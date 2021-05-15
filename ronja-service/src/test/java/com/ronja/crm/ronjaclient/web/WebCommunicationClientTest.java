@@ -6,6 +6,5 @@ class WebCommunicationClientTest {
 
     @Test
     void testSuccessfulCommunication() {
-        new WebCommunicationClient();
     }
 }
