@@ -1,16 +1,23 @@
 package com.ronja.crm.ronjaclient.web;
 
 import com.ronja.crm.ronjaclient.web.domain.Customer;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.web.reactive.function.client.WebClient;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class CustomerApiClientTest {
 
-    private final WebClient webClient = WebClient.builder().build();
+  private static CustomerApiClient customerApiClient;
 
-    @Test
-    void testSuccessfulCommunication() {
-        CustomerApiClient customerApiClient = new CustomerApiClient(webClient);
-        Customer customer = customerApiClient.fetchCustomerByName("Emma");
-    }
+  @BeforeAll
+  static void setUp() {
+    customerApiClient = new CustomerApiClient();
+  }
+
+  @Test
+  void testSuccessfulCommunication() {
+    Customer[] customers = customerApiClient.fetchCustomers();
+    assertThat(customers).hasSize(5);
+  }
 }
