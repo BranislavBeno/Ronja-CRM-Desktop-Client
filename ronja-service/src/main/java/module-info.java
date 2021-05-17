@@ -6,6 +6,6 @@ module ronja.web {
   requires spring.beans;
   requires spring.core;
 
-  exports com.ronja.crm.ronjaclient.web;
-  exports com.ronja.crm.ronjaclient.web.domain;
+  exports com.ronja.crm.ronjaclient.service.domain;
+  exports com.ronja.crm.ronjaclient.service.communication;
 }

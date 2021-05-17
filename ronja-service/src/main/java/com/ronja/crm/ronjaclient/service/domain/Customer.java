@@ -1,4 +1,4 @@
-package com.ronja.crm.ronjaclient.web.domain;
+package com.ronja.crm.ronjaclient.service.domain;
 
 public class Customer {
 
