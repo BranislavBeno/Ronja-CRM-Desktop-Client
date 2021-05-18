@@ -4,12 +4,10 @@ import com.ronja.crm.ronjaclient.service.domain.Customer;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
 
-@Component
 public class CustomerApiClient {
 
   private final RestTemplate restTemplate;
