@@ -7,6 +7,7 @@ import com.ronja.crm.ronjaclient.service.domain.Focus;
 import com.ronja.crm.ronjaclient.service.domain.Status;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,7 +18,7 @@ public class CustomerApiClientTest {
 
   @BeforeAll
   public static void setUp() {
-    customerApiClient = new CustomerApiClient();
+    customerApiClient = new CustomerApiClient(new RestTemplateBuilder());
   }
 
   @Test
