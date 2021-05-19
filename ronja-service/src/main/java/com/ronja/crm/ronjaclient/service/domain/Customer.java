@@ -51,4 +51,10 @@ public class Customer {
   public void setStatus(Status status) {
     this.status = status;
   }
+
+  @Override
+  public String toString() {
+    return String.format("Customer[id = %s, companyName = %s, category = %s, focus = %s, status = %s]",
+        id, companyName, category.getLabel(), focus.getLabel(), status.getLabel());
+  }
 }

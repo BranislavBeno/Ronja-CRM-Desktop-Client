@@ -9,4 +9,6 @@ module ronja.service {
 
   exports com.ronja.crm.ronjaclient.service.domain;
   exports com.ronja.crm.ronjaclient.service.communication;
+
+  opens com.ronja.crm.ronjaclient.service.configuration;
 }

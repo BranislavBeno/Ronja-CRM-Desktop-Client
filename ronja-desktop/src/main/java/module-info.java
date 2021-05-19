@@ -12,4 +12,5 @@ module ronja.desktop {
   exports com.ronja.crm.ronjaclient.desktop.controller;
 
   opens com.ronja.crm.ronjaclient.desktop;
+  opens com.ronja.crm.ronjaclient.desktop.controller;
 }

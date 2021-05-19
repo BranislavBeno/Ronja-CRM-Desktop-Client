@@ -1,18 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.LineChart?>
-<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
+<VBox xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.ronja.crm.ronjaclient.desktop.controller.MainController">
-    <LineChart prefHeight="600" fx:id="main">
-        <xAxis>
-            <CategoryAxis label="Time"/>
-        </xAxis>
-        <yAxis>
-            <NumberAxis label="Price"/>
-        </yAxis>
-    </LineChart>
+    <Label fx:id="label" text="Label"/>
 </VBox>
