@@ -4,6 +4,7 @@ import com.ronja.crm.ronjaclient.service.communication.CustomerApiClient;
 import com.ronja.crm.ronjaclient.service.domain.Customer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,8 @@ import java.util.stream.Collectors;
 @Component
 public class MainController {
 
+  @FXML
+  private TableView<?> customersTableView;
   @FXML
   private Label label;
 
