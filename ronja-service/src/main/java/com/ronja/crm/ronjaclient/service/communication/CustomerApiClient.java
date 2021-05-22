@@ -14,7 +14,7 @@ public class CustomerApiClient {
 
   public CustomerApiClient(RestTemplateBuilder restTemplateBuilder) {
     this.restTemplate = restTemplateBuilder
-        .rootUri("http://localhost:8080/customers")
+        .rootUri("http://localhost:8087/customers")
         .setConnectTimeout(Duration.ofSeconds(2))
         .setReadTimeout(Duration.ofSeconds(2))
         .build();
