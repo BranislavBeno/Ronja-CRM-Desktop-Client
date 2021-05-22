@@ -9,5 +9,4 @@ public class RonjaDesktopApplication {
   public static void main(String[] args) {
     Application.launch(DesktopApplication.class, args);
   }
-
 }

@@ -4,16 +4,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.5</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <groupId>com.ronja.crm.ronjaclient</groupId>
+        <artifactId>ronja-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.ronja.crm.ronjaclient</groupId>
     <artifactId>ronja-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>ronja-web</name>
     <description>Client code to connect to the ronja service</description>
 
     <properties>
@@ -41,6 +37,16 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
         </plugins>
     </build>
