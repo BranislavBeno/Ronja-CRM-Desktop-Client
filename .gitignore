@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+## Ronja Application
+ronja-desktop/dependency-reduced-pom.xml
