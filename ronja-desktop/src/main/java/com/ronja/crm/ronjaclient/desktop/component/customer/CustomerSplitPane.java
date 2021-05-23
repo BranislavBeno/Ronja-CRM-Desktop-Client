@@ -6,9 +6,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomerSplitPane extends SplitPane {
 
-    public CustomerSplitPane(CustomerTableView customerTableView) {
-        CustomerDetailView customerDetailView = new CustomerDetailView();
+  private CustomerDetailView customerDetailView;
 
-        getItems().addAll(customerTableView, customerDetailView);
+  public CustomerSplitPane(CustomerTableView customerTableView) {
+    customerTableView.selectedCustomer().addListener((ov, oldRemark, newRemark) -> showCustomerDetail(newRemark));
+    getItems().addAll(customerTableView);
+  }
+
+  private void showCustomerDetail(CustomerTableItem customer) {
+    if (customerDetailView == null) {
+      customerDetailView = new CustomerDetailView();
+      this.getItems().add(customerDetailView);
     }
+
+    if (customer != null) {
+      customerDetailView.setUpContent(customer);
+    }
+  }
 }

@@ -15,33 +15,32 @@ import java.io.IOException;
 @Component
 public class StageInitializer implements ApplicationListener<StageReadyEvent> {
 
-    @Value("classpath:/MainWindow.fxml")
-    private Resource mainResource;
-    private final String applicationTitle;
-    private final ApplicationContext applicationContext;
+  @Value("classpath:/MainWindow.fxml")
+  private Resource mainResource;
+  private final String applicationTitle;
+  private final ApplicationContext applicationContext;
 
-    public StageInitializer(@Value("${spring.application.ui.title}") String applicationTitle,
-                            ApplicationContext applicationContext) {
-        this.applicationTitle = applicationTitle;
-        this.applicationContext = applicationContext;
-    }
+  public StageInitializer(@Value("${spring.application.ui.title}") String applicationTitle,
+                          ApplicationContext applicationContext) {
+    this.applicationTitle = applicationTitle;
+    this.applicationContext = applicationContext;
+  }
 
-    @Override
-    public void onApplicationEvent(StageReadyEvent event) {
-        try {
-            var fxmlLoader = new FXMLLoader(mainResource.getURL());
-            fxmlLoader.setControllerFactory(applicationContext::getBean);
-            var parent = (Parent) fxmlLoader.load();
-            var stage = event.getStage();
-            App.setStage(stage);
-            var scene = new Scene(parent, 800, 600);
-            stage.setScene(scene);
-            stage.setTitle(applicationTitle);
-            stage.setMaximized(true);
-            App.setWindow(scene.getWindow());
-            stage.show();
-        } catch (IOException e) {
-            throw new StageException("Stage initialization failed", e);
-        }
+  @Override
+  public void onApplicationEvent(StageReadyEvent event) {
+    try {
+      var fxmlLoader = new FXMLLoader(mainResource.getURL());
+      fxmlLoader.setControllerFactory(applicationContext::getBean);
+      var parent = (Parent) fxmlLoader.load();
+      var stage = event.getStage();
+      App.setStage(stage);
+      var scene = new Scene(parent, 1000, 800);
+      stage.setScene(scene);
+      stage.setTitle(applicationTitle);
+      App.setWindow(scene.getWindow());
+      stage.show();
+    } catch (IOException e) {
+      throw new StageException("Stage initialization failed", e);
     }
+  }
 }
