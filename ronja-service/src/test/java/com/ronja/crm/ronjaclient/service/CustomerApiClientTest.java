@@ -32,13 +32,15 @@ public class CustomerApiClientTest {
     @Test
     @Disabled
     public void testSuccessfulAdding() {
-        Customer customer = new Customer();
-        customer.setCompanyName("TestCorp");
-        customer.setCategory(Category.LEVEL_3);
-        customer.setFocus(Focus.TRADE);
-        customer.setStatus(Status.INACTIVE);
-        HttpStatus code = customerApiClient.createCustomer(customer);
-        assertThat(code.is2xxSuccessful()).isTrue();
+        for (var i = 1; i <= 100; i++) {
+            Customer customer = new Customer();
+            customer.setCompanyName("TestCorp" + i);
+            customer.setCategory(Category.LEVEL_3);
+            customer.setFocus(Focus.TRADE);
+            customer.setStatus(Status.INACTIVE);
+            HttpStatus code = customerApiClient.createCustomer(customer);
+            assertThat(code.is2xxSuccessful()).isTrue();
+        }
     }
 
     @Test

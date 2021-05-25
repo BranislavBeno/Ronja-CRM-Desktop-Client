@@ -2,7 +2,11 @@ package com.ronja.crm.ronjaclient.desktop.component.dialog;
 
 import com.ronja.crm.ronjaclient.desktop.App;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Region;
+
+import java.util.Optional;
 
 public class Dialogs {
 
@@ -16,10 +20,26 @@ public class Dialogs {
         alert.setContentText(message);
         alert.setResizable(true);
         alert.initOwner(App.getMainWindow());
-
-        // Resize automatically according the content
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-
         alert.showAndWait();
+    }
+
+    public static boolean showAlertDialog(String title, String contentText, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(contentText);
+        alert.initOwner(App.getMainWindow());
+        alert.setResizable(true);
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        alert.getButtonTypes().clear();
+        alert.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
+        Button noButton = (Button) alert.getDialogPane().lookupButton(ButtonType.NO);
+        Button yesButton = (Button) alert.getDialogPane().lookupButton(ButtonType.YES);
+        noButton.setDefaultButton(true);
+        yesButton.setDefaultButton(false);
+        Optional<ButtonType> result = alert.showAndWait();
+
+        return result.orElse(null) == ButtonType.YES;
     }
 }

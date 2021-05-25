@@ -4,13 +4,15 @@ import com.ronja.crm.ronjaclient.service.domain.Category;
 import com.ronja.crm.ronjaclient.service.domain.Customer;
 import com.ronja.crm.ronjaclient.service.domain.Focus;
 import com.ronja.crm.ronjaclient.service.domain.Status;
-import javafx.beans.property.*;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 import java.util.Objects;
 
 public class CustomerTableItem {
 
-    private final SimpleIntegerProperty id;
     private final SimpleStringProperty companyName;
     private final SimpleObjectProperty<Category> category;
     private final SimpleObjectProperty<Focus> focus;
@@ -22,18 +24,9 @@ public class CustomerTableItem {
         this.customer = customer;
 
         status = new SimpleObjectProperty<>(customer.getStatus());
-        id = new SimpleIntegerProperty(customer.getId());
         companyName = new SimpleStringProperty(customer.getCompanyName());
         category = new SimpleObjectProperty<>(customer.getCategory());
         focus = new SimpleObjectProperty<>(customer.getFocus());
-    }
-
-    public int getId() {
-        return id.get();
-    }
-
-    public ReadOnlyIntegerProperty idProperty() {
-        return id;
     }
 
     public String getCompanyName() {
@@ -86,5 +79,9 @@ public class CustomerTableItem {
     public void setStatus(Status status) {
         this.status.set(status);
         this.customer.setStatus(status);
+    }
+
+    public Customer getCustomer() {
+        return customer;
     }
 }
