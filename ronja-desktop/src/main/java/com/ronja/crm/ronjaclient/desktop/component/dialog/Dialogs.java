@@ -1,6 +1,8 @@
 package com.ronja.crm.ronjaclient.desktop.component.dialog;
 
 import com.ronja.crm.ronjaclient.desktop.App;
+import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableView;
+import com.ronja.crm.ronjaclient.service.communication.CustomerApiClient;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -10,36 +12,41 @@ import java.util.Optional;
 
 public class Dialogs {
 
-    private Dialogs() {
-    }
+  private Dialogs() {
+  }
 
-    public static void showErrorMessage(String title, String message) {
-        var alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.setResizable(true);
-        alert.initOwner(App.getMainWindow());
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        alert.showAndWait();
-    }
+  public static void showCustomerDetailDialog(CustomerApiClient customerApiClient, CustomerTableView customerTableView) {
+    var dialog = new CustomerDetailDialog(customerApiClient, customerTableView);
+    dialog.showAndWait();
+  }
 
-    public static boolean showAlertDialog(String title, String contentText, Alert.AlertType alertType) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(contentText);
-        alert.initOwner(App.getMainWindow());
-        alert.setResizable(true);
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        alert.getButtonTypes().clear();
-        alert.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
-        Button noButton = (Button) alert.getDialogPane().lookupButton(ButtonType.NO);
-        Button yesButton = (Button) alert.getDialogPane().lookupButton(ButtonType.YES);
-        noButton.setDefaultButton(true);
-        yesButton.setDefaultButton(false);
-        Optional<ButtonType> result = alert.showAndWait();
+  public static void showErrorMessage(String title, String message) {
+    var alert = new Alert(Alert.AlertType.ERROR);
+    alert.setTitle(title);
+    alert.setHeaderText(null);
+    alert.setContentText(message);
+    alert.setResizable(true);
+    alert.initOwner(App.getMainWindow());
+    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+    alert.showAndWait();
+  }
 
-        return result.orElse(null) == ButtonType.YES;
-    }
+  public static boolean showAlertDialog(String title, String contentText, Alert.AlertType alertType) {
+    var alert = new Alert(alertType);
+    alert.setTitle(title);
+    alert.setHeaderText(null);
+    alert.setContentText(contentText);
+    alert.initOwner(App.getMainWindow());
+    alert.setResizable(true);
+    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+    alert.getButtonTypes().clear();
+    alert.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
+    var noButton = (Button) alert.getDialogPane().lookupButton(ButtonType.NO);
+    var yesButton = (Button) alert.getDialogPane().lookupButton(ButtonType.YES);
+    noButton.setDefaultButton(true);
+    yesButton.setDefaultButton(false);
+    Optional<ButtonType> result = alert.showAndWait();
+
+    return result.orElse(null) == ButtonType.YES;
+  }
 }
