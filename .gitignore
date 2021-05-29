@@ -34,3 +34,4 @@ build/
 
 ## Ronja Application
 ronja-desktop/dependency-reduced-pom.xml
+ronja-run/runtime/

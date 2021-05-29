@@ -3,7 +3,6 @@ package com.ronja.crm.ronjaclient.desktop.component.dialog;
 import com.ronja.crm.ronjaclient.desktop.App;
 import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableItem;
 import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableView;
-import com.ronja.crm.ronjaclient.service.communication.CustomerApiClient;
 import com.ronja.crm.ronjaclient.service.domain.Category;
 import com.ronja.crm.ronjaclient.service.domain.Focus;
 import com.ronja.crm.ronjaclient.service.domain.Status;
@@ -25,7 +24,6 @@ import java.util.Objects;
 public class CustomerDetailDialog extends Stage {
 
   private CustomerTableItem customerItem;
-  private final CustomerTableView customerTableView;
   private final Label companyNameLabel;
   private final Label categoryLabel;
   private final Label focusLabel;
@@ -34,10 +32,9 @@ public class CustomerDetailDialog extends Stage {
   private final ChoiceBox<Category> categoryChoiceBox;
   private final ChoiceBox<Focus> focusChoiceBox;
   private final ChoiceBox<Status> statusChoiceBox;
-  private final CustomerApiClient customerApiClient;
+  private final CustomerTableView customerTableView;
 
-  public CustomerDetailDialog(CustomerApiClient customerApiClient, CustomerTableView customerTableView) {
-    this.customerApiClient = Objects.requireNonNull(customerApiClient);
+  public CustomerDetailDialog(CustomerTableView customerTableView) {
     this.customerTableView = Objects.requireNonNull(customerTableView);
 
     setTitle("Upraviť zákazníka");
@@ -56,10 +53,10 @@ public class CustomerDetailDialog extends Stage {
     focusChoiceBox.setItems(FXCollections.observableArrayList(Focus.values()));
     statusChoiceBox = new ChoiceBox<>();
     statusChoiceBox.setItems(FXCollections.observableArrayList(Status.values()));
-    setUpContent(customerTableView.selectedCustomer().getValue());
+    setUpContent(this.customerTableView.selectedCustomer().getValue());
 
     var saveButton = new Button("Ulož");
-//    saveButton.setOnAction(e -> updateCustomer());
+    saveButton.setOnAction(e -> updateCustomer());
     var hBox = new HBox();
     hBox.setAlignment(Pos.CENTER_RIGHT);
     hBox.getChildren().add(saveButton);
@@ -74,14 +71,13 @@ public class CustomerDetailDialog extends Stage {
   }
 
   private void updateCustomer() {
-    if (customerItem != null) {
-      customerItem.setCompanyName(companyNameTextField.getText());
-      customerItem.setCategory(categoryChoiceBox.getValue());
-      customerItem.setFocus(focusChoiceBox.getValue());
-      customerItem.setStatus(statusChoiceBox.getValue());
+    customerItem.setCompanyName(companyNameTextField.getText());
+    customerItem.setCategory(categoryChoiceBox.getValue());
+    customerItem.setFocus(focusChoiceBox.getValue());
+    customerItem.setStatus(statusChoiceBox.getValue());
+    getScene().getWindow().hide();
 
-      Platform.runLater(() -> customerApiClient.updateCustomer(customerItem.getCustomer()));
-    }
+    Platform.runLater(() -> customerTableView.getCustomerApiClient().updateCustomer(customerItem.getCustomer()));
   }
 
   private GridPane setUpGridPane() {

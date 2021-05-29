@@ -14,18 +14,24 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+@Component
 public class CustomerTableView extends VBox {
+
+  @Autowired
+  private final CustomerApiClient customerApiClient;
 
   private final ObservableList<CustomerTableItem> tableItems;
   private final TableView<CustomerTableItem> tableView;
-  private final CustomerApiClient customerApiClient;
   private final TextField searchTextField;
 
   public CustomerTableView(CustomerApiClient customerApiClient) {
@@ -125,24 +131,48 @@ public class CustomerTableView extends VBox {
     return s.contains(searchText);
   }
 
+  public ReadOnlyObjectProperty<CustomerTableItem> selectedCustomer() {
+    return tableView.getSelectionModel().selectedItemProperty();
+  }
+
   private ContextMenu setUpContextMenu() {
     var menuItem1 = new MenuItem("Upraviť...");
-    menuItem1.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerApiClient, this));
+    menuItem1.setOnAction(e -> {
+      if (selectedCustomer().get() != null) {
+        Dialogs.showCustomerDetailDialog(this);
+      }
+    });
     var menuItem2 = new MenuItem("Pridať nového...");
-    menuItem2.setOnAction(e -> System.out.println("Choice 2 clicked!"));
+    menuItem2.setOnAction(e -> System.out.println("Add customer clicked!"));
     var menuItem3 = new MenuItem("Zmazať...");
-    menuItem3.setOnAction(e -> System.out.println("Choice 3 clicked!"));
+    menuItem3.setOnAction(e -> deleteCustomer());
     var contextMenu = new ContextMenu();
     contextMenu.getItems().addAll(menuItem1, new SeparatorMenuItem(), menuItem2, new SeparatorMenuItem(), menuItem3);
 
     return contextMenu;
   }
 
-  public ReadOnlyObjectProperty<CustomerTableItem> selectedCustomer() {
-    return tableView.getSelectionModel().selectedItemProperty();
+  private void deleteCustomer() {
+    CustomerTableItem customerItem = selectedCustomer().get();
+    if (customerItem != null) {
+      var title = "Zmazanie zákazníka";
+      var message = String.format("Skutočne chcete zmazať zákazníka '%s'?",
+          customerItem.companyNameProperty().get());
+      if (Dialogs.showAlertDialog(title, message, Alert.AlertType.CONFIRMATION)) {
+        CompletableFuture
+            .runAsync(() -> customerApiClient.deleteCustomer(customerItem.getCustomer().getId()))
+            .whenComplete((r, t) -> {
+              if (t == null) {
+                Platform.runLater(() -> tableItems.remove(customerItem));
+              } else {
+                refreshItems();
+              }
+            });
+      }
+    }
   }
 
-  public ObservableList<CustomerTableItem> getTableItems() {
-    return tableItems;
+  public CustomerApiClient getCustomerApiClient() {
+    return customerApiClient;
   }
 }

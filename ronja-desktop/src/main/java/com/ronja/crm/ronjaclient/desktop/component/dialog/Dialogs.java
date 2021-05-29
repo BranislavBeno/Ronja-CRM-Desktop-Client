@@ -2,7 +2,6 @@ package com.ronja.crm.ronjaclient.desktop.component.dialog;
 
 import com.ronja.crm.ronjaclient.desktop.App;
 import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableView;
-import com.ronja.crm.ronjaclient.service.communication.CustomerApiClient;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -15,8 +14,8 @@ public class Dialogs {
   private Dialogs() {
   }
 
-  public static void showCustomerDetailDialog(CustomerApiClient customerApiClient, CustomerTableView customerTableView) {
-    var dialog = new CustomerDetailDialog(customerApiClient, customerTableView);
+  public static void showCustomerDetailDialog(CustomerTableView customerTableView) {
+    var dialog = new CustomerDetailDialog(customerTableView);
     dialog.showAndWait();
   }
 
