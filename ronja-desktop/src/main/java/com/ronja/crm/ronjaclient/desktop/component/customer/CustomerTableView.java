@@ -5,6 +5,8 @@ import com.ronja.crm.ronjaclient.desktop.component.util.TableViewUtil;
 import com.ronja.crm.ronjaclient.service.communication.CustomerApiClient;
 import com.ronja.crm.ronjaclient.service.domain.Customer;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -137,38 +139,41 @@ public class CustomerTableView extends VBox {
 
   private ContextMenu setUpContextMenu() {
     var menuItem1 = new MenuItem("Upraviť...");
-    menuItem1.setOnAction(e -> {
-      if (selectedCustomer().get() != null) {
-        Dialogs.showCustomerDetailDialog(customerApiClient, selectedCustomer().get());
-      }
-    });
+    menuItem1.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerApiClient, selectedCustomer().get()));
+    menuItem1.disableProperty().bind(isSelectedCustomerNull());
+
     var menuItem2 = new MenuItem("Pridať nového...");
     menuItem2.setOnAction(e -> System.out.println("Add customer clicked!"));
+
     var menuItem3 = new MenuItem("Zmazať...");
     menuItem3.setOnAction(e -> deleteCustomer());
+    menuItem3.disableProperty().bind(isSelectedCustomerNull());
+
     var contextMenu = new ContextMenu();
     contextMenu.getItems().addAll(menuItem1, new SeparatorMenuItem(), menuItem2, new SeparatorMenuItem(), menuItem3);
 
     return contextMenu;
   }
 
+  private BooleanBinding isSelectedCustomerNull() {
+    return Bindings.isNull(selectedCustomer());
+  }
+
   private void deleteCustomer() {
     CustomerTableItem customerItem = selectedCustomer().get();
-    if (customerItem != null) {
-      var title = "Zmazanie zákazníka";
-      var message = String.format("Skutočne chcete zmazať zákazníka '%s'?",
-          customerItem.companyNameProperty().get());
-      if (Dialogs.showAlertDialog(title, message, Alert.AlertType.CONFIRMATION)) {
-        CompletableFuture
-            .runAsync(() -> customerApiClient.deleteCustomer(customerItem.getCustomer().getId()))
-            .whenComplete((r, t) -> {
-              if (t == null) {
-                Platform.runLater(() -> tableItems.remove(customerItem));
-              } else {
-                refreshItems();
-              }
-            });
-      }
+    var title = "Zmazanie zákazníka";
+    var message = String.format("Skutočne chcete zmazať zákazníka '%s'?",
+        customerItem.companyNameProperty().get());
+    if (Dialogs.showAlertDialog(title, message, Alert.AlertType.CONFIRMATION)) {
+      CompletableFuture
+          .runAsync(() -> customerApiClient.deleteCustomer(customerItem.getCustomer().getId()))
+          .whenComplete((r, t) -> {
+            if (t == null) {
+              Platform.runLater(() -> tableItems.remove(customerItem));
+            } else {
+              refreshItems();
+            }
+          });
     }
   }
 }
