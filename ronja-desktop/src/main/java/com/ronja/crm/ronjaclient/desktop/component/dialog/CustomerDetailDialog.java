@@ -2,7 +2,7 @@ package com.ronja.crm.ronjaclient.desktop.component.dialog;
 
 import com.ronja.crm.ronjaclient.desktop.App;
 import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableItem;
-import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableView;
+import com.ronja.crm.ronjaclient.service.communication.CustomerApiClient;
 import com.ronja.crm.ronjaclient.service.domain.Category;
 import com.ronja.crm.ronjaclient.service.domain.Focus;
 import com.ronja.crm.ronjaclient.service.domain.Status;
@@ -32,10 +32,10 @@ public class CustomerDetailDialog extends Stage {
   private final ChoiceBox<Category> categoryChoiceBox;
   private final ChoiceBox<Focus> focusChoiceBox;
   private final ChoiceBox<Status> statusChoiceBox;
-  private final CustomerTableView customerTableView;
+  private final CustomerApiClient customerApiClient;
 
-  public CustomerDetailDialog(CustomerTableView customerTableView) {
-    this.customerTableView = Objects.requireNonNull(customerTableView);
+  public CustomerDetailDialog(CustomerApiClient customerApiClient, CustomerTableItem customerItem) {
+    this.customerApiClient = Objects.requireNonNull(customerApiClient);
 
     setTitle("Upraviť zákazníka");
     initOwner(App.getMainWindow());
@@ -53,7 +53,7 @@ public class CustomerDetailDialog extends Stage {
     focusChoiceBox.setItems(FXCollections.observableArrayList(Focus.values()));
     statusChoiceBox = new ChoiceBox<>();
     statusChoiceBox.setItems(FXCollections.observableArrayList(Status.values()));
-    setUpContent(this.customerTableView.selectedCustomer().getValue());
+    setUpContent(customerItem);
 
     var saveButton = new Button("Ulož");
     saveButton.setOnAction(e -> updateCustomer());
@@ -77,7 +77,7 @@ public class CustomerDetailDialog extends Stage {
     customerItem.setStatus(statusChoiceBox.getValue());
     getScene().getWindow().hide();
 
-    Platform.runLater(() -> customerTableView.getCustomerApiClient().updateCustomer(customerItem.getCustomer()));
+    Platform.runLater(() -> customerApiClient.updateCustomer(customerItem.getCustomer()));
   }
 
   private GridPane setUpGridPane() {

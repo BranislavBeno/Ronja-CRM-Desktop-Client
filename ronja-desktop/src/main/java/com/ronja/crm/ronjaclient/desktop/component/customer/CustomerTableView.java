@@ -131,7 +131,7 @@ public class CustomerTableView extends VBox {
     return s.contains(searchText);
   }
 
-  public ReadOnlyObjectProperty<CustomerTableItem> selectedCustomer() {
+  private ReadOnlyObjectProperty<CustomerTableItem> selectedCustomer() {
     return tableView.getSelectionModel().selectedItemProperty();
   }
 
@@ -139,7 +139,7 @@ public class CustomerTableView extends VBox {
     var menuItem1 = new MenuItem("Upraviť...");
     menuItem1.setOnAction(e -> {
       if (selectedCustomer().get() != null) {
-        Dialogs.showCustomerDetailDialog(this);
+        Dialogs.showCustomerDetailDialog(customerApiClient, selectedCustomer().get());
       }
     });
     var menuItem2 = new MenuItem("Pridať nového...");
@@ -170,9 +170,5 @@ public class CustomerTableView extends VBox {
             });
       }
     }
-  }
-
-  public CustomerApiClient getCustomerApiClient() {
-    return customerApiClient;
   }
 }
