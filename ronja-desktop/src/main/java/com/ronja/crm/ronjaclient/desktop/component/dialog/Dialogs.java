@@ -1,7 +1,7 @@
 package com.ronja.crm.ronjaclient.desktop.component.dialog;
 
 import com.ronja.crm.ronjaclient.desktop.App;
-import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableItem;
+import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableView;
 import com.ronja.crm.ronjaclient.service.communication.CustomerApiClient;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -15,8 +15,10 @@ public class Dialogs {
   private Dialogs() {
   }
 
-  public static void showCustomerDetailDialog(CustomerApiClient customerApiClient, CustomerTableItem customerItem) {
-    var dialog = new CustomerDetailDialog(customerApiClient, customerItem);
+  public static void showCustomerDetailDialog(CustomerApiClient customerApiClient,
+                                              CustomerTableView tableView,
+                                              boolean update) {
+    var dialog = new CustomerDetailDialog(customerApiClient, tableView, update);
     dialog.showAndWait();
   }
 
@@ -42,7 +44,9 @@ public class Dialogs {
     alert.getButtonTypes().clear();
     alert.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
     var noButton = (Button) alert.getDialogPane().lookupButton(ButtonType.NO);
+    noButton.setText("Nie");
     var yesButton = (Button) alert.getDialogPane().lookupButton(ButtonType.YES);
+    yesButton.setText("Áno");
     noButton.setDefaultButton(true);
     yesButton.setDefaultButton(false);
     Optional<ButtonType> result = alert.showAndWait();

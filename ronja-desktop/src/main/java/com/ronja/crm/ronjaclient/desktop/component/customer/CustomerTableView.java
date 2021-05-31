@@ -92,6 +92,10 @@ public class CustomerTableView extends VBox {
 
   private void addItem(Customer customer) {
     var item = new CustomerTableItem(customer);
+    addItem(item);
+  }
+
+  public void addItem(CustomerTableItem item) {
     tableItems.add(item);
   }
 
@@ -133,17 +137,17 @@ public class CustomerTableView extends VBox {
     return s.contains(searchText);
   }
 
-  private ReadOnlyObjectProperty<CustomerTableItem> selectedCustomer() {
+  public ReadOnlyObjectProperty<CustomerTableItem> selectedCustomer() {
     return tableView.getSelectionModel().selectedItemProperty();
   }
 
   private ContextMenu setUpContextMenu() {
     var menuItem1 = new MenuItem("Upraviť...");
-    menuItem1.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerApiClient, selectedCustomer().get()));
+    menuItem1.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerApiClient, this, true));
     menuItem1.disableProperty().bind(isSelectedCustomerNull());
 
     var menuItem2 = new MenuItem("Pridať nového...");
-    menuItem2.setOnAction(e -> System.out.println("Add customer clicked!"));
+    menuItem2.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerApiClient, this, false));
 
     var menuItem3 = new MenuItem("Zmazať...");
     menuItem3.setOnAction(e -> deleteCustomer());

@@ -2,8 +2,10 @@ package com.ronja.crm.ronjaclient.desktop.component.dialog;
 
 import com.ronja.crm.ronjaclient.desktop.App;
 import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableItem;
+import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableView;
 import com.ronja.crm.ronjaclient.service.communication.CustomerApiClient;
 import com.ronja.crm.ronjaclient.service.domain.Category;
+import com.ronja.crm.ronjaclient.service.domain.Customer;
 import com.ronja.crm.ronjaclient.service.domain.Focus;
 import com.ronja.crm.ronjaclient.service.domain.Status;
 import javafx.application.Platform;
@@ -32,12 +34,13 @@ public class CustomerDetailDialog extends Stage {
   private final ChoiceBox<Category> categoryChoiceBox;
   private final ChoiceBox<Focus> focusChoiceBox;
   private final ChoiceBox<Status> statusChoiceBox;
-  private final CustomerApiClient customerApiClient;
 
-  public CustomerDetailDialog(CustomerApiClient customerApiClient, CustomerTableItem customerItem) {
-    this.customerApiClient = Objects.requireNonNull(customerApiClient);
+  public CustomerDetailDialog(CustomerApiClient customerApiClient,
+                              CustomerTableView tableView,
+                              boolean update) {
+    Objects.requireNonNull(customerApiClient);
+    Objects.requireNonNull(tableView);
 
-    setTitle("Upraviť zákazníka");
     initOwner(App.getMainWindow());
     initModality(Modality.WINDOW_MODAL);
     setResizable(false);
@@ -53,13 +56,38 @@ public class CustomerDetailDialog extends Stage {
     focusChoiceBox.setItems(FXCollections.observableArrayList(Focus.values()));
     statusChoiceBox = new ChoiceBox<>();
     statusChoiceBox.setItems(FXCollections.observableArrayList(Status.values()));
-    setUpContent(customerItem);
 
-    var saveButton = new Button("Ulož");
-    saveButton.setOnAction(e -> updateCustomer());
+    var saveButton = new Button();
+    if (update) {
+      customerItem = tableView.selectedCustomer().getValue();
+      setUpContent(customerItem);
+      setTitle("Upraviť zákazníka");
+      saveButton.setText("Ulož");
+      saveButton.setOnAction(e -> updateCustomer(() -> customerApiClient.updateCustomer(customerItem.getCustomer())));
+    } else {
+      setTitle("Pridať zákazníka");
+      setUpContent();
+      saveButton.setText("Pridaj");
+      saveButton.setOnAction(e -> {
+            var customer = new Customer();
+            customer.setCompanyName(companyNameTextField.getText());
+            customer.setCategory(categoryChoiceBox.getValue());
+            customer.setFocus(focusChoiceBox.getValue());
+            customer.setStatus(statusChoiceBox.getValue());
+            customerItem = new CustomerTableItem(customer);
+            tableView.addItem(customerItem);
+            updateCustomer(() -> customerApiClient.createCustomer(customer));
+          }
+      );
+    }
+
+    var cancelButton = new Button("Zruš");
+    cancelButton.setOnAction(e -> cancelOperation());
+
     var hBox = new HBox();
     hBox.setAlignment(Pos.CENTER_RIGHT);
-    hBox.getChildren().add(saveButton);
+    hBox.setSpacing(10);
+    hBox.getChildren().addAll(cancelButton, saveButton);
     var detailViewPane = setUpGridPane();
     var vBox = new VBox();
     vBox.getChildren().addAll(detailViewPane, hBox);
@@ -70,14 +98,18 @@ public class CustomerDetailDialog extends Stage {
     setScene(scene);
   }
 
-  private void updateCustomer() {
+  private void updateCustomer(Runnable runnable) {
     customerItem.setCompanyName(companyNameTextField.getText());
     customerItem.setCategory(categoryChoiceBox.getValue());
     customerItem.setFocus(focusChoiceBox.getValue());
     customerItem.setStatus(statusChoiceBox.getValue());
     getScene().getWindow().hide();
 
-    Platform.runLater(() -> customerApiClient.updateCustomer(customerItem.getCustomer()));
+    Platform.runLater(runnable);
+  }
+
+  private void cancelOperation() {
+    getScene().getWindow().hide();
   }
 
   private GridPane setUpGridPane() {
@@ -99,10 +131,16 @@ public class CustomerDetailDialog extends Stage {
   }
 
   private void setUpContent(CustomerTableItem customer) {
-    customerItem = customer;
     companyNameTextField.setText(customer.getCompanyName());
     categoryChoiceBox.setValue(customer.getCategory());
     focusChoiceBox.setValue(customer.getFocus());
     statusChoiceBox.setValue(customer.getStatus());
+  }
+
+  private void setUpContent() {
+    companyNameTextField.setText("");
+    categoryChoiceBox.setValue(Category.LEVEL_1);
+    focusChoiceBox.setValue(Focus.BUILDER);
+    statusChoiceBox.setValue(Status.ACTIVE);
   }
 }
