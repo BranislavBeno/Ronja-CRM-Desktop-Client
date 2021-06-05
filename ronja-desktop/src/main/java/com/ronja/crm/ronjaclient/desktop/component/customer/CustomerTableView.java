@@ -84,7 +84,7 @@ public class CustomerTableView extends VBox {
       return Arrays.stream(customerApiClient.fetchAllCustomers())
           .sorted(Comparator.comparing(Customer::getCompanyName));
     } catch (Exception e) {
-      throw new RuntimeException("""
+      throw new CustomerFetchException("""
           Nepodarilo sa získať dáta o klientoch.
           Preverte spojenie so serverom.""", e);
     }
