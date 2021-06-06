@@ -2,7 +2,7 @@ package com.ronja.crm.ronjaclient.desktop.component.dialog;
 
 import com.ronja.crm.ronjaclient.desktop.App;
 import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableView;
-import com.ronja.crm.ronjaclient.service.communication.CustomerApiClient;
+import com.ronja.crm.ronjaclient.service.clientapi.CustomerApiClient;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;

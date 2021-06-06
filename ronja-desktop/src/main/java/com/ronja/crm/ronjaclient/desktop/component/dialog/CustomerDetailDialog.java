@@ -3,7 +3,7 @@ package com.ronja.crm.ronjaclient.desktop.component.dialog;
 import com.ronja.crm.ronjaclient.desktop.App;
 import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableItem;
 import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableView;
-import com.ronja.crm.ronjaclient.service.communication.CustomerApiClient;
+import com.ronja.crm.ronjaclient.service.clientapi.CustomerApiClient;
 import com.ronja.crm.ronjaclient.service.domain.Category;
 import com.ronja.crm.ronjaclient.service.domain.Customer;
 import com.ronja.crm.ronjaclient.service.domain.Focus;

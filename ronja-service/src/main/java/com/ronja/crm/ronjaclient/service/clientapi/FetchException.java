@@ -1,4 +1,4 @@
-package com.ronja.crm.ronjaclient.service.communication;
+package com.ronja.crm.ronjaclient.service.clientapi;
 
 public class FetchException extends RuntimeException {
 

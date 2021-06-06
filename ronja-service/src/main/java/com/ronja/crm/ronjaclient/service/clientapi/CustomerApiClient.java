@@ -1,4 +1,4 @@
-package com.ronja.crm.ronjaclient.service.communication;
+package com.ronja.crm.ronjaclient.service.clientapi;
 
 import com.ronja.crm.ronjaclient.service.domain.Customer;
 import org.springframework.boot.web.client.RestTemplateBuilder;

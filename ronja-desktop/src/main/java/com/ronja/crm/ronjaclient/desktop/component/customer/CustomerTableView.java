@@ -2,7 +2,7 @@ package com.ronja.crm.ronjaclient.desktop.component.customer;
 
 import com.ronja.crm.ronjaclient.desktop.component.dialog.Dialogs;
 import com.ronja.crm.ronjaclient.desktop.component.util.TableViewUtil;
-import com.ronja.crm.ronjaclient.service.communication.CustomerApiClient;
+import com.ronja.crm.ronjaclient.service.clientapi.CustomerApiClient;
 import com.ronja.crm.ronjaclient.service.domain.Customer;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;

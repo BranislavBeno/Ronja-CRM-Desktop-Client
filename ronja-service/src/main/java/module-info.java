@@ -8,7 +8,8 @@ module ronja.service {
   requires spring.boot.autoconfigure;
 
   exports com.ronja.crm.ronjaclient.service.domain;
-  exports com.ronja.crm.ronjaclient.service.communication;
 
+  opens com.ronja.crm.ronjaclient.service.clientapi;
   opens com.ronja.crm.ronjaclient.service.configuration;
+  exports com.ronja.crm.ronjaclient.service.clientapi;
 }
