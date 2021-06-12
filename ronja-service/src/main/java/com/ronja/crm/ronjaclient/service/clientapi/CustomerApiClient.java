@@ -12,9 +12,11 @@ public class CustomerApiClient {
 
   private final RestTemplate restTemplate;
 
-  public CustomerApiClient(RestTemplateBuilder restTemplateBuilder) {
+  public CustomerApiClient(
+      String baseUrl,
+      RestTemplateBuilder restTemplateBuilder) {
     this.restTemplate = restTemplateBuilder
-        .rootUri("http://localhost:8087/customers")
+        .rootUri(baseUrl)
         .setConnectTimeout(Duration.ofSeconds(2))
         .setReadTimeout(Duration.ofSeconds(2))
         .build();

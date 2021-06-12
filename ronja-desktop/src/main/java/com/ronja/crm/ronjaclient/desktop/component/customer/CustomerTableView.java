@@ -17,6 +17,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -29,6 +30,8 @@ import java.util.stream.Stream;
 @Component
 public class CustomerTableView extends VBox {
 
+  @Value("${client.customers.base-url}")
+  String baseUrl;
   @Autowired
   private final CustomerApiClient customerApiClient;
 

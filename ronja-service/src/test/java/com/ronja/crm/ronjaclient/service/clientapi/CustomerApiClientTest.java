@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockRestServiceServer;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
@@ -23,7 +24,7 @@ public class CustomerApiClientTest {
 
   @Autowired
   private MockRestServiceServer mockRestServiceServer;
-  @Autowired
+  @MockBean
   private CustomerApiClient cut;
   @Autowired
   private RestTemplateBuilder restTemplateBuilder;
