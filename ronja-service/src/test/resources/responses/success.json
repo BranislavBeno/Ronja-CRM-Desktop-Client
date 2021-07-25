@@ -1,0 +1,30 @@
+[
+  {
+    "id": 3,
+    "companyName": "AvaniCorp",
+    "category": "LEVEL_3",
+    "focus": "SPECIALIZED_MANUFACTURE",
+    "status": "ACTIVE"
+  },
+  {
+    "id": 4,
+    "companyName": "BuritoCorp",
+    "category": "LEVEL_3",
+    "focus": "BUILDER",
+    "status": "ACTIVE"
+  },
+  {
+    "id": 2,
+    "companyName": "EmmaCorp",
+    "category": "LEVEL_2",
+    "focus": "MANUFACTURE",
+    "status": "INACTIVE"
+  },
+  {
+    "id": 1,
+    "companyName": "LeslieCorp",
+    "category": "LEVEL_1",
+    "focus": "MANUFACTURE",
+    "status": "ACTIVE"
+  }
+]
