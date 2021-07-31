@@ -1,7 +1,9 @@
 module ronja.service {
   requires com.fasterxml.jackson.databind;
+  requires reactor.core;
   requires spring.context;
   requires spring.web;
+  requires spring.webflux;
   requires spring.boot;
   requires spring.beans;
   requires spring.core;

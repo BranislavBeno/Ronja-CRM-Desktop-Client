@@ -2,7 +2,7 @@ package com.ronja.crm.ronjaclient.desktop.component.customer;
 
 import com.ronja.crm.ronjaclient.desktop.component.dialog.Dialogs;
 import com.ronja.crm.ronjaclient.desktop.component.util.TableViewUtil;
-import com.ronja.crm.ronjaclient.service.clientapi.CustomerApiClient;
+import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
 import com.ronja.crm.ronjaclient.service.domain.Customer;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -33,14 +33,14 @@ public class CustomerTableView extends VBox {
   @Value("${client.customers.base-url}")
   String baseUrl;
   @Autowired
-  private final CustomerApiClient customerApiClient;
+  private final CustomerWebClient customerWebClient;
 
   private final ObservableList<CustomerTableItem> tableItems;
   private final TableView<CustomerTableItem> tableView;
   private final TextField searchTextField;
 
-  public CustomerTableView(CustomerApiClient customerApiClient) {
-    this.customerApiClient = Objects.requireNonNull(customerApiClient);
+  public CustomerTableView(CustomerWebClient customerWebClient) {
+    this.customerWebClient = Objects.requireNonNull(customerWebClient);
 
     this.searchTextField = new TextField();
     GridPane customerToolBar = setUpToolBar();
@@ -84,8 +84,8 @@ public class CustomerTableView extends VBox {
 
   private Stream<Customer> fetchCustomers() {
     try {
-      return Arrays.stream(customerApiClient.fetchAllCustomers())
-          .sorted(Comparator.comparing(Customer::getCompanyName));
+      Customer[] customers = Objects.requireNonNull(customerWebClient.fetchAllCustomers().block());
+      return Arrays.stream(customers).sorted(Comparator.comparing(Customer::getCompanyName));
     } catch (Exception e) {
       throw new CustomerFetchException("""
           Nepodarilo sa získať dáta o klientoch.
@@ -146,11 +146,11 @@ public class CustomerTableView extends VBox {
 
   private ContextMenu setUpContextMenu() {
     var menuItem1 = new MenuItem("Upraviť...");
-    menuItem1.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerApiClient, this, true));
+    menuItem1.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerWebClient, this, true));
     menuItem1.disableProperty().bind(isSelectedCustomerNull());
 
     var menuItem2 = new MenuItem("Pridať nového...");
-    menuItem2.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerApiClient, this, false));
+    menuItem2.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerWebClient, this, false));
 
     var menuItem3 = new MenuItem("Zmazať...");
     menuItem3.setOnAction(e -> deleteCustomer());
@@ -173,7 +173,10 @@ public class CustomerTableView extends VBox {
         customerItem.companyNameProperty().get());
     if (Dialogs.showAlertDialog(title, message, Alert.AlertType.CONFIRMATION)) {
       CompletableFuture
-          .runAsync(() -> customerApiClient.deleteCustomer(customerItem.getCustomer().getId()))
+          .runAsync(() -> {
+            int id = customerItem.getCustomer().getId();
+            customerWebClient.deleteCustomer(id).block();
+          })
           .whenComplete((r, t) -> {
             if (t == null) {
               Platform.runLater(() -> tableItems.remove(customerItem));

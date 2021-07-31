@@ -3,7 +3,7 @@ package com.ronja.crm.ronjaclient.desktop.component.dialog;
 import com.ronja.crm.ronjaclient.desktop.App;
 import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableItem;
 import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableView;
-import com.ronja.crm.ronjaclient.service.clientapi.CustomerApiClient;
+import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
 import com.ronja.crm.ronjaclient.service.domain.Category;
 import com.ronja.crm.ronjaclient.service.domain.Customer;
 import com.ronja.crm.ronjaclient.service.domain.Focus;
@@ -35,10 +35,10 @@ public class CustomerDetailDialog extends Stage {
   private final ChoiceBox<Focus> focusChoiceBox;
   private final ChoiceBox<Status> statusChoiceBox;
 
-  public CustomerDetailDialog(CustomerApiClient customerApiClient,
+  public CustomerDetailDialog(CustomerWebClient customerWebClient,
                               CustomerTableView tableView,
                               boolean update) {
-    Objects.requireNonNull(customerApiClient);
+    Objects.requireNonNull(customerWebClient);
     Objects.requireNonNull(tableView);
 
     initOwner(App.getMainWindow());
@@ -63,7 +63,10 @@ public class CustomerDetailDialog extends Stage {
       setUpContent(customerItem);
       setTitle("Upraviť zákazníka");
       saveButton.setText("Ulož");
-      saveButton.setOnAction(e -> updateCustomer(() -> customerApiClient.updateCustomer(customerItem.getCustomer())));
+      saveButton.setOnAction(e -> updateCustomer(() -> {
+        Customer customer = customerItem.getCustomer();
+        customerWebClient.updateCustomer(customer).block();
+      }));
     } else {
       setTitle("Pridať zákazníka");
       setUpContent();
@@ -76,7 +79,7 @@ public class CustomerDetailDialog extends Stage {
             customer.setStatus(statusChoiceBox.getValue());
             customerItem = new CustomerTableItem(customer);
             tableView.addItem(customerItem);
-            updateCustomer(() -> customerApiClient.createCustomer(customer));
+            updateCustomer(() -> customerWebClient.createCustomer(customer).block());
           }
       );
     }
