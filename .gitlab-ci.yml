@@ -1,5 +1,5 @@
 ## docker image
-image: openjdk:11
+image: openjdk:16
 
 ## job test_code
 ## - run unit tests
