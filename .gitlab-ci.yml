@@ -1,0 +1,12 @@
+## docker image
+image: openjdk:16
+
+## job test_code
+## - run unit tests
+## - evaluate test coverage 
+test_code:
+  stage: test
+  script:
+    - sh ./mvnw verify
+  tags:
+    - DOCKER
