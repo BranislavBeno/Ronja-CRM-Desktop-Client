@@ -6,6 +6,7 @@ import com.ronja.crm.ronjaclient.service.domain.Focus;
 import com.ronja.crm.ronjaclient.service.domain.Status;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,10 +65,7 @@ public class CustomerWebClientTest {
 
   @Test
   public void testFetchingCustomerList() {
-    MockResponse mockResponse = new MockResponse()
-        .addHeader("Content-Type", "application/json; charset=utf-8")
-        .setBody(LIST_RESPONSE);
-    this.mockWebServer.enqueue(mockResponse);
+    mockResponse(LIST_RESPONSE);
 
     Customer[] customers = customerWebClient.fetchAllCustomers().block();
     assertAll(() -> {
@@ -94,17 +92,10 @@ public class CustomerWebClientTest {
   }
 
   @Test
-  public void testCreatingNewCustomer() {
-    MockResponse mockResponse = new MockResponse()
-        .addHeader("Content-Type", "application/json; charset=utf-8")
-        .setBody(SINGLE_RESPONSE);
-    this.mockWebServer.enqueue(mockResponse);
+  public void testCreatingCustomer() {
+    mockResponse(SINGLE_RESPONSE);
 
-    Customer customer = new Customer();
-    customer.setCompanyName("TestCompany");
-    customer.setCategory(Category.LEVEL_1);
-    customer.setFocus(Focus.BUILDER);
-    customer.setStatus(Status.ACTIVE);
+    Customer customer = provideCustomer();
     Customer newCustomer = customerWebClient.createCustomer(customer).block();
 
     assertAll(() -> {
@@ -113,8 +104,18 @@ public class CustomerWebClientTest {
     });
   }
 
+  @NotNull
+  private Customer provideCustomer() {
+    Customer customer = new Customer();
+    customer.setCompanyName("TestCompany");
+    customer.setCategory(Category.LEVEL_1);
+    customer.setFocus(Focus.BUILDER);
+    customer.setStatus(Status.ACTIVE);
+    return customer;
+  }
+
   @Test
-  public void testExceptionsOnCreatingNewCustomer() {
+  public void testExceptionsOnCreatingCustomer() {
     assertAll(() -> {
       assertThatThrownBy(() -> propagateExceptionWith500ServerError(
           () -> customerWebClient.createCustomer(new Customer()).block()))
@@ -123,6 +124,13 @@ public class CustomerWebClientTest {
           () -> customerWebClient.createCustomer(new Customer()).block()))
           .isInstanceOf(RuntimeException.class);
     });
+  }
+
+  @Test
+  public void testUpdatingCustomer() {
+    mockResponse(SINGLE_RESPONSE);
+    Customer updatedCustomer = customerWebClient.updateCustomer(new Customer()).block();
+    assertThat(updatedCustomer).isNotNull();
   }
 
   private void propagateExceptionWith400ServerError(Supplier<Customer> supplier) {
@@ -144,5 +152,12 @@ public class CustomerWebClientTest {
     this.mockWebServer.enqueue(new MockResponse()
         .setResponseCode(i)
         .setBody(s));
+  }
+
+  private void mockResponse(String listResponse) {
+    MockResponse mockResponse = new MockResponse()
+        .addHeader("Content-Type", "application/json; charset=utf-8")
+        .setBody(listResponse);
+    this.mockWebServer.enqueue(mockResponse);
   }
 }
