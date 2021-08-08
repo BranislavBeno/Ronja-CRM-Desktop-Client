@@ -6,3 +6,5 @@ spring:
 client:
   customers:
     base-url: http://localhost:8087/customers
+  representatives:
+    base-url: http://localhost:8087/representatives

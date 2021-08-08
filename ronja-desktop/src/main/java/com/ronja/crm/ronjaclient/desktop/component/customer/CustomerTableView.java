@@ -63,12 +63,13 @@ public class CustomerTableView extends VBox {
     Platform.runLater(() -> fetchCustomers().forEach(this::addItem));
   }
 
+
   private Stream<Customer> fetchCustomers() {
     try {
       Customer[] customers = Objects.requireNonNull(customerWebClient.fetchAllCustomers().block());
       return Arrays.stream(customers).sorted(Comparator.comparing(Customer::getCompanyName));
     } catch (Exception e) {
-      throw new CustomerFetchException("""
+      throw new FetchException("""
           Nepodarilo sa získať dáta o klientoch.
           Preverte spojenie so serverom.""", e);
     }
