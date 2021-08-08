@@ -12,9 +12,13 @@ module ronja.desktop {
 
   exports com.ronja.crm.ronjaclient.desktop;
   exports com.ronja.crm.ronjaclient.desktop.controller;
+  exports com.ronja.crm.ronjaclient.desktop.component.common;
   exports com.ronja.crm.ronjaclient.desktop.component.customer;
+  exports com.ronja.crm.ronjaclient.desktop.component.representative;
 
   opens com.ronja.crm.ronjaclient.desktop;
   opens com.ronja.crm.ronjaclient.desktop.controller;
+  opens com.ronja.crm.ronjaclient.desktop.component.common;
   opens com.ronja.crm.ronjaclient.desktop.component.customer;
+  opens com.ronja.crm.ronjaclient.desktop.component.representative;
 }

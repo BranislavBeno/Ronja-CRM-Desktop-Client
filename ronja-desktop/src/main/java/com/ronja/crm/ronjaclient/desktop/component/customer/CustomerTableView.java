@@ -1,5 +1,6 @@
 package com.ronja.crm.ronjaclient.desktop.component.customer;
 
+import com.ronja.crm.ronjaclient.desktop.component.common.FetchException;
 import com.ronja.crm.ronjaclient.desktop.component.dialog.Dialogs;
 import com.ronja.crm.ronjaclient.desktop.component.util.TableViewUtil;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;

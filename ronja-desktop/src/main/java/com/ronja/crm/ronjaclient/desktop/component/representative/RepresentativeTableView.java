@@ -1,6 +1,6 @@
 package com.ronja.crm.ronjaclient.desktop.component.representative;
 
-import com.ronja.crm.ronjaclient.desktop.component.customer.FetchException;
+import com.ronja.crm.ronjaclient.desktop.component.common.FetchException;
 import com.ronja.crm.ronjaclient.desktop.component.util.TableViewUtil;
 import com.ronja.crm.ronjaclient.service.clientapi.RepresentativeWebClient;
 import com.ronja.crm.ronjaclient.service.domain.Representative;
@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 @Component
 public class RepresentativeTableView extends VBox {
 
-  @Value("${client.representative.base-url}")
+  @Value("${client.representatives.base-url}")
   String baseUrl;
   @Autowired
   private final RepresentativeWebClient representativeWebClient;
