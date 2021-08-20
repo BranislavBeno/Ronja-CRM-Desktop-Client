@@ -9,6 +9,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 public class RepresentativeTableItem {
@@ -17,11 +18,13 @@ public class RepresentativeTableItem {
     private final SimpleStringProperty lastName;
     private final SimpleStringProperty position;
     private final SimpleStringProperty region;
-    private final SimpleObjectProperty<Customer> customer;
     private final SimpleStringProperty notice;
     private final SimpleObjectProperty<Status> status;
+    private final SimpleObjectProperty<Customer> customer;
     private final SimpleObjectProperty<LocalDate> lastVisit;
     private final SimpleObjectProperty<LocalDate> scheduledVisit;
+    private final SimpleObjectProperty<List<String>> phoneNumbers;
+    private final SimpleObjectProperty<List<String>> emails;
 
     private final Representative representative;
 
@@ -32,11 +35,13 @@ public class RepresentativeTableItem {
         lastName = new SimpleStringProperty(representative.getLastName());
         position = new SimpleStringProperty(representative.getPosition());
         region = new SimpleStringProperty(representative.getRegion());
-        customer = new SimpleObjectProperty<>(representative.getCustomer());
         notice = new SimpleStringProperty(representative.getNotice());
         status = new SimpleObjectProperty<>(representative.getStatus());
+        customer = new SimpleObjectProperty<>(representative.getCustomer());
         lastVisit = new SimpleObjectProperty<>(representative.getLastVisit());
         scheduledVisit = new SimpleObjectProperty<>(representative.getScheduledVisit());
+        phoneNumbers = new SimpleObjectProperty<>(representative.getPhoneNumbers());
+        emails = new SimpleObjectProperty<>(representative.getEmails());
     }
 
     public String getFirstName() {
@@ -158,5 +163,33 @@ public class RepresentativeTableItem {
     public void setScheduledVisit(LocalDate scheduledVisit) {
         this.scheduledVisit.set(scheduledVisit);
         this.representative.setScheduledVisit(scheduledVisit);
+    }
+
+    public List<String> getPhoneNumbers() {
+        return phoneNumbers.get();
+    }
+
+    public ReadOnlyStringProperty phoneNumbersProperty() {
+        String phoneNumber = phoneNumbers.get().stream().findFirst().orElse("");
+        return new SimpleStringProperty(phoneNumber);
+    }
+
+    public void setPhoneNumbers(List<String> phoneNumbers) {
+        this.phoneNumbers.set(phoneNumbers);
+        this.representative.setPhoneNumbers(phoneNumbers);
+    }
+
+    public List<String> getEmails() {
+        return emails.get();
+    }
+
+    public ReadOnlyStringProperty emailsProperty() {
+        String email = emails.get().stream().findFirst().orElse("");
+        return new SimpleStringProperty(email);
+    }
+
+    public void setEmails(List<String> emails) {
+        this.emails.set(emails);
+        this.representative.setEmails(emails);
     }
 }

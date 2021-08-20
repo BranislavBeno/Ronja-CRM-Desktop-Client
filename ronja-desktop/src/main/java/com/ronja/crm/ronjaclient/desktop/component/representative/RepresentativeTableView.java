@@ -74,13 +74,17 @@ public class RepresentativeTableView extends VBox {
         TableViewUtil.addColumn("Meno",
                 Pos.CENTER_LEFT, tableView, String.class, RepresentativeTableItem::firstNameProperty);
         TableViewUtil.addColumn("Priezvisko", tableView, String.class, RepresentativeTableItem::lastNameProperty);
+        TableViewUtil.addColumn("Spoločnosť", tableView, String.class, RepresentativeTableItem::customerProperty);
         TableViewUtil.addColumn("Pozícia", tableView, String.class, RepresentativeTableItem::positionProperty);
         TableViewUtil.addColumn("Región", tableView, String.class, RepresentativeTableItem::regionProperty);
-        TableViewUtil.addColumn("Spoločnosť", tableView, String.class, RepresentativeTableItem::customerProperty);
-        TableViewUtil.addColumn("Poznámka", tableView, String.class, RepresentativeTableItem::noticeProperty);
+        TableViewUtil.addColumn("Tel. číslo", tableView, String.class, RepresentativeTableItem::phoneNumbersProperty);
+        TableViewUtil.addColumn("Email", tableView, String.class, RepresentativeTableItem::emailsProperty);
         TableViewUtil.addColumn("Stav", tableView, Status.class, RepresentativeTableItem::statusProperty);
-        TableViewUtil.addColumn("Posledné stretnutie", tableView, LocalDate.class, RepresentativeTableItem::lastVisitProperty);
-        TableViewUtil.addColumn("Plánované stretnutie", tableView, LocalDate.class, RepresentativeTableItem::scheduledVisitProperty);
+        TableViewUtil.addColumn("Posledné stretnutie",
+                tableView, LocalDate.class, RepresentativeTableItem::lastVisitProperty);
+        TableViewUtil.addColumn("Plánované stretnutie",
+                tableView, LocalDate.class, RepresentativeTableItem::scheduledVisitProperty);
+        TableViewUtil.addColumn("Poznámka", tableView, String.class, RepresentativeTableItem::noticeProperty);
 
         VBox.setVgrow(tableView, Priority.ALWAYS);
     }
