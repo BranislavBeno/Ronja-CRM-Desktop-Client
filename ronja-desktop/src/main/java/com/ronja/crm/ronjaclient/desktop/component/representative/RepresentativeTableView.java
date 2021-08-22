@@ -9,6 +9,9 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.tableview2.FilteredTableView;
@@ -86,6 +89,17 @@ public class RepresentativeTableView extends VBox {
                 tableView, LocalDate.class, RepresentativeTableItem::scheduledVisitProperty);
         TableViewUtil.addColumn("Poznámka", tableView, String.class, RepresentativeTableItem::noticeProperty);
 
+        tableView.setContextMenu(setUpContextMenu());
         VBox.setVgrow(tableView, Priority.ALWAYS);
+    }
+
+    private ContextMenu setUpContextMenu() {
+        var refreshItem = new MenuItem("Obnoviť");
+        refreshItem.setOnAction(e -> TableViewUtil.refreshTableView(tableView));
+
+        var contextMenu = new ContextMenu();
+        contextMenu.getItems().addAll(refreshItem, new SeparatorMenuItem());
+
+        return contextMenu;
     }
 }
