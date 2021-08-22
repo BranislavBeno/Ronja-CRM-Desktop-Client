@@ -100,29 +100,30 @@ public class CustomerTableView extends VBox {
         return tableView.getSelectionModel().selectedItemProperty();
     }
 
+    private BooleanBinding isSelectedCustomerNull() {
+        return Bindings.isNull(selectedCustomer());
+    }
+
     private ContextMenu setUpContextMenu() {
+        // refresh all items through resetting all filters
         var refreshItem = new MenuItem("Obnoviť");
         refreshItem.setOnAction(e -> TableViewUtil.refreshTableView(tableView));
-
+        // update selected customer
         var updateItem = new MenuItem("Upraviť...");
         updateItem.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerWebClient, this, true));
         updateItem.disableProperty().bind(isSelectedCustomerNull());
-
+        // add new customer
         var addItem = new MenuItem("Pridať nového...");
         addItem.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerWebClient, this, false));
-
+        // remove existing customer
         var deleteItem = new MenuItem("Zmazať...");
         deleteItem.setOnAction(e -> deleteCustomer());
         deleteItem.disableProperty().bind(isSelectedCustomerNull());
-
+        // create context menu
         var contextMenu = new ContextMenu();
         contextMenu.getItems().addAll(refreshItem, new SeparatorMenuItem(), updateItem, addItem, deleteItem);
 
         return contextMenu;
-    }
-
-    private BooleanBinding isSelectedCustomerNull() {
-        return Bindings.isNull(selectedCustomer());
     }
 
 

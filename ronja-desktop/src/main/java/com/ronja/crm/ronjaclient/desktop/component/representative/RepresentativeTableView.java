@@ -6,6 +6,9 @@ import com.ronja.crm.ronjaclient.service.clientapi.RepresentativeWebClient;
 import com.ronja.crm.ronjaclient.service.domain.Representative;
 import com.ronja.crm.ronjaclient.service.domain.Status;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -93,12 +96,32 @@ public class RepresentativeTableView extends VBox {
         VBox.setVgrow(tableView, Priority.ALWAYS);
     }
 
+    public ReadOnlyObjectProperty<RepresentativeTableItem> selectedCustomer() {
+        return tableView.getSelectionModel().selectedItemProperty();
+    }
+
+    private BooleanBinding isSelectedCustomerNull() {
+        return Bindings.isNull(selectedCustomer());
+    }
+
     private ContextMenu setUpContextMenu() {
+        // refresh all items through resetting all filters
         var refreshItem = new MenuItem("Obnoviť");
         refreshItem.setOnAction(e -> TableViewUtil.refreshTableView(tableView));
-
+        // update selected representative
+        var updateItem = new MenuItem("Upraviť...");
+        //updateItem.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerWebClient, this, true));
+        updateItem.disableProperty().bind(isSelectedCustomerNull());
+        // add new representative
+        var addItem = new MenuItem("Pridať nového...");
+        //addItem.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerWebClient, this, false));
+        // remove existing customer
+        var deleteItem = new MenuItem("Zmazať...");
+        //deleteItem.setOnAction(e -> deleteCustomer());
+        deleteItem.disableProperty().bind(isSelectedCustomerNull());
+        // create context menu
         var contextMenu = new ContextMenu();
-        contextMenu.getItems().addAll(refreshItem, new SeparatorMenuItem());
+        contextMenu.getItems().addAll(refreshItem, new SeparatorMenuItem(), updateItem, addItem, deleteItem);
 
         return contextMenu;
     }
