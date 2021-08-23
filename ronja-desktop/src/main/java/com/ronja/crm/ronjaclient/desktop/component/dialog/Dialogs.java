@@ -2,7 +2,9 @@ package com.ronja.crm.ronjaclient.desktop.component.dialog;
 
 import com.ronja.crm.ronjaclient.desktop.App;
 import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableView;
+import com.ronja.crm.ronjaclient.desktop.component.representative.RepresentativeTableView;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
+import com.ronja.crm.ronjaclient.service.clientapi.RepresentativeWebClient;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -13,6 +15,13 @@ import java.util.Optional;
 public class Dialogs {
 
   private Dialogs() {
+  }
+
+  public static void showRepresentativeDetailDialog(RepresentativeWebClient webClient,
+                                                    RepresentativeTableView tableView,
+                                                    boolean update) {
+    var dialog = new RepresentativeDetailDialog(webClient, tableView, update);
+    dialog.showAndWait();
   }
 
   public static void showCustomerDetailDialog(CustomerWebClient customerWebClient,
