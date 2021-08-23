@@ -14,6 +14,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -35,6 +36,8 @@ public class RepresentativeDetailDialog extends Stage {
   private final DatePicker visitedDatePicker;
   private final DatePicker scheduledDatePicker;
   private final ChoiceBox<Status> statusChoiceBox;
+  private final ListView<String> phoneNumbers;
+  private final ListView<String> emails;
   private final Button saveButton;
 
   public RepresentativeDetailDialog(RepresentativeWebClient webClient,
@@ -61,7 +64,21 @@ public class RepresentativeDetailDialog extends Stage {
     scheduledDatePicker = new DatePicker();
     scheduledDatePicker.setConverter(
         new LocalDateStringConverter(DateTimeUtil.DATE_TIME_FORMATTER, DateTimeUtil.DATE_TIME_FORMATTER));
+    phoneNumbers = setUpListView();
+    emails = setUpListView();
 
+    initialize(update);
+  }
+
+  private ListView<String> setUpListView() {
+    ListView<String> list = new ListView<>();
+    list.setPrefHeight(55);
+    list.setEditable(true);
+    list.setCellFactory(TextFieldListCell.forListView());
+    return list;
+  }
+
+  private void initialize(boolean update) {
     if (update) {
       setUpDialogForUpdate();
     }
@@ -79,7 +96,7 @@ public class RepresentativeDetailDialog extends Stage {
     vBox.setPadding(new Insets(12, 10, 12, 10));
     vBox.setSpacing(10);
 
-    var scene = new Scene(vBox, 750, 400);
+    var scene = new Scene(vBox, 820, 400);
     setScene(scene);
   }
 
@@ -114,6 +131,8 @@ public class RepresentativeDetailDialog extends Stage {
     Label noticeLabel = new Label("Poznámka:");
     Label visitedLabel = new Label("Posledné stretnutie:");
     Label scheduledLabel = new Label("Plánované stretnutie:");
+    Label phonesLabel = new Label("Telefónne čísla:");
+    Label emailsLabel = new Label("E-maily:");
     Label statusLabel = new Label("Stav:");
 
     var gridPane = new GridPane();
@@ -121,6 +140,7 @@ public class RepresentativeDetailDialog extends Stage {
     gridPane.addRow(1, lastNameLabel, lastNameTextField, regionLabel, regionTextField);
     gridPane.addRow(2, noticeLabel, noticeTextField, statusLabel, statusChoiceBox);
     gridPane.addRow(3, visitedLabel, visitedDatePicker, scheduledLabel, scheduledDatePicker);
+    gridPane.addRow(4, phonesLabel, phoneNumbers, emailsLabel, emails);
 
     gridPane.setAlignment(Pos.CENTER_LEFT);
     gridPane.setHgap(5);
@@ -143,6 +163,8 @@ public class RepresentativeDetailDialog extends Stage {
     statusChoiceBox.setValue(item.getStatus());
     visitedDatePicker.setValue(item.getLastVisit().date());
     scheduledDatePicker.setValue(item.getScheduledVisit().date());
+    phoneNumbers.getItems().addAll(item.getPhoneNumbers());
+    emails.getItems().addAll(item.getEmails());
   }
 
   private void setUpContent() {

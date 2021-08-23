@@ -54,6 +54,10 @@ public class CustomerDetailDialog extends Stage {
     statusChoiceBox.setItems(FXCollections.observableArrayList(Status.values()));
     saveButton = new Button();
 
+    initialize(update);
+  }
+
+  private void initialize(boolean update) {
     if (update) {
       setUpDialogForUpdate();
     } else {
