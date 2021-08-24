@@ -3,6 +3,7 @@ package com.ronja.crm.ronjaclient.desktop.component.dialog;
 import com.ronja.crm.ronjaclient.desktop.App;
 import com.ronja.crm.ronjaclient.desktop.component.representative.RepresentativeTableItem;
 import com.ronja.crm.ronjaclient.desktop.component.representative.RepresentativeTableView;
+import com.ronja.crm.ronjaclient.desktop.component.representative.RonjaListView;
 import com.ronja.crm.ronjaclient.desktop.component.util.DialogUtil;
 import com.ronja.crm.ronjaclient.service.clientapi.RepresentativeWebClient;
 import com.ronja.crm.ronjaclient.service.domain.Representative;
@@ -14,7 +15,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -36,8 +36,8 @@ public class RepresentativeDetailDialog extends Stage {
   private final DatePicker visitedDatePicker;
   private final DatePicker scheduledDatePicker;
   private final ChoiceBox<Status> statusChoiceBox;
-  private final ListView<String> phoneNumbers;
-  private final ListView<String> emails;
+  private final RonjaListView phoneNumbers;
+  private final RonjaListView emails;
   private final Button saveButton;
 
   public RepresentativeDetailDialog(RepresentativeWebClient webClient,
@@ -64,23 +64,17 @@ public class RepresentativeDetailDialog extends Stage {
     scheduledDatePicker = new DatePicker();
     scheduledDatePicker.setConverter(
         new LocalDateStringConverter(DateTimeUtil.DATE_TIME_FORMATTER, DateTimeUtil.DATE_TIME_FORMATTER));
-    phoneNumbers = setUpListView();
-    emails = setUpListView();
+    phoneNumbers = new RonjaListView();
+    emails = new RonjaListView();
 
     initialize(update);
-  }
-
-  private ListView<String> setUpListView() {
-    ListView<String> list = new ListView<>();
-    list.setPrefHeight(55);
-    list.setEditable(true);
-    list.setCellFactory(TextFieldListCell.forListView());
-    return list;
   }
 
   private void initialize(boolean update) {
     if (update) {
       setUpDialogForUpdate();
+    } else {
+      setUpDialogForCreate();
     }
 
     var cancelButton = new Button("Zruš");
@@ -109,6 +103,29 @@ public class RepresentativeDetailDialog extends Stage {
       Representative representative = representativeItem.getRepresentative();
 //      webClient.updateCustomer(customer).block();
     }));
+  }
+
+  private void setUpDialogForCreate() {
+    setTitle("Pridať reprezentanta");
+    setUpContent();
+    saveButton.setText("Pridaj");
+    saveButton.setOnAction(e -> {
+          var representative = new Representative();
+          representative.setFirstName(firstNameTextField.getText());
+          representative.setLastName(lastNameTextField.getText());
+          representative.setPosition(positionTextField.getText());
+          representative.setRegion(regionTextField.getText());
+          representative.setNotice(noticeTextField.getText());
+          representative.setStatus(statusChoiceBox.getValue());
+          representative.setLastVisit(visitedDatePicker.getValue());
+          representative.setScheduledVisit(scheduledDatePicker.getValue());
+          representative.setPhoneNumbers(phoneNumbers.getItems());
+          representative.setEmails(emails.getItems());
+          representativeItem = new RepresentativeTableItem(representative);
+          tableView.addItem(representativeItem);
+//          updateRepresentative(() -> webClient.createRepresentative(representative).block());
+        }
+    );
   }
 
   private void updateRepresentative(Runnable runnable) {

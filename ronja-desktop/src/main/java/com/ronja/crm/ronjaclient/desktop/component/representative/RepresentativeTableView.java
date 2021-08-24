@@ -77,6 +77,10 @@ public class RepresentativeTableView extends VBox {
     tableItems.add(item);
   }
 
+  public void addItem(RepresentativeTableItem item) {
+    tableItems.add(item);
+  }
+
   private void setUpTableView() {
     TableViewUtil.addColumn("Meno",
         Pos.CENTER_LEFT, tableView, String.class, RepresentativeTableItem::firstNameProperty);
@@ -116,7 +120,7 @@ public class RepresentativeTableView extends VBox {
     // add new representative
     var addItem = new MenuItem("Pridať nového...");
     addItem.setOnAction(e -> Dialogs.showRepresentativeDetailDialog(representativeWebClient, this, false));
-    // remove existing customer
+    // remove existing representative
     var deleteItem = new MenuItem("Zmazať...");
     //deleteItem.setOnAction(e -> deleteCustomer());
     deleteItem.disableProperty().bind(isSelectedRepresentativeNull());
