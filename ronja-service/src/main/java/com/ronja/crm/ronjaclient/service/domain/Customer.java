@@ -1,60 +1,74 @@
 package com.ronja.crm.ronjaclient.service.domain;
 
+import java.util.Objects;
+
 public class Customer {
 
-  private int id;
+    private int id;
 
-  private String companyName;
+    private String companyName;
 
-  private Category category;
+    private Category category;
 
-  private Focus focus;
+    private Focus focus;
 
-  private Status status;
+    private Status status;
 
-  public int getId() {
-    return id;
-  }
+    public int getId() {
+        return id;
+    }
 
-  public void setId(int id) {
-    this.id = id;
-  }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-  public String getCompanyName() {
-    return companyName;
-  }
+    public String getCompanyName() {
+        return companyName;
+    }
 
-  public void setCompanyName(String companyName) {
-    this.companyName = companyName;
-  }
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
 
-  public Category getCategory() {
-    return category;
-  }
+    public Category getCategory() {
+        return category;
+    }
 
-  public void setCategory(Category category) {
-    this.category = category;
-  }
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
-  public Focus getFocus() {
-    return focus;
-  }
+    public Focus getFocus() {
+        return focus;
+    }
 
-  public void setFocus(Focus focus) {
-    this.focus = focus;
-  }
+    public void setFocus(Focus focus) {
+        this.focus = focus;
+    }
 
-  public Status getStatus() {
-    return status;
-  }
+    public Status getStatus() {
+        return status;
+    }
 
-  public void setStatus(Status status) {
-    this.status = status;
-  }
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 
-  @Override
-  public String toString() {
-    return String.format("Customer[id = %s, companyName = %s, category = %s, focus = %s, status = %s]",
-        id, companyName, category.getLabel(), focus.getLabel(), status.getLabel());
-  }
+    @Override
+    public String toString() {
+        return companyName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Customer customer = (Customer) o;
+        return Objects.equals(companyName, customer.companyName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, companyName);
+    }
 }

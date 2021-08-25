@@ -1,8 +1,7 @@
 package com.ronja.crm.ronjaclient.desktop.component.customer;
 
-import com.ronja.crm.ronjaclient.desktop.component.common.FetchException;
 import com.ronja.crm.ronjaclient.desktop.component.dialog.Dialogs;
-import com.ronja.crm.ronjaclient.desktop.component.util.TableViewUtil;
+import com.ronja.crm.ronjaclient.desktop.component.util.DesktopUtil;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
 import com.ronja.crm.ronjaclient.service.domain.Category;
 import com.ronja.crm.ronjaclient.service.domain.Customer;
@@ -26,17 +25,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
 
 @Component
 public class CustomerTableView extends VBox {
 
     @Value("${client.customers.base-url}")
-    String baseUrl;
+    String customerBaseUrl;
     @Autowired
     private final CustomerWebClient customerWebClient;
 
@@ -61,20 +57,9 @@ public class CustomerTableView extends VBox {
     }
 
     private void addItems() {
-        Platform.runLater(() -> fetchCustomers().forEach(this::addItem));
+        Platform.runLater(() -> DesktopUtil.fetchCustomers(customerWebClient).forEach(this::addItem));
     }
 
-
-    private Stream<Customer> fetchCustomers() {
-        try {
-            Customer[] customers = Objects.requireNonNull(customerWebClient.fetchAllCustomers().block());
-            return Arrays.stream(customers).sorted(Comparator.comparing(Customer::getCompanyName));
-        } catch (Exception e) {
-            throw new FetchException("""
-                    Nepodarilo sa získať dáta o klientoch.
-                    Preverte spojenie so serverom.""", e);
-        }
-    }
 
     private void addItem(Customer customer) {
         var item = new CustomerTableItem(customer);
@@ -86,11 +71,11 @@ public class CustomerTableView extends VBox {
     }
 
     private void setUpTableView() {
-        TableViewUtil.addColumn("Názov spoločnosti",
+        DesktopUtil.addColumn("Názov spoločnosti",
                 Pos.CENTER_LEFT, tableView, String.class, CustomerTableItem::companyNameProperty);
-        TableViewUtil.addColumn("Kategória", tableView, Category.class, CustomerTableItem::categoryProperty);
-        TableViewUtil.addColumn("Zameranie", tableView, Focus.class, CustomerTableItem::focusProperty);
-        TableViewUtil.addColumn("Stav", tableView, Status.class, CustomerTableItem::statusProperty);
+        DesktopUtil.addColumn("Kategória", tableView, Category.class, CustomerTableItem::categoryProperty);
+        DesktopUtil.addColumn("Zameranie", tableView, Focus.class, CustomerTableItem::focusProperty);
+        DesktopUtil.addColumn("Stav", tableView, Status.class, CustomerTableItem::statusProperty);
 
         tableView.setContextMenu(setUpContextMenu());
         VBox.setVgrow(tableView, Priority.ALWAYS);
@@ -107,7 +92,7 @@ public class CustomerTableView extends VBox {
     private ContextMenu setUpContextMenu() {
         // refresh all items through resetting all filters
         var refreshItem = new MenuItem("Obnoviť");
-        refreshItem.setOnAction(e -> TableViewUtil.refreshTableView(tableView));
+        refreshItem.setOnAction(e -> DesktopUtil.refreshTableView(tableView));
         // update selected customer
         var updateItem = new MenuItem("Upraviť...");
         updateItem.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerWebClient, this, true));
