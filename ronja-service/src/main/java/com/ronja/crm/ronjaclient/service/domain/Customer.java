@@ -56,7 +56,7 @@ public class Customer {
 
     @Override
     public String toString() {
-        return companyName;
+        return companyName != null ? companyName : "";
     }
 
     @Override
