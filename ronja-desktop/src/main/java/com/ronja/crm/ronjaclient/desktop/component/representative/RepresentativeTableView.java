@@ -33,110 +33,110 @@ import java.util.stream.Stream;
 @Component
 public class RepresentativeTableView extends VBox {
 
-    @Value("${client.customers.base-url}")
-    String customerBaseUrl;
-    @Value("${client.representatives.base-url}")
-    String representativeBaseUrl;
+  @Value("${client.customers.base-url}")
+  String customerBaseUrl;
+  @Value("${client.representatives.base-url}")
+  String representativeBaseUrl;
 
-    @Autowired
-    private final CustomerWebClient customerWebClient;
-    @Autowired
-    private final RepresentativeWebClient representativeWebClient;
+  @Autowired
+  private final CustomerWebClient customerWebClient;
+  @Autowired
+  private final RepresentativeWebClient representativeWebClient;
 
-    private final ObservableList<RepresentativeTableItem> tableItems;
-    private final FilteredTableView<RepresentativeTableItem> tableView;
+  private final ObservableList<RepresentativeTableItem> tableItems;
+  private final FilteredTableView<RepresentativeTableItem> tableView;
 
-    public RepresentativeTableView(CustomerWebClient customerWebClient, RepresentativeWebClient representativeWebClient) {
-        this.customerWebClient = Objects.requireNonNull(customerWebClient);
-        this.representativeWebClient = Objects.requireNonNull(representativeWebClient);
+  public RepresentativeTableView(CustomerWebClient customerWebClient, RepresentativeWebClient representativeWebClient) {
+    this.customerWebClient = Objects.requireNonNull(customerWebClient);
+    this.representativeWebClient = Objects.requireNonNull(representativeWebClient);
 
-        tableView = new FilteredTableView<>();
-        getChildren().add(tableView);
+    tableView = new FilteredTableView<>();
+    getChildren().add(tableView);
 
-        tableItems = FXCollections.observableArrayList();
-        addItems();
-        setUpTableView();
-        FilteredTableView.configureForFiltering(tableView, tableItems);
+    tableItems = FXCollections.observableArrayList();
+    addItems();
+    setUpTableView();
+    FilteredTableView.configureForFiltering(tableView, tableItems);
+  }
+
+  public void refreshItems() {
+    tableItems.clear();
+    addItems();
+  }
+
+  private void addItems() {
+    Platform.runLater(() -> fetchRepresentatives().forEach(this::addItem));
+  }
+
+  private Stream<Representative> fetchRepresentatives() {
+    try {
+      Representative[] representatives = Objects.requireNonNull(representativeWebClient.fetchAllRepresentatives().block());
+      return Arrays.stream(representatives).sorted(Comparator.comparing(Representative::getLastName));
+    } catch (Exception e) {
+      throw new FetchException("""
+          Nepodarilo sa získať dáta o reprezentantoch.
+          Preverte spojenie so serverom.""", e);
     }
+  }
 
-    public void refreshItems() {
-        tableItems.clear();
-        addItems();
-    }
+  private void addItem(Representative representative) {
+    var item = new RepresentativeTableItem(representative);
+    tableItems.add(item);
+  }
 
-    private void addItems() {
-        Platform.runLater(() -> fetchRepresentatives().forEach(this::addItem));
-    }
+  public void addItem(RepresentativeTableItem item) {
+    tableItems.add(item);
+  }
 
-    private Stream<Representative> fetchRepresentatives() {
-        try {
-            Representative[] representatives = Objects.requireNonNull(representativeWebClient.fetchAllRepresentatives().block());
-            return Arrays.stream(representatives).sorted(Comparator.comparing(Representative::getLastName));
-        } catch (Exception e) {
-            throw new FetchException("""
-                    Nepodarilo sa získať dáta o reprezentantoch.
-                    Preverte spojenie so serverom.""", e);
-        }
-    }
+  private void setUpTableView() {
+    DesktopUtil.addColumn("Meno",
+        Pos.CENTER_LEFT, tableView, String.class, RepresentativeTableItem::firstNameProperty);
+    DesktopUtil.addColumn("Priezvisko", tableView, String.class, RepresentativeTableItem::lastNameProperty);
+    DesktopUtil.addColumn("Spoločnosť", tableView, String.class, RepresentativeTableItem::customerProperty);
+    DesktopUtil.addColumn("Pozícia", tableView, String.class, RepresentativeTableItem::positionProperty);
+    DesktopUtil.addColumn("Región", tableView, String.class, RepresentativeTableItem::regionProperty);
+    DesktopUtil.addColumn("Tel. číslo", tableView, String.class, RepresentativeTableItem::phoneNumbersProperty);
+    DesktopUtil.addColumn("Email", tableView, String.class, RepresentativeTableItem::emailsProperty);
+    DesktopUtil.addColumn("Stav", tableView, Status.class, RepresentativeTableItem::statusProperty);
+    DesktopUtil.addColumn("Posledné stretnutie",
+        tableView, RonjaDate.class, RepresentativeTableItem::lastVisitProperty);
+    DesktopUtil.addColumn("Plánované stretnutie",
+        tableView, RonjaDate.class, RepresentativeTableItem::scheduledVisitProperty);
+    DesktopUtil.addColumn("Poznámka", tableView, String.class, RepresentativeTableItem::noticeProperty);
 
-    private void addItem(Representative representative) {
-        var item = new RepresentativeTableItem(representative);
-        tableItems.add(item);
-    }
+    tableView.setContextMenu(setUpContextMenu());
+    VBox.setVgrow(tableView, Priority.ALWAYS);
+  }
 
-    public void addItem(RepresentativeTableItem item) {
-        tableItems.add(item);
-    }
+  public ReadOnlyObjectProperty<RepresentativeTableItem> selectedRepresentative() {
+    return tableView.getSelectionModel().selectedItemProperty();
+  }
 
-    private void setUpTableView() {
-        DesktopUtil.addColumn("Meno",
-                Pos.CENTER_LEFT, tableView, String.class, RepresentativeTableItem::firstNameProperty);
-        DesktopUtil.addColumn("Priezvisko", tableView, String.class, RepresentativeTableItem::lastNameProperty);
-        DesktopUtil.addColumn("Spoločnosť", tableView, String.class, RepresentativeTableItem::customerProperty);
-        DesktopUtil.addColumn("Pozícia", tableView, String.class, RepresentativeTableItem::positionProperty);
-        DesktopUtil.addColumn("Región", tableView, String.class, RepresentativeTableItem::regionProperty);
-        DesktopUtil.addColumn("Tel. číslo", tableView, String.class, RepresentativeTableItem::phoneNumbersProperty);
-        DesktopUtil.addColumn("Email", tableView, String.class, RepresentativeTableItem::emailsProperty);
-        DesktopUtil.addColumn("Stav", tableView, Status.class, RepresentativeTableItem::statusProperty);
-        DesktopUtil.addColumn("Posledné stretnutie",
-                tableView, RonjaDate.class, RepresentativeTableItem::lastVisitProperty);
-        DesktopUtil.addColumn("Plánované stretnutie",
-                tableView, RonjaDate.class, RepresentativeTableItem::scheduledVisitProperty);
-        DesktopUtil.addColumn("Poznámka", tableView, String.class, RepresentativeTableItem::noticeProperty);
+  private BooleanBinding isSelectedRepresentativeNull() {
+    return Bindings.isNull(selectedRepresentative());
+  }
 
-        tableView.setContextMenu(setUpContextMenu());
-        VBox.setVgrow(tableView, Priority.ALWAYS);
-    }
+  private ContextMenu setUpContextMenu() {
+    // refresh all items through resetting all filters
+    var refreshItem = new MenuItem("Obnoviť");
+    refreshItem.setOnAction(e -> DesktopUtil.resetFilters(tableView));
+    // update selected representative
+    var updateItem = new MenuItem("Upraviť...");
+    updateItem.setOnAction(e -> Dialogs.showRepresentativeDetailDialog(
+        customerWebClient, representativeWebClient, this, true));
+    updateItem.disableProperty().bind(isSelectedRepresentativeNull());
+    // add new representative
+    var addItem = new MenuItem("Pridať nového...");
+    addItem.setOnAction(e -> Dialogs.showRepresentativeDetailDialog(
+        customerWebClient, representativeWebClient, this, false));
+    // remove existing representative
+    var deleteItem = new MenuItem("Zmazať...");
+    //deleteItem.setOnAction(e -> deleteCustomer());
+    deleteItem.disableProperty().bind(isSelectedRepresentativeNull());
+    // create context menu
+    var contextMenu = new ContextMenu();
+    contextMenu.getItems().addAll(refreshItem, new SeparatorMenuItem(), updateItem, addItem, deleteItem);
 
-    public ReadOnlyObjectProperty<RepresentativeTableItem> selectedRepresentative() {
-        return tableView.getSelectionModel().selectedItemProperty();
-    }
-
-    private BooleanBinding isSelectedRepresentativeNull() {
-        return Bindings.isNull(selectedRepresentative());
-    }
-
-    private ContextMenu setUpContextMenu() {
-        // refresh all items through resetting all filters
-        var refreshItem = new MenuItem("Obnoviť");
-        refreshItem.setOnAction(e -> DesktopUtil.refreshTableView(tableView));
-        // update selected representative
-        var updateItem = new MenuItem("Upraviť...");
-        updateItem.setOnAction(e -> Dialogs.showRepresentativeDetailDialog(
-                customerWebClient, representativeWebClient, this, true));
-        updateItem.disableProperty().bind(isSelectedRepresentativeNull());
-        // add new representative
-        var addItem = new MenuItem("Pridať nového...");
-        addItem.setOnAction(e -> Dialogs.showRepresentativeDetailDialog(
-                customerWebClient, representativeWebClient, this, false));
-        // remove existing representative
-        var deleteItem = new MenuItem("Zmazať...");
-        //deleteItem.setOnAction(e -> deleteCustomer());
-        deleteItem.disableProperty().bind(isSelectedRepresentativeNull());
-        // create context menu
-        var contextMenu = new ContextMenu();
-        contextMenu.getItems().addAll(refreshItem, new SeparatorMenuItem(), updateItem, addItem, deleteItem);
-
-        return contextMenu;
-    }
+    return contextMenu;
+  }
 }
