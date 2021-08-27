@@ -26,4 +26,14 @@ public class RepresentativeWebClient {
         .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::handleFetchingError)
         .bodyToMono(Representative[].class);
   }
+
+  public Mono<Representative> updateRepresentative(Representative representative) {
+    return webClient.post()
+        .uri("/update")
+        .body(Mono.just(representative), Representative.class)
+        .retrieve()
+        .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::handleEntityError)
+        .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::handleSavingError)
+        .bodyToMono(Representative.class);
+  }
 }

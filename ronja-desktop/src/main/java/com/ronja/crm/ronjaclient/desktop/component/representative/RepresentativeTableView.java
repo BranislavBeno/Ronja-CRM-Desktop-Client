@@ -117,9 +117,12 @@ public class RepresentativeTableView extends VBox {
   }
 
   private ContextMenu setUpContextMenu() {
-    // refresh all items through resetting all filters
+    // reset all filters
+    var resetFiltersItem = new MenuItem("Zrušiť filtrovanie");
+    resetFiltersItem.setOnAction(e -> DesktopUtil.resetFilters(tableView));
+    // fetch all items from
     var refreshItem = new MenuItem("Obnoviť");
-    refreshItem.setOnAction(e -> DesktopUtil.resetFilters(tableView));
+    refreshItem.setOnAction(e -> refreshItems());
     // update selected representative
     var updateItem = new MenuItem("Upraviť...");
     updateItem.setOnAction(e -> Dialogs.showRepresentativeDetailDialog(
@@ -135,7 +138,10 @@ public class RepresentativeTableView extends VBox {
     deleteItem.disableProperty().bind(isSelectedRepresentativeNull());
     // create context menu
     var contextMenu = new ContextMenu();
-    contextMenu.getItems().addAll(refreshItem, new SeparatorMenuItem(), updateItem, addItem, deleteItem);
+    contextMenu.getItems().addAll(
+        resetFiltersItem, new SeparatorMenuItem(),
+        refreshItem, new SeparatorMenuItem(),
+        updateItem, addItem, deleteItem);
 
     return contextMenu;
   }
