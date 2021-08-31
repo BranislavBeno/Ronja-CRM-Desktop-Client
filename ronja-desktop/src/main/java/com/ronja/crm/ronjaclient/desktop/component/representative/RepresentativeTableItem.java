@@ -101,7 +101,8 @@ public class RepresentativeTableItem {
   }
 
   public ReadOnlyStringProperty customerProperty() {
-    return new SimpleStringProperty(customer.get().getCompanyName());
+    String customerName = customer.get() != null ? customer.get().getCompanyName() : "";
+    return new SimpleStringProperty(customerName);
   }
 
   public void setCustomer(Customer customer) {

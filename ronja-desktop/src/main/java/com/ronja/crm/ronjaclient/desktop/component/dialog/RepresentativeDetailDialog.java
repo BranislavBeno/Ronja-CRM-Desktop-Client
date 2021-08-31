@@ -7,6 +7,7 @@ import com.ronja.crm.ronjaclient.desktop.component.representative.RonjaListView;
 import com.ronja.crm.ronjaclient.desktop.component.util.DesktopUtil;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
 import com.ronja.crm.ronjaclient.service.clientapi.RepresentativeWebClient;
+import com.ronja.crm.ronjaclient.service.clientapi.SaveException;
 import com.ronja.crm.ronjaclient.service.domain.Customer;
 import com.ronja.crm.ronjaclient.service.domain.Representative;
 import com.ronja.crm.ronjaclient.service.domain.RonjaDate;
@@ -25,12 +26,15 @@ import javafx.util.converter.LocalDateStringConverter;
 import org.controlsfx.control.ListSelectionView;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class RepresentativeDetailDialog extends Stage {
 
-  private RepresentativeTableItem representativeItem;
+  private final RepresentativeTableItem representativeItem;
   private final CustomerWebClient customerWebClient;
   private final RepresentativeWebClient representativeWebClient;
   private final RepresentativeTableView tableView;
@@ -54,6 +58,7 @@ public class RepresentativeDetailDialog extends Stage {
     this.customerWebClient = Objects.requireNonNull(customerWebClient);
     this.representativeWebClient = Objects.requireNonNull(representativeWebClient);
     this.tableView = Objects.requireNonNull(tableView);
+    this.representativeItem = tableView.selectedRepresentative().getValue();
 
     initOwner(App.getMainWindow());
     initModality(Modality.WINDOW_MODAL);
@@ -106,7 +111,7 @@ public class RepresentativeDetailDialog extends Stage {
   }
 
   private void setUpDialogForUpdate() {
-    Representative representative = tableView.selectedRepresentative().getValue().getRepresentative();
+    Representative representative = representativeItem.getRepresentative();
     setUpContent(representative);
     setTitle("Upraviť reprezentanta");
     saveButton.setText("Ulož");
@@ -120,20 +125,23 @@ public class RepresentativeDetailDialog extends Stage {
   }
 
   private void updateRepresentativeItem(Throwable throwable) {
-    if (throwable == null) {
-      RepresentativeTableItem item = tableView.selectedRepresentative().getValue();
-      item.setFirstName(firstNameTextField.getText());
-      item.setLastName(lastNameTextField.getText());
-      item.setPosition(positionTextField.getText());
-      item.setRegion(regionTextField.getText());
-      item.setNotice(noticeTextField.getText());
-      item.setStatus(statusChoiceBox.getValue());
-      item.setLastVisit(new RonjaDate(visitedDatePicker.getValue()));
-      item.setScheduledVisit(new RonjaDate(scheduledDatePicker.getValue()));
-      item.setPhoneNumbers(phoneNumberView.getItems());
-      item.setEmails(emailView.getItems());
-      item.setCustomer(provideCustomer());
+    if (throwable != null) {
+      throw new SaveException("""
+          Zmena dát o reprezentantovi zlyhala.
+          Preverte spojenie so serverom.""");
     }
+
+    representativeItem.setFirstName(firstNameTextField.getText());
+    representativeItem.setLastName(lastNameTextField.getText());
+    representativeItem.setPosition(positionTextField.getText());
+    representativeItem.setRegion(regionTextField.getText());
+    representativeItem.setNotice(noticeTextField.getText());
+    representativeItem.setStatus(statusChoiceBox.getValue());
+    representativeItem.setLastVisit(new RonjaDate(visitedDatePicker.getValue()));
+    representativeItem.setScheduledVisit(new RonjaDate(scheduledDatePicker.getValue()));
+    representativeItem.setPhoneNumbers(phoneNumberView.getItems());
+    representativeItem.setEmails(emailView.getItems());
+    representativeItem.setCustomer(provideCustomer());
   }
 
   private void setUpDialogForCreate() {
@@ -152,8 +160,7 @@ public class RepresentativeDetailDialog extends Stage {
           representative.setScheduledVisit(scheduledDatePicker.getValue());
           representative.setPhoneNumbers(phoneNumberView.getItems());
           representative.setEmails(emailView.getItems());
-          representativeItem = new RepresentativeTableItem(representative);
-          tableView.addItem(representativeItem);
+          tableView.addItem(new RepresentativeTableItem(representative));
 //          updateRepresentative(() -> webClient.createRepresentative(representative).block());
         }
     );
@@ -223,31 +230,30 @@ public class RepresentativeDetailDialog extends Stage {
     customerSelectionView.setSourceHeader(new Label("K dispozícii:"));
     customerSelectionView.setTargetHeader(new Label("Vybraná:"));
     customerSelectionView.getActions().clear();
-    Customer customer = addSelectionTargetItem();
-    addSelectionSourceItems(customer);
 
     return gridPane;
   }
 
-  private Customer addSelectionTargetItem() {
+  private List<Customer> fetchSelectionTargetItem() {
+    List<Customer> target = Collections.emptyList();
     if (representativeItem != null) {
       Customer customer = representativeItem.getRepresentative().getCustomer();
       if (customer != null) {
-        customerSelectionView.getTargetItems().add(customer);
+        target = List.of(customer);
       }
-      return customer;
     }
-    return null;
+
+    return target;
   }
 
-  private void addSelectionSourceItems(Customer customer) {
-    Platform.runLater(() -> DesktopUtil.fetchCustomers(customerWebClient)
-        .filter(c -> !c.equals(customer))
-        .forEach(this::addItem));
-  }
+  private void setSelectionItems(List<Customer> target) {
+    Platform.runLater(() -> {
+      List<Customer> source = DesktopUtil.fetchCustomers(customerWebClient).collect(Collectors.toList());
+      source.removeAll(target);
+      customerSelectionView.getSourceItems().setAll(source);
+      customerSelectionView.getTargetItems().setAll(target);
 
-  private void addItem(Customer customer) {
-    customerSelectionView.getSourceItems().add(customer);
+    });
   }
 
   private void setUpContent(Representative representative) {
@@ -261,7 +267,8 @@ public class RepresentativeDetailDialog extends Stage {
     scheduledDatePicker.setValue(representative.getScheduledVisit());
     phoneNumberView.getItems().addAll(representative.getPhoneNumbers());
     emailView.getItems().addAll(representative.getEmails());
-    customerSelectionView.getTargetItems().add(representative.getCustomer());
+    List<Customer> target = fetchSelectionTargetItem();
+    setSelectionItems(target);
   }
 
   private void setUpContent() {
@@ -273,5 +280,7 @@ public class RepresentativeDetailDialog extends Stage {
     statusChoiceBox.setValue(Status.ACTIVE);
     visitedDatePicker.setValue(LocalDate.now());
     scheduledDatePicker.setValue(LocalDate.now());
+    List<Customer> target = Collections.emptyList();
+    setSelectionItems(target);
   }
 }
