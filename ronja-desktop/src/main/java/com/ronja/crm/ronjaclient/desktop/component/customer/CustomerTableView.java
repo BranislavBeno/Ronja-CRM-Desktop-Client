@@ -3,6 +3,7 @@ package com.ronja.crm.ronjaclient.desktop.component.customer;
 import com.ronja.crm.ronjaclient.desktop.component.dialog.Dialogs;
 import com.ronja.crm.ronjaclient.desktop.component.util.DesktopUtil;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
+import com.ronja.crm.ronjaclient.service.clientapi.DeleteException;
 import com.ronja.crm.ronjaclient.service.domain.Category;
 import com.ronja.crm.ronjaclient.service.domain.Customer;
 import com.ronja.crm.ronjaclient.service.domain.Focus;
@@ -124,16 +125,28 @@ public class CustomerTableView extends VBox {
     var message = String.format("Skutočne chcete zmazať zákazníka '%s'?",
         customerItem.companyNameProperty().get());
     if (Dialogs.showAlertDialog(title, message, Alert.AlertType.CONFIRMATION)) {
-      CompletableFuture
-          .runAsync(() -> {
-            int id = customerItem.getCustomer().getId();
-            customerWebClient.deleteCustomer(id).block();
-          })
-          .whenComplete((r, t) -> {
-            if (t == null) {
-              Platform.runLater(() -> tableItems.remove(customerItem));
-            }
-          });
+      try {
+        CompletableFuture<Void> cf = CompletableFuture
+            .runAsync(() -> deleteCustomer(customerItem))
+            .whenComplete((r, t) -> deleteCustomerItem(customerItem, t));
+        cf.get();
+      } catch (Exception e) {
+        Thread.currentThread().interrupt();
+        throw new DeleteException("""
+            Zmazanie zákazníka zlyhalo.
+            Preverte spojenie so serverom.""");
+      }
     }
+  }
+
+  private void deleteCustomerItem(CustomerTableItem customerItem, Throwable throwable) {
+    if (throwable == null) {
+      tableItems.remove(customerItem);
+    }
+  }
+
+  private void deleteCustomer(CustomerTableItem customerItem) {
+    int id = customerItem.getCustomer().getId();
+    customerWebClient.deleteCustomer(id).block();
   }
 }

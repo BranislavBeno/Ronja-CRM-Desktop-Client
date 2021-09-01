@@ -117,31 +117,36 @@ public class RepresentativeDetailDialog extends Stage {
     saveButton.setText("Ulož");
     saveButton.setOnAction(e -> {
       Representative updatedRepresentative = updateRepresentative(representative);
-      CompletableFuture
-          .runAsync(() -> representativeWebClient.updateRepresentative(updatedRepresentative).block())
-          .whenComplete((r, t) -> updateRepresentativeItem(t));
-      DesktopUtil.cancelOperation(getScene());
+      try {
+        CompletableFuture<Void> cf = CompletableFuture
+            .runAsync(() -> representativeWebClient.updateRepresentative(updatedRepresentative).block())
+            .whenComplete((r, t) -> updateRepresentativeItem(t));
+        cf.get();
+      } catch (Exception ex) {
+        Thread.currentThread().interrupt();
+        throw new SaveException("""
+            Zmena údajov o reprezentantovi zlyhala.
+            Preverte spojenie so serverom.""");
+      } finally {
+        DesktopUtil.cancelOperation(getScene());
+      }
     });
   }
 
   private void updateRepresentativeItem(Throwable throwable) {
-    if (throwable != null) {
-      throw new SaveException("""
-          Zmena dát o reprezentantovi zlyhala.
-          Preverte spojenie so serverom.""");
+    if (throwable == null) {
+      representativeItem.setFirstName(firstNameTextField.getText());
+      representativeItem.setLastName(lastNameTextField.getText());
+      representativeItem.setPosition(positionTextField.getText());
+      representativeItem.setRegion(regionTextField.getText());
+      representativeItem.setNotice(noticeTextField.getText());
+      representativeItem.setStatus(statusChoiceBox.getValue());
+      representativeItem.setLastVisit(new RonjaDate(visitedDatePicker.getValue()));
+      representativeItem.setScheduledVisit(new RonjaDate(scheduledDatePicker.getValue()));
+      representativeItem.setPhoneNumbers(phoneNumberView.getItems());
+      representativeItem.setEmails(emailView.getItems());
+      representativeItem.setCustomer(provideCustomer());
     }
-
-    representativeItem.setFirstName(firstNameTextField.getText());
-    representativeItem.setLastName(lastNameTextField.getText());
-    representativeItem.setPosition(positionTextField.getText());
-    representativeItem.setRegion(regionTextField.getText());
-    representativeItem.setNotice(noticeTextField.getText());
-    representativeItem.setStatus(statusChoiceBox.getValue());
-    representativeItem.setLastVisit(new RonjaDate(visitedDatePicker.getValue()));
-    representativeItem.setScheduledVisit(new RonjaDate(scheduledDatePicker.getValue()));
-    representativeItem.setPhoneNumbers(phoneNumberView.getItems());
-    representativeItem.setEmails(emailView.getItems());
-    representativeItem.setCustomer(provideCustomer());
   }
 
   private void setUpDialogForCreate() {
