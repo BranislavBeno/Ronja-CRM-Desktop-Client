@@ -34,10 +34,10 @@ import java.util.stream.Collectors;
 
 public class RepresentativeDetailDialog extends Stage {
 
-  private final RepresentativeTableItem representativeItem;
   private final CustomerWebClient customerWebClient;
   private final RepresentativeWebClient representativeWebClient;
   private final RepresentativeTableView tableView;
+  private final RepresentativeTableItem representativeItem;
   private final TextField firstNameTextField;
   private final TextField lastNameTextField;
   private final TextField positionTextField;
@@ -133,6 +133,40 @@ public class RepresentativeDetailDialog extends Stage {
     });
   }
 
+  private void setUpDialogForCreate() {
+    setTitle("Pridať reprezentanta");
+    setUpContent();
+    saveButton.setText("Pridaj");
+    saveButton.setOnAction(e -> {
+      Representative representative = provideRepresentative();
+      try {
+        CompletableFuture<Void> cf = CompletableFuture
+            .runAsync(() -> representativeWebClient.createRepresentative(representative).block())
+            .whenComplete((r, t) -> addRepresentativeItem(representative, t));
+        cf.get();
+      } catch (Exception ex) {
+        Thread.currentThread().interrupt();
+        throw new SaveException("""
+            Pridanie nového reprezentanta zlyhalo.
+            Preverte spojenie so serverom.""");
+      } finally {
+        DesktopUtil.cancelOperation(getScene());
+      }
+    });
+  }
+
+  private void addRepresentativeItem(Representative representative, Throwable throwable) {
+    if (throwable == null) {
+      RepresentativeTableItem item = new RepresentativeTableItem(representative);
+      tableView.addItem(item);
+    }
+  }
+
+  private Representative provideRepresentative() {
+    var representative = new Representative();
+    return updateRepresentative(representative);
+  }
+
   private void updateRepresentativeItem(Throwable throwable) {
     if (throwable == null) {
       representativeItem.setFirstName(firstNameTextField.getText());
@@ -149,28 +183,6 @@ public class RepresentativeDetailDialog extends Stage {
     }
   }
 
-  private void setUpDialogForCreate() {
-    setTitle("Pridať reprezentanta");
-    setUpContent();
-    saveButton.setText("Pridaj");
-    saveButton.setOnAction(e -> {
-          var representative = new Representative();
-          representative.setFirstName(firstNameTextField.getText());
-          representative.setLastName(lastNameTextField.getText());
-          representative.setPosition(positionTextField.getText());
-          representative.setRegion(regionTextField.getText());
-          representative.setNotice(noticeTextField.getText());
-          representative.setStatus(statusChoiceBox.getValue());
-          representative.setLastVisit(visitedDatePicker.getValue());
-          representative.setScheduledVisit(scheduledDatePicker.getValue());
-          representative.setPhoneNumbers(phoneNumberView.getItems());
-          representative.setEmails(emailView.getItems());
-          tableView.addItem(new RepresentativeTableItem(representative));
-//          updateRepresentative(() -> webClient.createRepresentative(representative).block());
-        }
-    );
-  }
-
   private Representative updateRepresentative(Representative representative) {
     representative.setFirstName(firstNameTextField.getText());
     representative.setLastName(lastNameTextField.getText());
@@ -178,6 +190,10 @@ public class RepresentativeDetailDialog extends Stage {
     representative.setRegion(regionTextField.getText());
     representative.setNotice(noticeTextField.getText());
     representative.setStatus(statusChoiceBox.getValue());
+    representative.setLastVisit(visitedDatePicker.getValue());
+    representative.setScheduledVisit(scheduledDatePicker.getValue());
+    representative.setPhoneNumbers(phoneNumberView.getItems());
+    representative.setEmails(emailView.getItems());
     representative.setCustomer(provideCustomer());
 
     return representative;

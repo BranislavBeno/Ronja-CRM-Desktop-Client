@@ -29,6 +29,7 @@ public final class CustomerDetailDialog extends Stage {
 
   private final CustomerWebClient webClient;
   private final CustomerTableView tableView;
+  private final CustomerTableItem customerItem;
   private final TextField companyNameTextField;
   private final ChoiceBox<Category> categoryChoiceBox;
   private final ChoiceBox<Focus> focusChoiceBox;
@@ -40,6 +41,7 @@ public final class CustomerDetailDialog extends Stage {
                               boolean update) {
     this.webClient = Objects.requireNonNull(webClient);
     this.tableView = Objects.requireNonNull(tableView);
+    this.customerItem = tableView.selectedCustomer().getValue();
 
     initOwner(App.getMainWindow());
     initModality(Modality.WINDOW_MODAL);
@@ -82,7 +84,7 @@ public final class CustomerDetailDialog extends Stage {
   }
 
   private void setUpDialogForUpdate() {
-    Customer customer = tableView.selectedCustomer().getValue().getCustomer();
+    Customer customer = customerItem.getCustomer();
     setUpContent(customer);
     setTitle("Upraviť zákazníka");
     saveButton.setText("Ulož");
@@ -126,16 +128,6 @@ public final class CustomerDetailDialog extends Stage {
     });
   }
 
-  private void updateCustomerItem(Throwable throwable) {
-    if (throwable == null) {
-      CustomerTableItem item = tableView.selectedCustomer().getValue();
-      item.setCompanyName(companyNameTextField.getText());
-      item.setCategory(categoryChoiceBox.getValue());
-      item.setFocus(focusChoiceBox.getValue());
-      item.setStatus(statusChoiceBox.getValue());
-    }
-  }
-
   private void addCustomerItem(Customer customer, Throwable throwable) {
     if (throwable == null) {
       CustomerTableItem item = new CustomerTableItem(customer);
@@ -146,6 +138,15 @@ public final class CustomerDetailDialog extends Stage {
   private Customer provideCustomer() {
     var customer = new Customer();
     return updateCustomer(customer);
+  }
+
+  private void updateCustomerItem(Throwable throwable) {
+    if (throwable == null) {
+      customerItem.setCompanyName(companyNameTextField.getText());
+      customerItem.setCategory(categoryChoiceBox.getValue());
+      customerItem.setFocus(focusChoiceBox.getValue());
+      customerItem.setStatus(statusChoiceBox.getValue());
+    }
   }
 
   private Customer updateCustomer(Customer customer) {
