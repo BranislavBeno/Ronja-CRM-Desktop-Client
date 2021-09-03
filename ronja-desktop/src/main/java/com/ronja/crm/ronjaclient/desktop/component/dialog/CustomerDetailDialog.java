@@ -113,9 +113,9 @@ public final class CustomerDetailDialog extends Stage {
     saveButton.setOnAction(e -> {
       Customer customer = provideCustomer();
       try {
-        CompletableFuture<Void> cf = CompletableFuture
-            .runAsync(() -> webClient.createCustomer(customer).block())
-            .whenComplete((r, t) -> addCustomerItem(customer, t));
+        CompletableFuture<Customer> cf = CompletableFuture
+            .supplyAsync(() -> webClient.createCustomer(customer).block())
+            .whenComplete(this::addCustomerItem);
         cf.get();
       } catch (Exception ex) {
         Thread.currentThread().interrupt();

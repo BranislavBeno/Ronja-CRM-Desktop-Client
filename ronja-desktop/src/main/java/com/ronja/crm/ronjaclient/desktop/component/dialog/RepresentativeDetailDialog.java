@@ -140,9 +140,9 @@ public class RepresentativeDetailDialog extends Stage {
     saveButton.setOnAction(e -> {
       Representative representative = provideRepresentative();
       try {
-        CompletableFuture<Void> cf = CompletableFuture
-            .runAsync(() -> representativeWebClient.createRepresentative(representative).block())
-            .whenComplete((r, t) -> addRepresentativeItem(representative, t));
+        CompletableFuture<Representative> cf = CompletableFuture
+            .supplyAsync(() -> representativeWebClient.createRepresentative(representative).block())
+            .whenComplete(this::addRepresentativeItem);
         cf.get();
       } catch (Exception ex) {
         Thread.currentThread().interrupt();

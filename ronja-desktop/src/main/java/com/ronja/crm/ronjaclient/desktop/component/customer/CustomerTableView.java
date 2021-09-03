@@ -92,10 +92,10 @@ public class CustomerTableView extends VBox {
 
   private ContextMenu setUpContextMenu() {
     // reset all filters
-    var resetFiltersItem = new MenuItem("Zrušiť filtrovanie");
+    var resetFiltersItem = new MenuItem("Odstrániť filtre");
     resetFiltersItem.setOnAction(e -> DesktopUtil.resetFilters(tableView));
     // fetch all items from
-    var refreshItem = new MenuItem("Obnoviť");
+    var refreshItem = new MenuItem("Znovu načítať zoznam");
     refreshItem.setOnAction(e -> refreshItems());
     // update selected customer
     var updateItem = new MenuItem("Upraviť...");
