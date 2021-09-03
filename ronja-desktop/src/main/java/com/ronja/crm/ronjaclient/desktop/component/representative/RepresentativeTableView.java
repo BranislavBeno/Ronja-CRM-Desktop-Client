@@ -4,6 +4,7 @@ import com.ronja.crm.ronjaclient.desktop.component.common.FetchException;
 import com.ronja.crm.ronjaclient.desktop.component.dialog.Dialogs;
 import com.ronja.crm.ronjaclient.desktop.component.util.DesktopUtil;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
+import com.ronja.crm.ronjaclient.service.clientapi.DeleteException;
 import com.ronja.crm.ronjaclient.service.clientapi.RepresentativeWebClient;
 import com.ronja.crm.ronjaclient.service.domain.Representative;
 import com.ronja.crm.ronjaclient.service.domain.RonjaDate;
@@ -15,6 +16,7 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -28,6 +30,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 @Component
@@ -134,7 +137,7 @@ public class RepresentativeTableView extends VBox {
         Dialogs.showRepresentativeDetailDialog(customerWebClient, representativeWebClient, this, false));
     // remove existing representative
     var deleteItem = new MenuItem("Zmazať...");
-    //deleteItem.setOnAction(e -> deleteCustomer());
+    deleteItem.setOnAction(e -> deleteRepresentative());
     deleteItem.disableProperty().bind(isSelectedRepresentativeNull());
     // create context menu
     var contextMenu = new ContextMenu();
@@ -144,5 +147,36 @@ public class RepresentativeTableView extends VBox {
         updateItem, addItem, deleteItem);
 
     return contextMenu;
+  }
+
+  private void deleteRepresentative() {
+    RepresentativeTableItem representativeItem = selectedRepresentative().get();
+    var title = "Zmazať reprezentanta";
+    var message = "Skutočne chcete zmazať reprezentanta '%s %s'?".formatted(
+        representativeItem.firstNameProperty().get(), representativeItem.lastNameProperty().get());
+    if (Dialogs.showAlertDialog(title, message, Alert.AlertType.CONFIRMATION)) {
+      try {
+        CompletableFuture<Void> cf = CompletableFuture
+            .runAsync(() -> deleteRepresentative(representativeItem))
+            .whenComplete((r, t) -> deleteRepresentativeItem(representativeItem, t));
+        cf.get();
+      } catch (Exception e) {
+        Thread.currentThread().interrupt();
+        throw new DeleteException("""
+            Zmazanie reprezentanta zlyhalo.
+            Preverte spojenie so serverom.""");
+      }
+    }
+  }
+
+  private void deleteRepresentative(RepresentativeTableItem representativeItem) {
+    int id = representativeItem.getRepresentative().getId();
+    representativeWebClient.deleteRepresentative(id).block();
+  }
+
+  private void deleteRepresentativeItem(RepresentativeTableItem representativeItem, Throwable throwable) {
+    if (throwable == null) {
+      tableItems.remove(representativeItem);
+    }
   }
 }

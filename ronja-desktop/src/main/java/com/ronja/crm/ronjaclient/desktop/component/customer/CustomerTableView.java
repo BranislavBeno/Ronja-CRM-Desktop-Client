@@ -139,14 +139,14 @@ public class CustomerTableView extends VBox {
     }
   }
 
+  private void deleteCustomer(CustomerTableItem customerItem) {
+    int id = customerItem.getCustomer().getId();
+    customerWebClient.deleteCustomer(id).block();
+  }
+
   private void deleteCustomerItem(CustomerTableItem customerItem, Throwable throwable) {
     if (throwable == null) {
       tableItems.remove(customerItem);
     }
-  }
-
-  private void deleteCustomer(CustomerTableItem customerItem) {
-    int id = customerItem.getCustomer().getId();
-    customerWebClient.deleteCustomer(id).block();
   }
 }
