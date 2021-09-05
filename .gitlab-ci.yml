@@ -7,7 +7,7 @@ image: openjdk:16
 test_code:
   stage: test
   script:
-    - sh ./mvnw verify jacoco:report sonar:sonar
+    - sh ./mvnw verify jacoco:report
     - cat ronja-service/target/site/jacoco/index.html
   tags:
     - DOCKER
