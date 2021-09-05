@@ -1,0 +1,20 @@
+before_install:
+  # Set Maven wrapper executable permissions
+  - chmod +x mvnw
+
+language: java
+install: true
+jdk: openjdk16
+
+script:
+  # Use maven as tester
+  - ./mvnw verify
+  # Trigger with Gradle static and dynamic code analysis
+  - ./mvnw jacoco:report
+
+notifications:
+  email:
+    recipients:
+      - hugo.rad@gmail.com
+    on_success: always
+    on_failure: always
