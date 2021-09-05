@@ -10,7 +10,7 @@ script:
   # Use maven as tester
   - ./mvnw verify
   # Trigger with Gradle static and dynamic code analysis
-  - ./mvnw jacoco:report
+  - ./mvnw jacoco:report sonar:sonar
 
 notifications:
   email:
