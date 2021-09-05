@@ -18,6 +18,7 @@
 
     <properties>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.organization>branislavbeno</sonar.organization>
         <sonar.login>3953a9d7e11d39a5021edd84d4bbe2f99c1b0947</sonar.login>
     </properties>
 
