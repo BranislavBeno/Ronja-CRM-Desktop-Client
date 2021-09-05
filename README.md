@@ -1,5 +1,6 @@
 # Ronja CRM client
 
+[![Build Status](https://app.travis-ci.com/BranislavBeno/Ronja-CRM-Desktop-Client.svg?branch=master)](https://app.travis-ci.com/BranislavBeno/Ronja-CRM-Desktop-Client)
 [![Maven](https://img.shields.io/badge/maven-v3.8.2-blue)](https://img.shields.io/badge/maven-v3.8.2-blue)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
