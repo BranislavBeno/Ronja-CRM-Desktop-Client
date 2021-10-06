@@ -22,11 +22,11 @@ public class CustomerWebClient {
   }
 
   public Mono<Customer> updateCustomer(Customer customer) {
-    return ClientApiUtils.postEntity(webClient, "/update", customer, Customer.class);
+    return ClientApiUtils.putEntity(webClient, customer, Customer.class);
   }
 
   public Mono<Customer> createCustomer(Customer customer) {
-    return ClientApiUtils.postEntity(webClient, "/add", customer, Customer.class);
+    return ClientApiUtils.postEntity(webClient, customer, Customer.class);
   }
 
   public Mono<Void> deleteCustomer(int id) {

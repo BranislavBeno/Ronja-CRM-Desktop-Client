@@ -46,16 +46,6 @@ public class ClientApiUtils {
         .bodyToMono(clazz);
   }
 
-  static <T> Mono<T> postEntity(WebClient webClient, String operation, T t, Class<T> clazz) {
-    return webClient.post()
-        .uri(operation)
-        .body(Mono.just(t), clazz)
-        .retrieve()
-        .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::handleEntityError)
-        .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::handleSavingError)
-        .bodyToMono(clazz);
-  }
-
   static Mono<Void> deleteEntity(WebClient webClient, int id) {
     return webClient.delete()
         .uri("/delete/" + id)
@@ -63,5 +53,25 @@ public class ClientApiUtils {
         .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::handleEntityError)
         .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::handleDeletingError)
         .bodyToMono(Void.class);
+  }
+
+  static <T> Mono<T> postEntity(WebClient webClient, T t, Class<T> clazz) {
+    return webClient.post()
+        .uri("/add")
+        .body(Mono.just(t), clazz)
+        .retrieve()
+        .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::handleEntityError)
+        .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::handleSavingError)
+        .bodyToMono(clazz);
+  }
+
+  static <T> Mono<T> putEntity(WebClient webClient, T t, Class<T> clazz) {
+    return webClient.put()
+        .uri("/update")
+        .body(Mono.just(t), clazz)
+        .retrieve()
+        .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::handleEntityError)
+        .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::handleSavingError)
+        .bodyToMono(clazz);
   }
 }

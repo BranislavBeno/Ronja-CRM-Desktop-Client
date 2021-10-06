@@ -22,11 +22,11 @@ public class RepresentativeWebClient {
   }
 
   public Mono<Representative> updateRepresentative(Representative representative) {
-    return ClientApiUtils.postEntity(webClient, "/update", representative, Representative.class);
+    return ClientApiUtils.putEntity(webClient, representative, Representative.class);
   }
 
   public Mono<Representative> createRepresentative(Representative representative) {
-    return ClientApiUtils.postEntity(webClient, "/add", representative, Representative.class);
+    return ClientApiUtils.postEntity(webClient, representative, Representative.class);
   }
 
   public Mono<Void> deleteRepresentative(int id) {
