@@ -1,8 +1,12 @@
 package com.ronja.crm.ronjaclient.service.clientapi;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ServerErrorException;
 import reactor.core.publisher.Mono;
 
 public class ClientApiUtils {
@@ -12,28 +16,37 @@ public class ClientApiUtils {
   private ClientApiUtils() {
   }
 
-  static Mono<Throwable> handleEntityError(ClientResponse response) {
+  static Mono<Throwable> propagateServerError(ClientResponse response) {
     return response.bodyToMono(Throwable.class);
   }
 
-  static Mono<Throwable> handleDeletingError(ClientResponse response) {
+  static Mono<Throwable> propagateDeletingError(ClientResponse response) {
     Mono<String> errorMsg = response.bodyToMono(String.class);
     return errorMsg.flatMap(msg -> {
       throw new DeleteException(SERVER_ERROR_OCCURRED);
     });
   }
 
-  static Mono<Throwable> handleSavingError(ClientResponse response) {
-    Mono<String> errorMsg = response.bodyToMono(String.class);
-    return errorMsg.flatMap(msg -> {
-      throw new SaveException(SERVER_ERROR_OCCURRED);
-    });
-  }
-
-  static Mono<Throwable> handleFetchingError(ClientResponse response) {
+  static Mono<Throwable> propagateFetchingError(ClientResponse response) {
     Mono<String> errorMsg = response.bodyToMono(String.class);
     return errorMsg.flatMap(msg -> {
       throw new FetchException(SERVER_ERROR_OCCURRED);
+    });
+  }
+
+  static Mono<Throwable> propagateSavingError(ClientResponse response) {
+    Mono<String> errorMsg = response.bodyToMono(String.class);
+    return errorMsg.flatMap(msg -> {
+      ObjectMapper mapper = new ObjectMapper();
+      ObjectReader objectReader = mapper.readerFor(ValidationErrorResponse.class);
+      try {
+        ValidationErrorResponse errorResponse = objectReader.readValue(msg);
+        Violation violation = errorResponse.violations().stream().findFirst().orElse(null);
+        String message = violation != null ? violation.message() : "";
+        throw new SaveException(message);
+      } catch (JsonProcessingException e) {
+        throw new ServerErrorException("Čítanie odpovde serveru zlyhalo!", e);
+      }
     });
   }
 
@@ -41,8 +54,8 @@ public class ClientApiUtils {
     return webClient.get()
         .uri("/list")
         .retrieve()
-        .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::handleEntityError)
-        .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::handleFetchingError)
+        .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::propagateFetchingError)
+        .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::propagateServerError)
         .bodyToMono(clazz);
   }
 
@@ -50,8 +63,8 @@ public class ClientApiUtils {
     return webClient.delete()
         .uri("/delete/" + id)
         .retrieve()
-        .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::handleEntityError)
-        .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::handleDeletingError)
+        .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::propagateDeletingError)
+        .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::propagateServerError)
         .bodyToMono(Void.class);
   }
 
@@ -60,8 +73,8 @@ public class ClientApiUtils {
         .uri("/add")
         .body(Mono.just(t), clazz)
         .retrieve()
-        .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::handleEntityError)
-        .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::handleSavingError)
+        .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::propagateSavingError)
+        .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::propagateServerError)
         .bodyToMono(clazz);
   }
 
@@ -70,8 +83,8 @@ public class ClientApiUtils {
         .uri("/update")
         .body(Mono.just(t), clazz)
         .retrieve()
-        .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::handleEntityError)
-        .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::handleSavingError)
+        .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::propagateSavingError)
+        .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::propagateServerError)
         .bodyToMono(clazz);
   }
 }

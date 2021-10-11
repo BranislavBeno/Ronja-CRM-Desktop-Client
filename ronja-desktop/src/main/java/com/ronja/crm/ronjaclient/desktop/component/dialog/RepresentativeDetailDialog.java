@@ -124,9 +124,8 @@ public class RepresentativeDetailDialog extends Stage {
         cf.get();
       } catch (Exception ex) {
         Thread.currentThread().interrupt();
-        throw new SaveException("""
-            Zmena údajov o reprezentantovi zlyhala.
-            Preverte spojenie so serverom.""");
+        String message = ex.getCause().getMessage();
+        throw new SaveException(message);
       } finally {
         DesktopUtil.cancelOperation(getScene());
       }
