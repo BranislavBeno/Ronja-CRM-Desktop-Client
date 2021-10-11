@@ -1,0 +1,48 @@
+version: '3.5'
+
+## Services
+services:
+  viewer:
+    image: beo1975/ronja-server:0.4.1
+    container_name: ronja_server
+    restart: unless-stopped
+    ports:
+      - "8087:8087"
+    depends_on:
+      - ronja_db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://ronja_db:3306/ronja?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=ronja
+      - SPRING_DATASOURCE_PASSWORD=ronja
+    networks:
+      - ronjanet
+
+  #MySQL Service
+  ronja_db:
+    image: mysql:8.0.25
+    container_name: ronja_db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: ronja
+      MYSQL_PASSWORD: ronja
+      MYSQL_DATABASE: ronja
+    volumes:
+      - dbronja:/var/lib/mysql/
+    networks:
+      - ronjanet
+
+#Networks
+networks:
+  ronjanet:
+    driver: bridge
+
+#Volumes
+volumes:
+  dbronja:
+    driver: local
