@@ -10,6 +10,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.server.ServerErrorException;
 
 import java.io.IOException;
 import java.util.function.Supplier;
@@ -117,52 +118,39 @@ public class CustomerWebClientTest {
   public void testExceptionsOnCustomerDataHandling() {
     assertAll(() -> {
       // customer list fetching failures
-      assertThatThrownBy(() -> fetchCustomers(400)).isInstanceOf(RuntimeException.class);
-      assertThatThrownBy(() -> fetchCustomers(500)).isExactlyInstanceOf(FetchException.class);
+      assertThatThrownBy(this::fetchCustomers).isExactlyInstanceOf(FetchException.class);
       // customer creating failures
-      assertThatThrownBy(() -> propagateExceptionWith500ServerError(
-          () -> customerWebClient.createCustomer(new Customer()).block()))
-          .isExactlyInstanceOf(SaveException.class);
       assertThatThrownBy(() -> propagateExceptionWith400ServerError(
           () -> customerWebClient.createCustomer(new Customer()).block()))
-          .isInstanceOf(RuntimeException.class);
+          .isExactlyInstanceOf(ServerErrorException.class);
       // customer updating failures
-      assertThatThrownBy(() -> propagateExceptionWith500ServerError(
-          () -> customerWebClient.updateCustomer(new Customer()).block()))
-          .isExactlyInstanceOf(SaveException.class);
       assertThatThrownBy(() -> propagateExceptionWith400ServerError(
           () -> customerWebClient.updateCustomer(new Customer()).block()))
-          .isInstanceOf(RuntimeException.class);
+          .isExactlyInstanceOf(ServerErrorException.class);
       // customer deleting failures
-      assertThatThrownBy(() -> deleteCustomer(400)).isInstanceOf(RuntimeException.class);
-      assertThatThrownBy(() -> deleteCustomer(500)).isExactlyInstanceOf(DeleteException.class);
+      assertThatThrownBy(this::deleteCustomer).isExactlyInstanceOf(DeleteException.class);
     });
   }
 
   private void propagateExceptionWith400ServerError(Supplier<Customer> supplier) {
-    provideResponse(400, "Error occurred.");
+    provideResponse();
     supplier.get();
   }
 
-  private void propagateExceptionWith500ServerError(Supplier<Customer> supplier) {
-    provideResponse(500, "System is down.");
-    supplier.get();
-  }
-
-  private void fetchCustomers(int i) {
-    provideResponse(i, "Error occurred.");
+  private void fetchCustomers() {
+    provideResponse();
     customerWebClient.fetchAllCustomers().block();
   }
 
-  private void deleteCustomer(int i) {
-    provideResponse(i, "Error occurred.");
+  private void deleteCustomer() {
+    provideResponse();
     customerWebClient.deleteCustomer(0).block();
   }
 
-  private void provideResponse(int i, String s) {
+  private void provideResponse() {
     this.mockWebServer.enqueue(new MockResponse()
-        .setResponseCode(i)
-        .setBody(s));
+        .setResponseCode(400)
+        .setBody("Error occurred."));
   }
 
   private void mockResponse(String listResponse) {

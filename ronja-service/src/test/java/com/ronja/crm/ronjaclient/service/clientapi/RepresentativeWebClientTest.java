@@ -1,9 +1,6 @@
 package com.ronja.crm.ronjaclient.service.clientapi;
 
-import com.ronja.crm.ronjaclient.service.domain.Category;
-import com.ronja.crm.ronjaclient.service.domain.Focus;
-import com.ronja.crm.ronjaclient.service.domain.Representative;
-import com.ronja.crm.ronjaclient.service.domain.Status;
+import com.ronja.crm.ronjaclient.service.domain.*;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.jetbrains.annotations.NotNull;
@@ -11,11 +8,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.server.ServerErrorException;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.*;
@@ -36,12 +33,23 @@ public class RepresentativeWebClientTest {
               "lastVisit": "2020-10-07",
               "scheduledVisit": "2021-04-25",
               "phoneNumbers": [
-                  "+420920920920",
-                  "+421987654321"
+                  {
+                      "contact": "+420920920920",
+                      "type": "HOME",
+                      "primary": false
+                  },
+                  {
+                      "contact": "+420920920920",
+                      "type": "HOME",
+                      "primary": false
+                  }
               ],
               "emails": [
-                  "john@example.com",
-                  "doe@foo.com"
+                  {
+                      "contact": "john@example.com",
+                      "type": "WORK",
+                      "primary": true
+                  }
               ],
               "customer": {
                   "id": 1,
@@ -62,10 +70,18 @@ public class RepresentativeWebClientTest {
               "lastVisit": "2020-10-07",
               "scheduledVisit": "2021-04-25",
               "phoneNumbers": [
-                  "+420920920920"
+                  {
+                      "contact": "+420920920920",
+                      "type": "HOME",
+                      "primary": false
+                  }
               ],
               "emails": [
-                  "jane@example.com"
+                  {
+                      "contact": "jane@example.com",
+                      "type": "WORK",
+                      "primary": true
+                  }
               ],
               "customer": {
                   "id": 2,
@@ -132,7 +148,9 @@ public class RepresentativeWebClientTest {
       assertThat(representative.getLastVisit()).isEqualTo(LocalDate.of(2020, 10, 7));
       assertThat(representative.getScheduledVisit()).isEqualTo(LocalDate.of(2021, 4, 25));
       assertThat(representative.getPhoneNumbers()).hasSize(2);
-      assertThat(representative.getEmails().stream().findFirst()).isEqualTo(Optional.of("john@example.com"));
+      Contact expected = new Contact("john@example.com", "HOME", true);
+      Contact actual = representative.getEmails().stream().findFirst().orElseThrow();
+      assertThat(expected.contact()).isEqualTo(actual.contact());
       assertThat(representative.getCustomer().getCompanyName()).isEqualTo("LeslieCorp");
       assertThat(representative.getCustomer().getCategory()).isEqualTo(Category.LEVEL_1);
       assertThat(representative.getCustomer().getFocus()).isEqualTo(Focus.BUILDER);
@@ -175,52 +193,39 @@ public class RepresentativeWebClientTest {
   public void testExceptionsOnRepresentativeDataHandling() {
     assertAll(() -> {
       // representative list fetching failures
-      assertThatThrownBy(() -> fetchRepresentatives(400)).isInstanceOf(RuntimeException.class);
-      assertThatThrownBy(() -> fetchRepresentatives(500)).isExactlyInstanceOf(FetchException.class);
+      assertThatThrownBy(this::fetchRepresentatives).isExactlyInstanceOf(FetchException.class);
       // representative creating failures
-      assertThatThrownBy(() -> propagateExceptionWith500ServerError(
-          () -> representativeWebClient.createRepresentative(provideNewRepresentative()).block()))
-          .isExactlyInstanceOf(SaveException.class);
       assertThatThrownBy(() -> propagateExceptionWith400ServerError(
           () -> representativeWebClient.createRepresentative(provideNewRepresentative()).block()))
-          .isInstanceOf(RuntimeException.class);
+          .isExactlyInstanceOf(ServerErrorException.class);
       // representative updating failures
-      assertThatThrownBy(() -> propagateExceptionWith500ServerError(
-          () -> representativeWebClient.updateRepresentative(provideNewRepresentative()).block()))
-          .isExactlyInstanceOf(SaveException.class);
       assertThatThrownBy(() -> propagateExceptionWith400ServerError(
           () -> representativeWebClient.updateRepresentative(provideNewRepresentative()).block()))
-          .isInstanceOf(RuntimeException.class);
+          .isExactlyInstanceOf(ServerErrorException.class);
       // representative deleting failures
-      assertThatThrownBy(() -> deleteRepresentative(400)).isInstanceOf(RuntimeException.class);
-      assertThatThrownBy(() -> deleteRepresentative(500)).isExactlyInstanceOf(DeleteException.class);
+      assertThatThrownBy(this::deleteRepresentative).isExactlyInstanceOf(DeleteException.class);
     });
   }
 
   private void propagateExceptionWith400ServerError(Supplier<Representative> supplier) {
-    provideResponse(400, "Error occurred.");
+    provideResponse();
     supplier.get();
   }
 
-  private void propagateExceptionWith500ServerError(Supplier<Representative> supplier) {
-    provideResponse(500, "System is down.");
-    supplier.get();
-  }
-
-  private void fetchRepresentatives(int i) {
-    provideResponse(i, "Error occurred.");
+  private void fetchRepresentatives() {
+    provideResponse();
     representativeWebClient.fetchAllRepresentatives().block();
   }
 
-  private void deleteRepresentative(int i) {
-    provideResponse(i, "Error occurred.");
+  private void deleteRepresentative() {
+    provideResponse();
     representativeWebClient.deleteRepresentative(0).block();
   }
 
-  private void provideResponse(int i, String s) {
+  private void provideResponse() {
     this.mockWebServer.enqueue(new MockResponse()
-        .setResponseCode(i)
-        .setBody(s));
+        .setResponseCode(400)
+        .setBody("Error occurred."));
   }
 
   private void mockResponse() {

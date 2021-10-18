@@ -9,10 +9,11 @@ module ronja.service {
   requires spring.core;
   requires spring.boot.autoconfigure;
 
+  exports com.ronja.crm.ronjaclient.service.clientapi;
   exports com.ronja.crm.ronjaclient.service.domain;
   exports com.ronja.crm.ronjaclient.service.util;
 
   opens com.ronja.crm.ronjaclient.service.clientapi;
   opens com.ronja.crm.ronjaclient.service.configuration;
-  exports com.ronja.crm.ronjaclient.service.clientapi;
+  opens com.ronja.crm.ronjaclient.service.domain;
 }

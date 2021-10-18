@@ -1,9 +1,6 @@
 package com.ronja.crm.ronjaclient.desktop.component.representative;
 
-import com.ronja.crm.ronjaclient.service.domain.Customer;
-import com.ronja.crm.ronjaclient.service.domain.Representative;
-import com.ronja.crm.ronjaclient.service.domain.RonjaDate;
-import com.ronja.crm.ronjaclient.service.domain.Status;
+import com.ronja.crm.ronjaclient.service.domain.*;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -23,8 +20,8 @@ public class RepresentativeTableItem {
   private final SimpleObjectProperty<Customer> customer;
   private final SimpleObjectProperty<RonjaDate> lastVisit;
   private final SimpleObjectProperty<RonjaDate> scheduledVisit;
-  private final SimpleObjectProperty<List<String>> phoneNumbers;
-  private final SimpleObjectProperty<List<String>> emails;
+  private final SimpleObjectProperty<List<Contact>> phoneNumbers;
+  private final SimpleObjectProperty<List<Contact>> emails;
 
   private final Representative representative;
 
@@ -166,30 +163,39 @@ public class RepresentativeTableItem {
     this.representative.setScheduledVisit(scheduledVisit.date());
   }
 
-  public List<String> getPhoneNumbers() {
+  public List<Contact> getPhoneNumbers() {
     return phoneNumbers.get();
   }
 
   public ReadOnlyStringProperty phoneNumbersProperty() {
-    String phoneNumber = phoneNumbers.get().stream().findFirst().orElse("");
+    String phoneNumber = findPrimaryOrNew(phoneNumbers);
     return new SimpleStringProperty(phoneNumber);
   }
 
-  public void setPhoneNumbers(List<String> phoneNumbers) {
+  public void setPhoneNumbers(List<Contact> phoneNumbers) {
     this.phoneNumbers.set(phoneNumbers);
     this.representative.setPhoneNumbers(phoneNumbers);
   }
 
-  public List<String> getEmails() {
+  public List<Contact> getEmails() {
     return emails.get();
   }
 
   public ReadOnlyStringProperty emailsProperty() {
-    String email = emails.get().stream().findFirst().orElse("");
+    String email = findPrimaryOrNew(emails);
     return new SimpleStringProperty(email);
   }
 
-  public void setEmails(List<String> emails) {
+  private String findPrimaryOrNew(SimpleObjectProperty<List<Contact>> contacts) {
+    return contacts.get()
+        .stream()
+        .filter(Contact::primary)
+        .findFirst()
+        .orElse(new Contact())
+        .contact();
+  }
+
+  public void setEmails(List<Contact> emails) {
     this.emails.set(emails);
     this.representative.setEmails(emails);
   }
