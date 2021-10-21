@@ -68,20 +68,20 @@ public class ClientApiUtils {
         .bodyToMono(Void.class);
   }
 
-  static <T> Mono<T> postEntity(WebClient webClient, T t, Class<T> clazz) {
+  static <T, U> Mono<T> postEntity(WebClient webClient, U u, Class<T> clazz) {
     return webClient.post()
         .uri("/add")
-        .body(Mono.just(t), clazz)
+        .body(Mono.just(u), clazz)
         .retrieve()
         .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::propagateSavingError)
         .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::propagateServerError)
         .bodyToMono(clazz);
   }
 
-  static <T> Mono<T> putEntity(WebClient webClient, T t, Class<T> clazz) {
+  static <T, U> Mono<T> putEntity(WebClient webClient, U u, Class<T> clazz) {
     return webClient.put()
         .uri("/update")
-        .body(Mono.just(t), clazz)
+        .body(Mono.just(u), clazz)
         .retrieve()
         .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::propagateSavingError)
         .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::propagateServerError)

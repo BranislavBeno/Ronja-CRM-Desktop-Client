@@ -12,6 +12,7 @@ module ronja.service {
   exports com.ronja.crm.ronjaclient.service.clientapi;
   exports com.ronja.crm.ronjaclient.service.domain;
   exports com.ronja.crm.ronjaclient.service.util;
+  exports com.ronja.crm.ronjaclient.service.dto;
 
   opens com.ronja.crm.ronjaclient.service.clientapi;
   opens com.ronja.crm.ronjaclient.service.configuration;

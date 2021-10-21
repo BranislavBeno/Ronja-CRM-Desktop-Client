@@ -18,6 +18,7 @@ public class Representative {
   private List<Contact> phoneNumbers;
   private List<Contact> emails;
   private Customer customer;
+  private String contactType;
 
   public int getId() {
     return id;
@@ -113,5 +114,13 @@ public class Representative {
 
   public void setCustomer(Customer customer) {
     this.customer = customer;
+  }
+
+  public String getContactType() {
+    return contactType;
+  }
+
+  public void setContactType(String contactType) {
+    this.contactType = contactType;
   }
 }

@@ -1,6 +1,8 @@
 package com.ronja.crm.ronjaclient.service.clientapi;
 
 import com.ronja.crm.ronjaclient.service.domain.*;
+import com.ronja.crm.ronjaclient.service.dto.RepresentativeDto;
+import com.ronja.crm.ronjaclient.service.dto.RepresentativeMapper;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +34,7 @@ public class RepresentativeWebClientTest {
               "status": "ACTIVE",
               "lastVisit": "2020-10-07",
               "scheduledVisit": "2021-04-25",
+              "contactType": "MAIL",
               "phoneNumbers": [
                   {
                       "contact": "+420920920920",
@@ -69,6 +72,7 @@ public class RepresentativeWebClientTest {
               "status": "INACTIVE",
               "lastVisit": "2020-10-07",
               "scheduledVisit": "2021-04-25",
+              "contactType": "PHONE",
               "phoneNumbers": [
                   {
                       "contact": "+420920920920",
@@ -104,6 +108,7 @@ public class RepresentativeWebClientTest {
           "status": "INACTIVE",
           "lastVisit": "2021-09-03",
           "scheduledVisit": "2021-09-03",
+          "contactType": "MAIL",
           "phoneNumbers": [],
           "emails": [],
           "customer": null
@@ -113,11 +118,14 @@ public class RepresentativeWebClientTest {
 
   private RepresentativeWebClient representativeWebClient;
 
+  private RepresentativeMapper mapper;
+
   @BeforeEach
   public void setUp() throws IOException {
     this.mockWebServer = new MockWebServer();
     this.mockWebServer.start();
     this.representativeWebClient = new RepresentativeWebClient(mockWebServer.url("/").toString());
+    this.mapper = new RepresentativeMapper();
   }
 
   @AfterEach
@@ -164,7 +172,8 @@ public class RepresentativeWebClientTest {
     mockResponse(SINGLE_RESPONSE);
 
     Representative representative = provideRepresentative();
-    Representative newRepresentative = representativeWebClient.createRepresentative(representative).block();
+    RepresentativeDto dto = mapper.toDto(representative);
+    Representative newRepresentative = representativeWebClient.createRepresentative(dto).block();
 
     assertAll(() -> {
       assertThat(newRepresentative).isNotNull();
@@ -177,7 +186,8 @@ public class RepresentativeWebClientTest {
   public void testRepresentativeUpdating() {
     mockResponse(SINGLE_RESPONSE);
     Representative representative = provideNewRepresentative();
-    Representative updatedRepresentative = representativeWebClient.updateRepresentative(representative).block();
+    RepresentativeDto dto = mapper.toDto(representative);
+    Representative updatedRepresentative = representativeWebClient.updateRepresentative(dto).block();
     assertThat(updatedRepresentative).isNotNull();
   }
 
@@ -191,16 +201,17 @@ public class RepresentativeWebClientTest {
   @Test
   @DisplayName("Representative data handling: failure test")
   public void testExceptionsOnRepresentativeDataHandling() {
+    RepresentativeDto dto = mapper.toDto(provideNewRepresentative());
     assertAll(() -> {
       // representative list fetching failures
       assertThatThrownBy(this::fetchRepresentatives).isExactlyInstanceOf(FetchException.class);
       // representative creating failures
       assertThatThrownBy(() -> propagateExceptionWith400ServerError(
-          () -> representativeWebClient.createRepresentative(provideNewRepresentative()).block()))
+          () -> representativeWebClient.createRepresentative(dto).block()))
           .isExactlyInstanceOf(ServerErrorException.class);
       // representative updating failures
       assertThatThrownBy(() -> propagateExceptionWith400ServerError(
-          () -> representativeWebClient.updateRepresentative(provideNewRepresentative()).block()))
+          () -> representativeWebClient.updateRepresentative(dto).block()))
           .isExactlyInstanceOf(ServerErrorException.class);
       // representative deleting failures
       assertThatThrownBy(this::deleteRepresentative).isExactlyInstanceOf(DeleteException.class);
@@ -252,6 +263,7 @@ public class RepresentativeWebClientTest {
     representative.setStatus(Status.INACTIVE);
     representative.setLastVisit(LocalDate.of(2021, 9, 3));
     representative.setScheduledVisit(LocalDate.of(2021, 9, 3));
+    representative.setContactType("OTHER");
     representative.setPhoneNumbers(Collections.emptyList());
     representative.setEmails(Collections.emptyList());
     representative.setCustomer(null);
@@ -261,6 +273,7 @@ public class RepresentativeWebClientTest {
   @NotNull
   private Representative provideNewRepresentative() {
     Representative representative = new Representative();
+    representative.setStatus(Status.ACTIVE);
     representative.setPhoneNumbers(Collections.emptyList());
     representative.setEmails(Collections.emptyList());
     return representative;
