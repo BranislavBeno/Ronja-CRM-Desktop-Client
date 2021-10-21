@@ -12,6 +12,8 @@ import com.ronja.crm.ronjaclient.service.domain.Customer;
 import com.ronja.crm.ronjaclient.service.domain.Representative;
 import com.ronja.crm.ronjaclient.service.domain.RonjaDate;
 import com.ronja.crm.ronjaclient.service.domain.Status;
+import com.ronja.crm.ronjaclient.service.dto.RepresentativeDto;
+import com.ronja.crm.ronjaclient.service.dto.RepresentativeMapper;
 import com.ronja.crm.ronjaclient.service.util.DateTimeUtil;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -50,15 +52,18 @@ public class RepresentativeDetailDialog extends Stage {
   private final RonjaListView emailView;
   private final ListSelectionView<Customer> customerSelectionView;
   private final Button saveButton;
+  private final RepresentativeMapper mapper;
 
   public RepresentativeDetailDialog(CustomerWebClient customerWebClient,
                                     RepresentativeWebClient representativeWebClient,
                                     RepresentativeTableView tableView,
+                                    RepresentativeMapper mapper,
                                     boolean update) {
     this.customerWebClient = Objects.requireNonNull(customerWebClient);
     this.representativeWebClient = Objects.requireNonNull(representativeWebClient);
     this.tableView = Objects.requireNonNull(tableView);
     this.representativeItem = tableView.selectedRepresentative().getValue();
+    this.mapper = mapper;
 
     initOwner(App.getMainWindow());
     initModality(Modality.WINDOW_MODAL);
@@ -117,9 +122,10 @@ public class RepresentativeDetailDialog extends Stage {
     saveButton.setText("Ulož");
     saveButton.setOnAction(e -> {
       Representative updatedRepresentative = updateRepresentative(representative);
+      RepresentativeDto dto = mapper.toDto(updatedRepresentative);
       try {
         CompletableFuture<Void> cf = CompletableFuture
-            .runAsync(() -> representativeWebClient.updateRepresentative(updatedRepresentative).block())
+            .runAsync(() -> representativeWebClient.updateRepresentative(dto).block())
             .whenComplete((r, t) -> updateRepresentativeItem(t));
         cf.get();
       } catch (Exception ex) {
@@ -138,9 +144,10 @@ public class RepresentativeDetailDialog extends Stage {
     saveButton.setText("Pridaj");
     saveButton.setOnAction(e -> {
       Representative representative = provideRepresentative();
+      RepresentativeDto dto = mapper.toDto(representative);
       try {
         CompletableFuture<Representative> cf = CompletableFuture
-            .supplyAsync(() -> representativeWebClient.createRepresentative(representative).block())
+            .supplyAsync(() -> representativeWebClient.createRepresentative(dto).block())
             .whenComplete(this::addRepresentativeItem);
         cf.get();
       } catch (Exception ex) {
@@ -194,6 +201,7 @@ public class RepresentativeDetailDialog extends Stage {
     representative.setPhoneNumbers(phoneNumberView.getItems());
     representative.setEmails(emailView.getItems());
     representative.setCustomer(provideCustomer());
+    representative.setContactType("MAIL");
 
     return representative;
   }

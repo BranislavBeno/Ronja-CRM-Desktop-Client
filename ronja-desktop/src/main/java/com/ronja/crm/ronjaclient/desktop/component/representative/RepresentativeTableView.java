@@ -9,6 +9,7 @@ import com.ronja.crm.ronjaclient.service.clientapi.RepresentativeWebClient;
 import com.ronja.crm.ronjaclient.service.domain.Representative;
 import com.ronja.crm.ronjaclient.service.domain.RonjaDate;
 import com.ronja.crm.ronjaclient.service.domain.Status;
+import com.ronja.crm.ronjaclient.service.dto.RepresentativeMapper;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -41,17 +42,19 @@ public class RepresentativeTableView extends VBox {
   @Value("${client.representatives.base-url}")
   String representativeBaseUrl;
 
-  @Autowired
   private final CustomerWebClient customerWebClient;
-  @Autowired
   private final RepresentativeWebClient representativeWebClient;
+  private final RepresentativeMapper mapper;
 
   private final ObservableList<RepresentativeTableItem> tableItems;
   private final FilteredTableView<RepresentativeTableItem> tableView;
 
-  public RepresentativeTableView(CustomerWebClient customerWebClient, RepresentativeWebClient representativeWebClient) {
+  public RepresentativeTableView(@Autowired CustomerWebClient customerWebClient,
+                                 @Autowired RepresentativeWebClient representativeWebClient,
+                                 @Autowired RepresentativeMapper mapper) {
     this.customerWebClient = Objects.requireNonNull(customerWebClient);
     this.representativeWebClient = Objects.requireNonNull(representativeWebClient);
+    this.mapper = mapper;
 
     tableView = new FilteredTableView<>();
     getChildren().add(tableView);
@@ -129,12 +132,12 @@ public class RepresentativeTableView extends VBox {
     // update selected representative
     var updateItem = new MenuItem("Upraviť...");
     updateItem.setOnAction(e -> Dialogs.showRepresentativeDetailDialog(
-        customerWebClient, representativeWebClient, this, true));
+        customerWebClient, representativeWebClient, this, true, mapper));
     updateItem.disableProperty().bind(isSelectedRepresentativeNull());
     // add new representative
     var addItem = new MenuItem("Pridať nového...");
     addItem.setOnAction(e ->
-        Dialogs.showRepresentativeDetailDialog(customerWebClient, representativeWebClient, this, false));
+        Dialogs.showRepresentativeDetailDialog(customerWebClient, representativeWebClient, this, false, mapper));
     // remove existing representative
     var deleteItem = new MenuItem("Zmazať...");
     deleteItem.setOnAction(e -> deleteRepresentative());
