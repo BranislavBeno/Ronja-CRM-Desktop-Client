@@ -191,7 +191,7 @@ public class RepresentativeTableItem {
         .stream()
         .filter(Contact::primary)
         .findFirst()
-        .orElse(new Contact())
+        .orElse(contacts.get().stream().findFirst().orElse(new Contact()))
         .contact();
   }
 
