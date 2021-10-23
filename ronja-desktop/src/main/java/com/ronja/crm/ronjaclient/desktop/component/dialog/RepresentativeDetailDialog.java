@@ -25,14 +25,12 @@ import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.converter.LocalDateStringConverter;
-import org.controlsfx.control.ListSelectionView;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 public class RepresentativeDetailDialog extends Stage {
 
@@ -48,9 +46,9 @@ public class RepresentativeDetailDialog extends Stage {
   private final DatePicker visitedDatePicker;
   private final DatePicker scheduledDatePicker;
   private final ChoiceBox<Status> statusChoiceBox;
+  private final ChoiceBox<Customer> customerChoiceBox;
   private final RonjaListView phoneNumberView;
   private final RonjaListView emailView;
-  private final ListSelectionView<Customer> customerSelectionView;
   private final Button saveButton;
   private final RepresentativeMapper mapper;
 
@@ -76,6 +74,7 @@ public class RepresentativeDetailDialog extends Stage {
     noticeTextField = new TextField();
     statusChoiceBox = new ChoiceBox<>();
     statusChoiceBox.setItems(FXCollections.observableArrayList(Status.values()));
+    customerChoiceBox = new ChoiceBox<>();
     saveButton = new Button();
     visitedDatePicker = new DatePicker();
     visitedDatePicker.setConverter(
@@ -85,7 +84,6 @@ public class RepresentativeDetailDialog extends Stage {
         new LocalDateStringConverter(DateTimeUtil.DATE_TIME_FORMATTER, DateTimeUtil.DATE_TIME_FORMATTER));
     phoneNumberView = new RonjaListView();
     emailView = new RonjaListView();
-    customerSelectionView = new ListSelectionView<>();
 
     initialize(update);
   }
@@ -105,9 +103,8 @@ public class RepresentativeDetailDialog extends Stage {
     buttonBar.setSpacing(10);
     buttonBar.getChildren().addAll(cancelButton, saveButton);
     var propertiesViewPane = setUpPropertiesViewPane();
-    var customerSelectionPane = setUpCustomerSelectionPane();
     var vBox = new VBox();
-    vBox.getChildren().addAll(propertiesViewPane, customerSelectionPane, buttonBar);
+    vBox.getChildren().addAll(propertiesViewPane, buttonBar);
     vBox.setPadding(new Insets(12, 10, 12, 10));
     vBox.setSpacing(10);
 
@@ -124,9 +121,9 @@ public class RepresentativeDetailDialog extends Stage {
       Representative updatedRepresentative = updateRepresentative(representative);
       RepresentativeDto dto = mapper.toDto(updatedRepresentative);
       try {
-        CompletableFuture<Void> cf = CompletableFuture
-            .runAsync(() -> representativeWebClient.updateRepresentative(dto).block())
-            .whenComplete((r, t) -> updateRepresentativeItem(t));
+        CompletableFuture<Representative> cf = CompletableFuture
+            .supplyAsync(() -> representativeWebClient.updateRepresentative(dto).block())
+            .whenComplete(this::updateRepresentativeItem);
         cf.get();
       } catch (Exception ex) {
         Thread.currentThread().interrupt();
@@ -161,31 +158,33 @@ public class RepresentativeDetailDialog extends Stage {
     });
   }
 
-  private void addRepresentativeItem(Representative representative, Throwable throwable) {
-    if (throwable == null) {
-      RepresentativeTableItem item = new RepresentativeTableItem(representative);
-      tableView.addItem(item);
-    }
-  }
-
   private Representative provideRepresentative() {
     var representative = new Representative();
     return updateRepresentative(representative);
   }
 
-  private void updateRepresentativeItem(Throwable throwable) {
+  private void addRepresentativeItem(Representative representative, Throwable throwable) {
     if (throwable == null) {
-      representativeItem.setFirstName(firstNameTextField.getText());
-      representativeItem.setLastName(lastNameTextField.getText());
-      representativeItem.setPosition(positionTextField.getText());
-      representativeItem.setRegion(regionTextField.getText());
-      representativeItem.setNotice(noticeTextField.getText());
-      representativeItem.setStatus(statusChoiceBox.getValue());
-      representativeItem.setLastVisit(new RonjaDate(visitedDatePicker.getValue()));
-      representativeItem.setScheduledVisit(new RonjaDate(scheduledDatePicker.getValue()));
-      representativeItem.setPhoneNumbers(phoneNumberView.getItems());
-      representativeItem.setEmails(emailView.getItems());
-      representativeItem.setCustomer(provideCustomer());
+      RepresentativeTableItem item = new RepresentativeTableItem(representative);
+      tableView.addItem(item);
+      tableView.refreshItems();
+    }
+  }
+
+  private void updateRepresentativeItem(Representative representative, Throwable throwable) {
+    if (throwable == null) {
+      representativeItem.setFirstName(representative.getFirstName());
+      representativeItem.setLastName(representative.getLastName());
+      representativeItem.setPosition(representative.getPosition());
+      representativeItem.setRegion(representative.getRegion());
+      representativeItem.setNotice(representative.getNotice());
+      representativeItem.setStatus(representative.getStatus());
+      representativeItem.setLastVisit(new RonjaDate(representative.getLastVisit()));
+      representativeItem.setScheduledVisit(new RonjaDate(representative.getScheduledVisit()));
+      representativeItem.setPhoneNumbers(representative.getPhoneNumbers());
+      representativeItem.setEmails(representative.getEmails());
+      representativeItem.setCustomer(representative.getCustomer());
+      tableView.refreshItems();
     }
   }
 
@@ -200,14 +199,10 @@ public class RepresentativeDetailDialog extends Stage {
     representative.setScheduledVisit(scheduledDatePicker.getValue());
     representative.setPhoneNumbers(phoneNumberView.getItems());
     representative.setEmails(emailView.getItems());
-    representative.setCustomer(provideCustomer());
+    representative.setCustomer(customerChoiceBox.getValue());
     representative.setContactType("MAIL");
 
     return representative;
-  }
-
-  private Customer provideCustomer() {
-    return customerSelectionView.getTargetItems().stream().findFirst().orElse(null);
   }
 
   private GridPane setUpPropertiesViewPane() {
@@ -219,15 +214,17 @@ public class RepresentativeDetailDialog extends Stage {
     Label statusLabel = new Label("Stav:");
     Label visitedLabel = new Label("Posledné stretnutie:");
     Label scheduledLabel = new Label("Plánované stretnutie:");
+    Label customerLabel = new Label("Spoločnosť:");
     Label phonesLabel = new Label("Telefónne číslo:");
     Label emailsLabel = new Label("E-mail:");
 
     var gridPane = new GridPane();
     gridPane.addRow(0, firstNameLabel, firstNameTextField, positionLabel, positionTextField);
     gridPane.addRow(1, lastNameLabel, lastNameTextField, regionLabel, regionTextField);
-    gridPane.addRow(2, noticeLabel, noticeTextField, statusLabel, statusChoiceBox);
-    gridPane.addRow(3, visitedLabel, visitedDatePicker, scheduledLabel, scheduledDatePicker);
-    gridPane.addRow(4, phonesLabel, phoneNumberView, emailsLabel, emailView);
+    gridPane.addRow(2, noticeLabel, noticeTextField);
+    gridPane.addRow(3, customerLabel, customerChoiceBox, statusLabel, statusChoiceBox);
+    gridPane.addRow(4, visitedLabel, visitedDatePicker, scheduledLabel, scheduledDatePicker);
+    gridPane.addRow(5, phonesLabel, phoneNumberView, emailsLabel, emailView);
 
     gridPane.setAlignment(Pos.CENTER_LEFT);
     gridPane.setHgap(5);
@@ -241,46 +238,14 @@ public class RepresentativeDetailDialog extends Stage {
     return gridPane;
   }
 
-  private GridPane setUpCustomerSelectionPane() {
-    Label customerLabel = new Label("Spoločnosť:");
-
-    var gridPane = new GridPane();
-    gridPane.addRow(0, customerLabel, customerSelectionView);
-
-    gridPane.setAlignment(Pos.CENTER_LEFT);
-    gridPane.setHgap(5);
-    gridPane.setVgap(5);
-    var columnConstraints = new ColumnConstraints();
-    columnConstraints.setHgrow(Priority.ALWAYS);
-    gridPane.getColumnConstraints().addAll(new ColumnConstraints(), columnConstraints);
-    VBox.setVgrow(gridPane, Priority.NEVER);
-
-    customerSelectionView.setSourceHeader(new Label("K dispozícii:"));
-    customerSelectionView.setTargetHeader(new Label("Vybraná:"));
-    customerSelectionView.getActions().clear();
-
-    return gridPane;
+  private Optional<Customer> fetchSelectionTargetItem() {
+    return Optional.ofNullable(representativeItem.getRepresentative().getCustomer());
   }
 
-  private List<Customer> fetchSelectionTargetItem() {
-    List<Customer> target = Collections.emptyList();
-    if (representativeItem != null) {
-      Customer customer = representativeItem.getRepresentative().getCustomer();
-      if (customer != null) {
-        target = List.of(customer);
-      }
-    }
-
-    return target;
-  }
-
-  private void setSelectionItems(List<Customer> target) {
+  private void setSelectionItems() {
     Platform.runLater(() -> {
-      List<Customer> source = DesktopUtil.fetchCustomers(customerWebClient).collect(Collectors.toList());
-      source.removeAll(target);
-      customerSelectionView.getSourceItems().setAll(source);
-      customerSelectionView.getTargetItems().setAll(target);
-
+      List<Customer> source = DesktopUtil.fetchCustomers(customerWebClient).toList();
+      customerChoiceBox.setItems(FXCollections.observableArrayList(source));
     });
   }
 
@@ -295,8 +260,8 @@ public class RepresentativeDetailDialog extends Stage {
     scheduledDatePicker.setValue(representative.getScheduledVisit());
     phoneNumberView.getItems().addAll(representative.getPhoneNumbers());
     emailView.getItems().addAll(representative.getEmails());
-    List<Customer> target = fetchSelectionTargetItem();
-    setSelectionItems(target);
+    fetchSelectionTargetItem().ifPresent(customerChoiceBox::setValue);
+    setSelectionItems();
   }
 
   private void setUpContent() {
@@ -308,7 +273,6 @@ public class RepresentativeDetailDialog extends Stage {
     statusChoiceBox.setValue(Status.ACTIVE);
     visitedDatePicker.setValue(LocalDate.now());
     scheduledDatePicker.setValue(LocalDate.now());
-    List<Customer> target = Collections.emptyList();
-    setSelectionItems(target);
+    setSelectionItems();
   }
 }
