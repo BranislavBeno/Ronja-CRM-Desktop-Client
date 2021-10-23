@@ -17,6 +17,7 @@ public class RepresentativeTableItem {
   private final SimpleStringProperty region;
   private final SimpleStringProperty notice;
   private final SimpleObjectProperty<Status> status;
+  private final SimpleObjectProperty<ContactType> contactType;
   private final SimpleObjectProperty<Customer> customer;
   private final SimpleObjectProperty<RonjaDate> lastVisit;
   private final SimpleObjectProperty<RonjaDate> scheduledVisit;
@@ -34,6 +35,7 @@ public class RepresentativeTableItem {
     region = new SimpleStringProperty(representative.getRegion());
     notice = new SimpleStringProperty(representative.getNotice());
     status = new SimpleObjectProperty<>(representative.getStatus());
+    contactType = new SimpleObjectProperty<>(representative.getContactType());
     customer = new SimpleObjectProperty<>(representative.getCustomer());
     lastVisit = new SimpleObjectProperty<>(new RonjaDate(representative.getLastVisit()));
     scheduledVisit = new SimpleObjectProperty<>(new RonjaDate(representative.getScheduledVisit()));
@@ -131,6 +133,19 @@ public class RepresentativeTableItem {
   public void setStatus(Status status) {
     this.status.set(status);
     this.representative.setStatus(status);
+  }
+
+  public ContactType getContactType() {
+    return contactType.get();
+  }
+
+  public ReadOnlyObjectProperty<ContactType> contactTypeProperty() {
+    return contactType;
+  }
+
+  public void setContactType(ContactType contactType) {
+    this.contactType.set(contactType);
+    this.representative.setContactType(contactType);
   }
 
   public Representative getRepresentative() {

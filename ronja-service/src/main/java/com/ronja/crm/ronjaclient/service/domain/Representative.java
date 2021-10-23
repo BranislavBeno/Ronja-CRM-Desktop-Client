@@ -18,7 +18,7 @@ public class Representative {
   private List<Contact> phoneNumbers;
   private List<Contact> emails;
   private Customer customer;
-  private String contactType;
+  private ContactType contactType;
 
   public int getId() {
     return id;
@@ -116,11 +116,11 @@ public class Representative {
     this.customer = customer;
   }
 
-  public String getContactType() {
+  public ContactType getContactType() {
     return contactType;
   }
 
-  public void setContactType(String contactType) {
+  public void setContactType(ContactType contactType) {
     this.contactType = contactType;
   }
 }

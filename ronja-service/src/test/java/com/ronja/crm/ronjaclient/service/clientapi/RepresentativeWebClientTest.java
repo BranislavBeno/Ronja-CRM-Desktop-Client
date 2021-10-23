@@ -263,7 +263,7 @@ public class RepresentativeWebClientTest {
     representative.setStatus(Status.INACTIVE);
     representative.setLastVisit(LocalDate.of(2021, 9, 3));
     representative.setScheduledVisit(LocalDate.of(2021, 9, 3));
-    representative.setContactType("OTHER");
+    representative.setContactType(ContactType.PHONE);
     representative.setPhoneNumbers(Collections.emptyList());
     representative.setEmails(Collections.emptyList());
     representative.setCustomer(null);

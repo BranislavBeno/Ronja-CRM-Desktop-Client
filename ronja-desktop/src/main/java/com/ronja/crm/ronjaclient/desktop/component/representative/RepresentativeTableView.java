@@ -6,6 +6,7 @@ import com.ronja.crm.ronjaclient.desktop.component.util.DesktopUtil;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
 import com.ronja.crm.ronjaclient.service.clientapi.DeleteException;
 import com.ronja.crm.ronjaclient.service.clientapi.RepresentativeWebClient;
+import com.ronja.crm.ronjaclient.service.domain.ContactType;
 import com.ronja.crm.ronjaclient.service.domain.Representative;
 import com.ronja.crm.ronjaclient.service.domain.RonjaDate;
 import com.ronja.crm.ronjaclient.service.domain.Status;
@@ -104,6 +105,7 @@ public class RepresentativeTableView extends VBox {
     DesktopUtil.addColumn("Tel. číslo", tableView, String.class, RepresentativeTableItem::phoneNumbersProperty);
     DesktopUtil.addColumn("Email", tableView, String.class, RepresentativeTableItem::emailsProperty);
     DesktopUtil.addColumn("Stav", tableView, Status.class, RepresentativeTableItem::statusProperty);
+    DesktopUtil.addColumn("Spôsob kontaktovania", tableView, ContactType.class, RepresentativeTableItem::contactTypeProperty);
     DesktopUtil.addColumn("Posledné stretnutie",
         tableView, RonjaDate.class, RepresentativeTableItem::lastVisitProperty);
     DesktopUtil.addColumn("Plánované stretnutie",

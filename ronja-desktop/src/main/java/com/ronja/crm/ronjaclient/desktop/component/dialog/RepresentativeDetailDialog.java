@@ -8,10 +8,7 @@ import com.ronja.crm.ronjaclient.desktop.component.util.DesktopUtil;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
 import com.ronja.crm.ronjaclient.service.clientapi.RepresentativeWebClient;
 import com.ronja.crm.ronjaclient.service.clientapi.SaveException;
-import com.ronja.crm.ronjaclient.service.domain.Customer;
-import com.ronja.crm.ronjaclient.service.domain.Representative;
-import com.ronja.crm.ronjaclient.service.domain.RonjaDate;
-import com.ronja.crm.ronjaclient.service.domain.Status;
+import com.ronja.crm.ronjaclient.service.domain.*;
 import com.ronja.crm.ronjaclient.service.dto.RepresentativeDto;
 import com.ronja.crm.ronjaclient.service.dto.RepresentativeMapper;
 import com.ronja.crm.ronjaclient.service.util.DateTimeUtil;
@@ -47,6 +44,7 @@ public class RepresentativeDetailDialog extends Stage {
   private final DatePicker visitedDatePicker;
   private final DatePicker scheduledDatePicker;
   private final ChoiceBox<Status> statusChoiceBox;
+  private final ChoiceBox<ContactType> contactTypeChoiceBox;
   private final SearchableComboBox<Customer> customerChoiceBox;
   private final RonjaListView phoneNumberView;
   private final RonjaListView emailView;
@@ -75,6 +73,8 @@ public class RepresentativeDetailDialog extends Stage {
     noticeTextField = new TextField();
     statusChoiceBox = new ChoiceBox<>();
     statusChoiceBox.setItems(FXCollections.observableArrayList(Status.values()));
+    contactTypeChoiceBox = new ChoiceBox<>();
+    contactTypeChoiceBox.setItems(FXCollections.observableArrayList(ContactType.values()));
     customerChoiceBox = new SearchableComboBox<>();
     saveButton = new Button();
     visitedDatePicker = new DatePicker();
@@ -180,6 +180,7 @@ public class RepresentativeDetailDialog extends Stage {
       representativeItem.setRegion(representative.getRegion());
       representativeItem.setNotice(representative.getNotice());
       representativeItem.setStatus(representative.getStatus());
+      representativeItem.setContactType(representative.getContactType());
       representativeItem.setLastVisit(new RonjaDate(representative.getLastVisit()));
       representativeItem.setScheduledVisit(new RonjaDate(representative.getScheduledVisit()));
       representativeItem.setPhoneNumbers(representative.getPhoneNumbers());
@@ -196,12 +197,12 @@ public class RepresentativeDetailDialog extends Stage {
     representative.setRegion(regionTextField.getText());
     representative.setNotice(noticeTextField.getText());
     representative.setStatus(statusChoiceBox.getValue());
+    representative.setContactType(contactTypeChoiceBox.getValue());
     representative.setLastVisit(visitedDatePicker.getValue());
     representative.setScheduledVisit(scheduledDatePicker.getValue());
     representative.setPhoneNumbers(phoneNumberView.getItems());
     representative.setEmails(emailView.getItems());
     representative.setCustomer(customerChoiceBox.getValue());
-    representative.setContactType("MAIL");
 
     return representative;
   }
@@ -213,6 +214,7 @@ public class RepresentativeDetailDialog extends Stage {
     Label regionLabel = new Label("Región:");
     Label noticeLabel = new Label("Poznámka:");
     Label statusLabel = new Label("Stav:");
+    Label contactTypeLabel = new Label("Spôsob kontaktovania:");
     Label visitedLabel = new Label("Posledné stretnutie:");
     Label scheduledLabel = new Label("Plánované stretnutie:");
     Label customerLabel = new Label("Spoločnosť:");
@@ -222,8 +224,8 @@ public class RepresentativeDetailDialog extends Stage {
     var gridPane = new GridPane();
     gridPane.addRow(0, firstNameLabel, firstNameTextField, positionLabel, positionTextField);
     gridPane.addRow(1, lastNameLabel, lastNameTextField, regionLabel, regionTextField);
-    gridPane.addRow(2, noticeLabel, noticeTextField);
-    gridPane.addRow(3, customerLabel, customerChoiceBox, statusLabel, statusChoiceBox);
+    gridPane.addRow(2, noticeLabel, noticeTextField, customerLabel, customerChoiceBox);
+    gridPane.addRow(3, statusLabel, statusChoiceBox, contactTypeLabel, contactTypeChoiceBox);
     gridPane.addRow(4, visitedLabel, visitedDatePicker, scheduledLabel, scheduledDatePicker);
     gridPane.addRow(5, phonesLabel, phoneNumberView, emailsLabel, emailView);
 
@@ -257,6 +259,7 @@ public class RepresentativeDetailDialog extends Stage {
     regionTextField.setText(representative.getRegion());
     noticeTextField.setText(representative.getNotice());
     statusChoiceBox.setValue(representative.getStatus());
+    contactTypeChoiceBox.setValue(representative.getContactType());
     visitedDatePicker.setValue(representative.getLastVisit());
     scheduledDatePicker.setValue(representative.getScheduledVisit());
     phoneNumberView.getItems().addAll(representative.getPhoneNumbers());
@@ -272,6 +275,7 @@ public class RepresentativeDetailDialog extends Stage {
     regionTextField.setText("");
     noticeTextField.setText("");
     statusChoiceBox.setValue(Status.ACTIVE);
+    contactTypeChoiceBox.setValue(ContactType.PERSONAL);
     visitedDatePicker.setValue(LocalDate.now());
     scheduledDatePicker.setValue(LocalDate.now());
     setSelectionItems();

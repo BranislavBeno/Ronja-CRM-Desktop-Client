@@ -1,6 +1,7 @@
 package com.ronja.crm.ronjaclient.service.dto;
 
 import com.ronja.crm.ronjaclient.service.domain.Contact;
+import com.ronja.crm.ronjaclient.service.domain.ContactType;
 import com.ronja.crm.ronjaclient.service.domain.Representative;
 
 import java.time.LocalDate;
@@ -23,7 +24,7 @@ public class RepresentativeMapper {
     int customerId = representative.getCustomer() != null
         ? representative.getCustomer().getId()
         : 0;
-    String contactType = representative.getContactType();
+    ContactType contactType = representative.getContactType();
 
     return new RepresentativeDto(id, firstName, lastName, position, region, notice, status, lastVisit, scheduledVisit,
         phoneNumbers, emails, customerId, contactType);

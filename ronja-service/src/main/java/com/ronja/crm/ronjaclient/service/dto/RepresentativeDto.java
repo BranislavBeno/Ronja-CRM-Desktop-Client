@@ -1,6 +1,7 @@
 package com.ronja.crm.ronjaclient.service.dto;
 
 import com.ronja.crm.ronjaclient.service.domain.Contact;
+import com.ronja.crm.ronjaclient.service.domain.ContactType;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,5 +19,5 @@ public record RepresentativeDto(
     List<Contact> phoneNumbers,
     List<Contact> emails,
     int customerId,
-    String contactType) {
+    ContactType contactType) {
 }
