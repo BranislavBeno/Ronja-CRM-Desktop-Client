@@ -25,6 +25,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.converter.LocalDateStringConverter;
+import org.controlsfx.control.SearchableComboBox;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -46,7 +47,7 @@ public class RepresentativeDetailDialog extends Stage {
   private final DatePicker visitedDatePicker;
   private final DatePicker scheduledDatePicker;
   private final ChoiceBox<Status> statusChoiceBox;
-  private final ChoiceBox<Customer> customerChoiceBox;
+  private final SearchableComboBox<Customer> customerChoiceBox;
   private final RonjaListView phoneNumberView;
   private final RonjaListView emailView;
   private final Button saveButton;
@@ -74,7 +75,7 @@ public class RepresentativeDetailDialog extends Stage {
     noticeTextField = new TextField();
     statusChoiceBox = new ChoiceBox<>();
     statusChoiceBox.setItems(FXCollections.observableArrayList(Status.values()));
-    customerChoiceBox = new ChoiceBox<>();
+    customerChoiceBox = new SearchableComboBox<>();
     saveButton = new Button();
     visitedDatePicker = new DatePicker();
     visitedDatePicker.setConverter(
