@@ -122,9 +122,9 @@ public class RepresentativeDetailDialog extends Stage {
       Representative updatedRepresentative = updateRepresentative(representative);
       RepresentativeDto dto = mapper.toDto(updatedRepresentative);
       try {
-        CompletableFuture<Representative> cf = CompletableFuture
-            .supplyAsync(() -> representativeWebClient.updateRepresentative(dto).block())
-            .whenComplete(this::updateRepresentativeItem);
+        CompletableFuture<Void> cf = CompletableFuture
+            .runAsync(() -> representativeWebClient.updateRepresentative(dto).block())
+            .whenComplete((r, t) -> updateRepresentativeItem(t));
         cf.get();
       } catch (Exception ex) {
         Thread.currentThread().interrupt();
@@ -167,26 +167,25 @@ public class RepresentativeDetailDialog extends Stage {
   private void addRepresentativeItem(Representative representative, Throwable throwable) {
     if (throwable == null) {
       RepresentativeTableItem item = new RepresentativeTableItem(representative);
+      item.setCustomer(customerChoiceBox.getValue());
       tableView.addItem(item);
-      tableView.refreshItems();
     }
   }
 
-  private void updateRepresentativeItem(Representative representative, Throwable throwable) {
+  private void updateRepresentativeItem(Throwable throwable) {
     if (throwable == null) {
-      representativeItem.setFirstName(representative.getFirstName());
-      representativeItem.setLastName(representative.getLastName());
-      representativeItem.setPosition(representative.getPosition());
-      representativeItem.setRegion(representative.getRegion());
-      representativeItem.setNotice(representative.getNotice());
-      representativeItem.setStatus(representative.getStatus());
-      representativeItem.setContactType(representative.getContactType());
-      representativeItem.setLastVisit(new RonjaDate(representative.getLastVisit()));
-      representativeItem.setScheduledVisit(new RonjaDate(representative.getScheduledVisit()));
-      representativeItem.setPhoneNumbers(representative.getPhoneNumbers());
-      representativeItem.setEmails(representative.getEmails());
-      representativeItem.setCustomer(representative.getCustomer());
-      tableView.refreshItems();
+      representativeItem.setFirstName(firstNameTextField.getText());
+      representativeItem.setLastName(lastNameTextField.getText());
+      representativeItem.setPosition(positionTextField.getText());
+      representativeItem.setRegion(regionTextField.getText());
+      representativeItem.setNotice(noticeTextField.getText());
+      representativeItem.setStatus(statusChoiceBox.getValue());
+      representativeItem.setContactType(contactTypeChoiceBox.getValue());
+      representativeItem.setLastVisit(new RonjaDate(visitedDatePicker.getValue()));
+      representativeItem.setScheduledVisit(new RonjaDate(scheduledDatePicker.getValue()));
+      representativeItem.setPhoneNumbers(phoneNumberView.getItems());
+      representativeItem.setEmails(emailView.getItems());
+      representativeItem.setCustomer(customerChoiceBox.getValue());
     }
   }
 
