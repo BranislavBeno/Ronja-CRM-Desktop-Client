@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class RepresentativeWebClientTest {
+class RepresentativeWebClientTest {
 
   private static final String LIST_RESPONSE = """
       [
@@ -121,7 +121,7 @@ public class RepresentativeWebClientTest {
   private RepresentativeMapper mapper;
 
   @BeforeEach
-  public void setUp() throws IOException {
+  void setUp() throws IOException {
     this.mockWebServer = new MockWebServer();
     this.mockWebServer.start();
     this.representativeWebClient = new RepresentativeWebClient(mockWebServer.url("/").toString());
@@ -129,13 +129,13 @@ public class RepresentativeWebClientTest {
   }
 
   @AfterEach
-  public void shutdown() throws IOException {
+  void shutdown() throws IOException {
     this.mockWebServer.shutdown();
   }
 
   @Test
   @DisplayName("Representative list fetching: happy path test")
-  public void testRepresentativeListFetching() {
+  void testRepresentativeListFetching() {
     mockResponse(LIST_RESPONSE);
 
     Representative[] representatives = representativeWebClient.fetchAllRepresentatives().block();
@@ -168,7 +168,7 @@ public class RepresentativeWebClientTest {
 
   @Test
   @DisplayName("Representative creating: happy path test")
-  public void testRepresentativeCreating() {
+  void testRepresentativeCreating() {
     mockResponse(SINGLE_RESPONSE);
 
     Representative representative = provideRepresentative();
@@ -183,7 +183,7 @@ public class RepresentativeWebClientTest {
 
   @Test
   @DisplayName("Representative updating: happy path test")
-  public void testRepresentativeUpdating() {
+  void testRepresentativeUpdating() {
     mockResponse(SINGLE_RESPONSE);
     Representative representative = provideNewRepresentative();
     RepresentativeDto dto = mapper.toDto(representative);
@@ -193,14 +193,14 @@ public class RepresentativeWebClientTest {
 
   @Test
   @DisplayName("Representative deleting: happy path test")
-  public void testRepresentativeDeleting() {
+  void testRepresentativeDeleting() {
     mockResponse();
     assertThatCode(() -> representativeWebClient.deleteRepresentative(1).block()).doesNotThrowAnyException();
   }
 
   @Test
   @DisplayName("Representative data handling: failure test")
-  public void testExceptionsOnRepresentativeDataHandling() {
+  void testExceptionsOnRepresentativeDataHandling() {
     RepresentativeDto dto = mapper.toDto(provideNewRepresentative());
     assertAll(() -> {
       // representative list fetching failures

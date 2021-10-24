@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class CustomerWebClientTest {
+class CustomerWebClientTest {
 
   private static final String LIST_RESPONSE = """
       [
@@ -52,20 +52,20 @@ public class CustomerWebClientTest {
   private CustomerWebClient customerWebClient;
 
   @BeforeEach
-  public void setUp() throws IOException {
+  void setUp() throws IOException {
     this.mockWebServer = new MockWebServer();
     this.mockWebServer.start();
     this.customerWebClient = new CustomerWebClient(mockWebServer.url("/").toString());
   }
 
   @AfterEach
-  public void shutdown() throws IOException {
+  void shutdown() throws IOException {
     this.mockWebServer.shutdown();
   }
 
   @Test
   @DisplayName("Customer list fetching: happy path test")
-  public void testCustomerListFetching() {
+  void testCustomerListFetching() {
     mockResponse(LIST_RESPONSE);
 
     Customer[] customers = customerWebClient.fetchAllCustomers().block();
@@ -86,7 +86,7 @@ public class CustomerWebClientTest {
 
   @Test
   @DisplayName("Customer creating: happy path test")
-  public void testCustomerCreating() {
+  void testCustomerCreating() {
     mockResponse(SINGLE_RESPONSE);
 
     Customer customer = provideCustomer();
@@ -100,7 +100,7 @@ public class CustomerWebClientTest {
 
   @Test
   @DisplayName("Customer updating: happy path test")
-  public void testCustomerUpdating() {
+  void testCustomerUpdating() {
     mockResponse(SINGLE_RESPONSE);
     Customer updatedCustomer = customerWebClient.updateCustomer(new Customer()).block();
     assertThat(updatedCustomer).isNotNull();
@@ -108,14 +108,14 @@ public class CustomerWebClientTest {
 
   @Test
   @DisplayName("Customer deleting: happy path test")
-  public void testCustomerDeleting() {
+  void testCustomerDeleting() {
     mockResponse();
     assertThatCode(() -> customerWebClient.deleteCustomer(0).block()).doesNotThrowAnyException();
   }
 
   @Test
   @DisplayName("Customer data handling: failure test")
-  public void testExceptionsOnCustomerDataHandling() {
+  void testExceptionsOnCustomerDataHandling() {
     assertAll(() -> {
       // customer list fetching failures
       assertThatThrownBy(this::fetchCustomers).isExactlyInstanceOf(FetchException.class);
