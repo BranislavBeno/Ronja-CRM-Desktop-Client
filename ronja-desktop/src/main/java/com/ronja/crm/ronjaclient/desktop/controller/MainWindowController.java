@@ -35,7 +35,17 @@ public class MainWindowController {
   @FXML
   public void initialize() {
     customersTab.setContent(customerTableView);
+    customersTab.selectedProperty().addListener((observable, oldValue, newValue) ->
+        onChange(newValue, customerTableView::refreshItems));
     representativesTab.setContent(representativeTableView);
+    representativesTab.selectedProperty().addListener((observable, oldValue, newValue) ->
+        onChange(newValue, representativeTableView::refreshItems));
+  }
+
+  private void onChange(Boolean newValue, Runnable runnable) {
+    if (Boolean.TRUE.equals(newValue)) {
+      runnable.run();
+    }
   }
 
   private void handleUncaughtException(Thread thread, Throwable throwable) {
