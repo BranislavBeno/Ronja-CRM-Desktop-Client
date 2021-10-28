@@ -3,6 +3,7 @@ package com.ronja.crm.ronjaclient.desktop.component.dialog;
 import com.ronja.crm.ronjaclient.desktop.App;
 import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableItem;
 import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableView;
+import com.ronja.crm.ronjaclient.desktop.component.representative.RepresentativeTableView;
 import com.ronja.crm.ronjaclient.desktop.component.util.DesktopUtil;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
 import com.ronja.crm.ronjaclient.service.clientapi.SaveException;
@@ -14,38 +15,40 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public final class CustomerDetailDialog extends Stage {
 
-  private final CustomerWebClient webClient;
-  private final CustomerTableView tableView;
+  private final CustomerWebClient customerWebClient;
+  private final CustomerTableView customerTableView;
   private final CustomerTableItem customerItem;
+  private final RepresentativeTableView representativeTableView;
   private final TextField companyNameTextField;
   private final ChoiceBox<Category> categoryChoiceBox;
   private final ChoiceBox<Focus> focusChoiceBox;
   private final ChoiceBox<Status> statusChoiceBox;
   private final Button saveButton;
+  private final Button saveCloseButton;
 
-  public CustomerDetailDialog(CustomerWebClient webClient,
-                              CustomerTableView tableView,
+  public CustomerDetailDialog(CustomerWebClient customerWebClient,
+                              CustomerTableView customerTableView,
+                              RepresentativeTableView representativeTableView,
                               boolean update) {
-    this.webClient = Objects.requireNonNull(webClient);
-    this.tableView = Objects.requireNonNull(tableView);
-    this.customerItem = tableView.selectedCustomer().getValue();
+    this.customerWebClient = Objects.requireNonNull(customerWebClient);
+    this.customerTableView = Objects.requireNonNull(customerTableView);
+    this.customerItem = customerTableView.selectedCustomer().getValue();
+    this.representativeTableView = Objects.requireNonNull(representativeTableView);
 
     initOwner(App.getMainWindow());
     initModality(Modality.WINDOW_MODAL);
-    setResizable(false);
+    setResizable(true);
 
     companyNameTextField = new TextField();
     categoryChoiceBox = new ChoiceBox<>();
@@ -55,6 +58,7 @@ public final class CustomerDetailDialog extends Stage {
     statusChoiceBox = new ChoiceBox<>();
     statusChoiceBox.setItems(FXCollections.observableArrayList(Status.values()));
     saveButton = new Button();
+    saveCloseButton = new Button();
 
     initialize(update);
   }
@@ -72,66 +76,116 @@ public final class CustomerDetailDialog extends Stage {
     var buttonBar = new HBox();
     buttonBar.setAlignment(Pos.CENTER_RIGHT);
     buttonBar.setSpacing(10);
-    buttonBar.getChildren().addAll(cancelButton, saveButton);
-    var detailViewPane = setUpGridPane();
+    buttonBar.getChildren().addAll(cancelButton, saveButton, saveCloseButton);
+    GridPane detailViewPane = setUpPropertiesPane();
+    VBox representativesView = setUpRepresentativesView();
     var vBox = new VBox();
-    vBox.getChildren().addAll(detailViewPane, buttonBar);
+    vBox.getChildren().addAll(detailViewPane, buttonBar, representativesView);
     vBox.setPadding(new Insets(12, 10, 12, 10));
     vBox.setSpacing(10);
 
-    var scene = new Scene(vBox, 400, 170);
+    var scene = new Scene(vBox, 1200, 400);
     setScene(scene);
+  }
+
+  private VBox setUpRepresentativesView() {
+    VBox representativesView = new VBox();
+    representativesView.getChildren().addAll(new Label("Reprezentanti:"), representativeTableView);
+    representativesView.setSpacing(10);
+    VBox.setVgrow(representativeTableView, Priority.ALWAYS);
+    VBox.setVgrow(representativesView, Priority.ALWAYS);
+
+    return representativesView;
   }
 
   private void setUpDialogForUpdate() {
     Customer customer = customerItem.getCustomer();
     setUpContent(customer);
     setTitle("Upraviť zákazníka");
+    representativeTableView.setCustomer(customer);
+    representativeTableView.refreshItems();
     saveButton.setText("Ulož");
-    saveButton.setOnAction(e -> {
-      Customer updatedCustomer = updateCustomer(customer);
-      try {
-        CompletableFuture<Void> cf = CompletableFuture
-            .runAsync(() -> webClient.updateCustomer(updatedCustomer).block())
-            .whenComplete((r, t) -> updateCustomerItem(t));
-        cf.get();
-      } catch (Exception ex) {
-        Thread.currentThread().interrupt();
-        throw new SaveException("""
-            Zmena údajov o zákazníkovi zlyhala.
-            Preverte spojenie so serverom.""");
-      } finally {
-        DesktopUtil.cancelOperation(getScene());
-      }
-    });
+    saveButton.setOnAction(e -> updateAction(customer, false));
+    saveCloseButton.setText("Ulož a zatvor");
+    saveCloseButton.setOnAction(e -> updateAction(customer, true));
   }
 
   private void setUpDialogForCreate() {
     setUpContent();
     setTitle("Pridať zákazníka");
+    representativeTableView.setCustomer(null);
+    representativeTableView.refreshItems();
     saveButton.setText("Pridaj");
-    saveButton.setOnAction(e -> {
-      Customer customer = provideCustomer();
-      try {
-        CompletableFuture<Customer> cf = CompletableFuture
-            .supplyAsync(() -> webClient.createCustomer(customer).block())
-            .whenComplete(this::addCustomerItem);
-        cf.get();
-      } catch (Exception ex) {
-        Thread.currentThread().interrupt();
-        throw new SaveException("""
-            Pridanie nového zákazníka zlyhalo.
-            Preverte spojenie so serverom.""");
-      } finally {
+    saveButton.setOnAction(e -> addAction(false));
+    saveCloseButton.setText("Pridaj a zatvor");
+    saveCloseButton.setOnAction(e -> addAction(true));
+  }
+
+  private void updateAction(Customer customer, boolean close) {
+    try {
+      Customer updatedCustomer = updateCustomer(customer);
+      CompletableFuture<Void> cf = CompletableFuture
+          .runAsync(() -> customerWebClient.updateCustomer(updatedCustomer).block())
+          .whenComplete((r, t) -> updateCustomerItem(t));
+      cf.get();
+    } catch (Exception ex) {
+      Thread.currentThread().interrupt();
+      throw new SaveException("""
+          Zmena údajov o zákazníkovi zlyhala.
+          Preverte spojenie so serverom.""");
+    } finally {
+      if (close) {
         DesktopUtil.cancelOperation(getScene());
       }
-    });
+    }
+  }
+
+  private void addAction(boolean close) {
+    try {
+      Customer customer = provideCustomer();
+      if (confirmAddAction(customer)) {
+        CompletableFuture
+            .supplyAsync(() -> customerWebClient.createCustomer(customer).block())
+            .whenComplete(this::addCustomerItem)
+            .get();
+      }
+    } catch (Exception ex) {
+      Thread.currentThread().interrupt();
+      throw new SaveException("""
+          Pridanie nového zákazníka zlyhalo.
+          Preverte spojenie so serverom.""");
+    } finally {
+      if (close) {
+        DesktopUtil.cancelOperation(getScene());
+      }
+    }
+  }
+
+  private boolean confirmAddAction(Customer customer) throws InterruptedException, ExecutionException {
+    boolean runAction = true;
+    if (customerExists(customer)) {
+      String message = """
+          Zákazník '%s' už existuje.
+          Skutočne ho chcete pridať?
+          """.formatted(customer.getCompanyName());
+      runAction = Dialogs.showAlertDialog("Pridať zákazníka", message, Alert.AlertType.CONFIRMATION);
+    }
+    return runAction;
+  }
+
+  private boolean customerExists(Customer customer) throws InterruptedException, ExecutionException {
+    CompletableFuture<Boolean> bf = CompletableFuture
+        .supplyAsync(() -> DesktopUtil.fetchCustomers(customerWebClient)
+            .anyMatch(c -> c.isSame(customer)));
+    return bf.get();
   }
 
   private void addCustomerItem(Customer customer, Throwable throwable) {
     if (throwable == null) {
       CustomerTableItem item = new CustomerTableItem(customer);
-      tableView.addItem(item);
+      customerTableView.addItem(item);
+      representativeTableView.setCustomer(customer);
+      representativeTableView.refreshItems();
     }
   }
 
@@ -146,6 +200,7 @@ public final class CustomerDetailDialog extends Stage {
       customerItem.setCategory(categoryChoiceBox.getValue());
       customerItem.setFocus(focusChoiceBox.getValue());
       customerItem.setStatus(statusChoiceBox.getValue());
+      representativeTableView.refreshItems();
     }
   }
 
@@ -157,7 +212,7 @@ public final class CustomerDetailDialog extends Stage {
     return customer;
   }
 
-  private GridPane setUpGridPane() {
+  private GridPane setUpPropertiesPane() {
     Label companyNameLabel = new Label("Názov spoločnosti:");
     Label categoryLabel = new Label("Kategória:");
     Label focusLabel = new Label("Zameranie:");

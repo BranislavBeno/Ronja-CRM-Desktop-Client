@@ -36,6 +36,7 @@ public class RepresentativeDetailDialog extends Stage {
     private final RepresentativeWebClient representativeWebClient;
     private final RepresentativeTableView tableView;
     private final RepresentativeTableItem representativeItem;
+    private final RepresentativeMapper mapper;
     private final TextField firstNameTextField;
     private final TextField lastNameTextField;
     private final TextField positionTextField;
@@ -49,13 +50,13 @@ public class RepresentativeDetailDialog extends Stage {
     private final ContactTableView phoneTableView;
     private final ContactTableView emailTableView;
     private final Button saveButton;
-    private final RepresentativeMapper mapper;
 
     public RepresentativeDetailDialog(CustomerWebClient customerWebClient,
                                       RepresentativeWebClient representativeWebClient,
                                       RepresentativeTableView tableView,
                                       RepresentativeMapper mapper,
-                                      boolean update) {
+                                      boolean update,
+                                      boolean forDialog) {
         this.customerWebClient = Objects.requireNonNull(customerWebClient);
         this.representativeWebClient = Objects.requireNonNull(representativeWebClient);
         this.tableView = Objects.requireNonNull(tableView);
@@ -75,7 +76,6 @@ public class RepresentativeDetailDialog extends Stage {
         statusChoiceBox.setItems(FXCollections.observableArrayList(Status.values()));
         contactTypeChoiceBox = new ChoiceBox<>();
         contactTypeChoiceBox.setItems(FXCollections.observableArrayList(ContactType.values()));
-        customerChoiceBox = new SearchableComboBox<>();
         saveButton = new Button();
         visitedDatePicker = new DatePicker();
         visitedDatePicker.setConverter(
@@ -85,6 +85,11 @@ public class RepresentativeDetailDialog extends Stage {
                 new LocalDateStringConverter(DateTimeUtil.DATE_TIME_FORMATTER, DateTimeUtil.DATE_TIME_FORMATTER));
         phoneTableView = new ContactTableView();
         emailTableView = new ContactTableView();
+        customerChoiceBox = new SearchableComboBox<>();
+        customerChoiceBox.setValue(tableView.getCustomer());
+        if (forDialog) {
+            customerChoiceBox.setDisable(true);
+        }
 
         initialize(update);
     }

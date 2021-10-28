@@ -20,17 +20,22 @@ public class Dialogs {
 
   public static void showRepresentativeDetailDialog(CustomerWebClient customerWebClient,
                                                     RepresentativeWebClient representativeWebClient,
-                                                    RepresentativeTableView tableView,
+                                                    RepresentativeTableView representativeView,
+                                                    RepresentativeMapper representativeMapper,
                                                     boolean update,
-                                                    RepresentativeMapper mapper) {
-    var dialog = new RepresentativeDetailDialog(customerWebClient, representativeWebClient, tableView, mapper, update);
+                                                    boolean forDialog) {
+    var dialog = new RepresentativeDetailDialog(
+            customerWebClient,
+            representativeWebClient, representativeView, representativeMapper,
+            update, forDialog);
     dialog.showAndWait();
   }
 
   public static void showCustomerDetailDialog(CustomerWebClient customerWebClient,
-                                              CustomerTableView tableView,
+                                              CustomerTableView customerTableView,
+                                              RepresentativeTableView representativeTableView,
                                               boolean update) {
-    var dialog = new CustomerDetailDialog(customerWebClient, tableView, update);
+    var dialog = new CustomerDetailDialog(customerWebClient, customerTableView, representativeTableView, update);
     dialog.showAndWait();
   }
 

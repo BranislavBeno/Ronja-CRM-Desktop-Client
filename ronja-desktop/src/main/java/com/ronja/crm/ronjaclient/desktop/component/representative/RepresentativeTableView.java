@@ -6,10 +6,7 @@ import com.ronja.crm.ronjaclient.desktop.component.util.DesktopUtil;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
 import com.ronja.crm.ronjaclient.service.clientapi.DeleteException;
 import com.ronja.crm.ronjaclient.service.clientapi.RepresentativeWebClient;
-import com.ronja.crm.ronjaclient.service.domain.ContactType;
-import com.ronja.crm.ronjaclient.service.domain.Representative;
-import com.ronja.crm.ronjaclient.service.domain.RonjaDate;
-import com.ronja.crm.ronjaclient.service.domain.Status;
+import com.ronja.crm.ronjaclient.service.domain.*;
 import com.ronja.crm.ronjaclient.service.dto.RepresentativeMapper;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -17,6 +14,8 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ContextMenu;
@@ -25,9 +24,6 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.tableview2.FilteredTableView;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -35,27 +31,31 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-@Component
 public class RepresentativeTableView extends VBox {
-
-    @Value("${client.customers.base-url}")
-    String customerBaseUrl;
-    @Value("${client.representatives.base-url}")
-    String representativeBaseUrl;
 
     private final CustomerWebClient customerWebClient;
     private final RepresentativeWebClient representativeWebClient;
     private final RepresentativeMapper mapper;
+    private final boolean forDialog;
+    private Customer customer = new Customer();
 
     private final ObservableList<RepresentativeTableItem> tableItems;
     private final FilteredTableView<RepresentativeTableItem> tableView;
 
-    public RepresentativeTableView(@Autowired CustomerWebClient customerWebClient,
-                                   @Autowired RepresentativeWebClient representativeWebClient,
-                                   @Autowired RepresentativeMapper mapper) {
+    public RepresentativeTableView(CustomerWebClient customerWebClient,
+                                   RepresentativeWebClient representativeWebClient,
+                                   RepresentativeMapper mapper) {
+        this(customerWebClient, representativeWebClient, mapper, false);
+    }
+
+    public RepresentativeTableView(CustomerWebClient customerWebClient,
+                                   RepresentativeWebClient representativeWebClient,
+                                   RepresentativeMapper mapper,
+                                   boolean forDialog) {
         this.customerWebClient = Objects.requireNonNull(customerWebClient);
         this.representativeWebClient = Objects.requireNonNull(representativeWebClient);
-        this.mapper = mapper;
+        this.mapper = Objects.requireNonNull(mapper);
+        this.forDialog = forDialog;
 
         tableView = new FilteredTableView<>();
         getChildren().add(tableView);
@@ -64,6 +64,14 @@ public class RepresentativeTableView extends VBox {
         addItems();
         setUpTableView();
         FilteredTableView.configureForFiltering(tableView, tableItems);
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public void refreshItems() {
@@ -77,7 +85,12 @@ public class RepresentativeTableView extends VBox {
 
     private Stream<Representative> fetchRepresentatives() {
         try {
-            Representative[] representatives = Objects.requireNonNull(representativeWebClient.fetchAllRepresentatives().block());
+            int customerId = customer != null ? customer.getId() : -1;
+            Representative[] representatives = switch (customerId) {
+                case -1 -> new Representative[]{};
+                case 0 -> Objects.requireNonNull(representativeWebClient.fetchAllRepresentatives().block());
+                default -> Objects.requireNonNull(representativeWebClient.fetchParticularRepresentatives(customerId).block());
+            };
             return Arrays.stream(representatives).sorted(Comparator.comparing(Representative::getLastName));
         } catch (Exception e) {
             throw new FetchException("""
@@ -125,25 +138,19 @@ public class RepresentativeTableView extends VBox {
     }
 
     private ContextMenu setUpContextMenu() {
-        // reset all filters
-        var resetFiltersItem = new MenuItem("Odstrániť filtre");
-        resetFiltersItem.setOnAction(e -> DesktopUtil.resetFilters(tableView));
-        // fetch all items from
-        var refreshItem = new MenuItem("Znovu načítať zoznam");
-        refreshItem.setOnAction(e -> refreshItems());
-        // update selected representative
-        var updateItem = new MenuItem("Upraviť...");
-        updateItem.setOnAction(e -> Dialogs.showRepresentativeDetailDialog(
-                customerWebClient, representativeWebClient, this, true, mapper));
-        updateItem.disableProperty().bind(isSelectedRepresentativeNull());
-        // add new representative
-        var addItem = new MenuItem("Pridať nového...");
-        addItem.setOnAction(e ->
-                Dialogs.showRepresentativeDetailDialog(customerWebClient, representativeWebClient, this, false, mapper));
-        // remove existing representative
-        var deleteItem = new MenuItem("Zmazať...");
-        deleteItem.setOnAction(e -> deleteRepresentative());
-        deleteItem.disableProperty().bind(isSelectedRepresentativeNull());
+        // menu item for reset all filters
+        MenuItem resetFiltersItem = provideMenuItem("Odstrániť filtre", e -> DesktopUtil.resetFilters(tableView));
+        // menu item for fetch all items from
+        MenuItem refreshItem = provideMenuItem("Znovu načítať zoznam", e -> refreshItems());
+        // menu item for update selected representative
+        MenuItem updateItem = provideBoundMenuItem("Upraviť...", e -> Dialogs.showRepresentativeDetailDialog(
+                customerWebClient, representativeWebClient, this, mapper, true, forDialog));
+        // menu item for add new representative
+        MenuItem addItem = provideMenuItem("Pridať nového...", e -> Dialogs.showRepresentativeDetailDialog(
+                customerWebClient, representativeWebClient, this, mapper, false, forDialog));
+        // menu item for remove existing representative
+        MenuItem deleteItem = provideBoundMenuItem("Zmazať...", e -> deleteRepresentative());
+
         // create context menu
         var contextMenu = new ContextMenu();
         contextMenu.getItems().addAll(
@@ -152,6 +159,20 @@ public class RepresentativeTableView extends VBox {
                 updateItem, addItem, deleteItem);
 
         return contextMenu;
+    }
+
+    private MenuItem provideMenuItem(String title, EventHandler<ActionEvent> value) {
+        var item = new MenuItem(title);
+        item.setOnAction(value);
+
+        return item;
+    }
+
+    private MenuItem provideBoundMenuItem(String title, EventHandler<ActionEvent> value) {
+        var item = provideMenuItem(title, value);
+        item.disableProperty().bind(isSelectedRepresentativeNull());
+
+        return item;
     }
 
     private void deleteRepresentative() {

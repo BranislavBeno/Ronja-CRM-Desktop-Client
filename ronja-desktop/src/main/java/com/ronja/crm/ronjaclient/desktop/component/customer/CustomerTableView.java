@@ -1,6 +1,7 @@
 package com.ronja.crm.ronjaclient.desktop.component.customer;
 
 import com.ronja.crm.ronjaclient.desktop.component.dialog.Dialogs;
+import com.ronja.crm.ronjaclient.desktop.component.representative.RepresentativeTableView;
 import com.ronja.crm.ronjaclient.desktop.component.util.DesktopUtil;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
 import com.ronja.crm.ronjaclient.service.clientapi.DeleteException;
@@ -22,26 +23,21 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.tableview2.FilteredTableView;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-@Component
 public class CustomerTableView extends VBox {
 
-    @Value("${client.customers.base-url}")
-    String customerBaseUrl;
-    @Autowired
     private final CustomerWebClient customerWebClient;
-
+    private final RepresentativeTableView representativeTableView;
     private final ObservableList<CustomerTableItem> tableItems;
     private final FilteredTableView<CustomerTableItem> tableView;
 
-    public CustomerTableView(CustomerWebClient customerWebClient) {
+    public CustomerTableView(CustomerWebClient customerWebClient,
+                             RepresentativeTableView representativeTableView) {
         this.customerWebClient = Objects.requireNonNull(customerWebClient);
+        this.representativeTableView = Objects.requireNonNull(representativeTableView);
 
         tableView = new FilteredTableView<>();
         getChildren().add(tableView);
@@ -98,11 +94,11 @@ public class CustomerTableView extends VBox {
         refreshItem.setOnAction(e -> refreshItems());
         // update selected customer
         var updateItem = new MenuItem("Upraviť...");
-        updateItem.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerWebClient, this, true));
+        updateItem.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerWebClient, this, representativeTableView, true));
         updateItem.disableProperty().bind(isSelectedCustomerNull());
         // add new customer
         var addItem = new MenuItem("Pridať nového...");
-        addItem.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerWebClient, this, false));
+        addItem.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerWebClient, this, representativeTableView, false));
         // remove existing customer
         var deleteItem = new MenuItem("Zmazať...");
         deleteItem.setOnAction(e -> deleteCustomer());

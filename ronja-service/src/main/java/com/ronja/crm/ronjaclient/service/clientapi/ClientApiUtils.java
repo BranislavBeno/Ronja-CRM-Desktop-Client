@@ -59,6 +59,15 @@ public class ClientApiUtils {
         .bodyToMono(clazz);
   }
 
+  static <T> Mono<T> fetchParticularEntities(WebClient webClient, int id, Class<T> clazz) {
+    return webClient.get()
+        .uri("/search?customerId=" + id)
+        .retrieve()
+        .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::propagateFetchingError)
+        .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::propagateServerError)
+        .bodyToMono(clazz);
+  }
+
   static Mono<Void> deleteEntity(WebClient webClient, int id) {
     return webClient.delete()
         .uri("/delete/" + id)

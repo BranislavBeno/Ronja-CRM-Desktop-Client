@@ -19,13 +19,11 @@ public class MainWindowController {
   @FXML
   private Tab representativesTab;
 
-  @Autowired
   private final CustomerTableView customerTableView;
-  @Autowired
   private final RepresentativeTableView representativeTableView;
 
-  public MainWindowController(CustomerTableView customerTableView,
-                              RepresentativeTableView representativeTableView) {
+  public MainWindowController(@Autowired CustomerTableView customerTableView,
+                              @Autowired RepresentativeTableView representativeTableView) {
     Thread.setDefaultUncaughtExceptionHandler(this::handleUncaughtException);
 
     this.customerTableView = Objects.requireNonNull(customerTableView);
