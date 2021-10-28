@@ -128,15 +128,13 @@ public final class CustomerDetailDialog extends Stage {
           .runAsync(() -> customerWebClient.updateCustomer(updatedCustomer).block())
           .whenComplete((r, t) -> updateCustomerItem(t));
       cf.get();
-    } catch (Exception ex) {
-      Thread.currentThread().interrupt();
-      throw new SaveException("""
-          Zmena údajov o zákazníkovi zlyhala.
-          Preverte spojenie so serverom.""");
-    } finally {
       if (close) {
         DesktopUtil.closeOperation(getScene());
       }
+    } catch (Exception ex) {
+      Thread.currentThread().interrupt();
+      String message = ex.getCause().getMessage();
+      throw new SaveException(message);
     }
   }
 
@@ -149,15 +147,13 @@ public final class CustomerDetailDialog extends Stage {
             .whenComplete(this::addCustomerItem)
             .get();
       }
-    } catch (Exception ex) {
-      Thread.currentThread().interrupt();
-      throw new SaveException("""
-          Pridanie nového zákazníka zlyhalo.
-          Preverte spojenie so serverom.""");
-    } finally {
       if (close) {
         DesktopUtil.closeOperation(getScene());
       }
+    } catch (Exception ex) {
+      Thread.currentThread().interrupt();
+      String message = ex.getCause().getMessage();
+      throw new SaveException(message);
     }
   }
 
