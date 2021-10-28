@@ -71,7 +71,7 @@ public final class CustomerDetailDialog extends Stage {
     }
 
     var cancelButton = new Button("Zruš");
-    cancelButton.setOnAction(e -> DesktopUtil.cancelOperation(getScene()));
+    cancelButton.setOnAction(e -> DesktopUtil.closeOperation(getScene()));
 
     var buttonBar = new HBox();
     buttonBar.setAlignment(Pos.CENTER_RIGHT);
@@ -135,7 +135,7 @@ public final class CustomerDetailDialog extends Stage {
           Preverte spojenie so serverom.""");
     } finally {
       if (close) {
-        DesktopUtil.cancelOperation(getScene());
+        DesktopUtil.closeOperation(getScene());
       }
     }
   }
@@ -156,7 +156,7 @@ public final class CustomerDetailDialog extends Stage {
           Preverte spojenie so serverom.""");
     } finally {
       if (close) {
-        DesktopUtil.cancelOperation(getScene());
+        DesktopUtil.closeOperation(getScene());
       }
     }
   }
