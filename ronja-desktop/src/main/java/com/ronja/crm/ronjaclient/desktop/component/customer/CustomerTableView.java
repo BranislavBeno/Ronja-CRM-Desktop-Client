@@ -129,7 +129,8 @@ public class CustomerTableView extends VBox {
                 Thread.currentThread().interrupt();
                 throw new DeleteException("""
                         Zmazanie zákazníka zlyhalo.
-                        Preverte spojenie so serverom.""");
+                        Zmažte najskôr reprezentantov uvedeného zákazníka,
+                        alebo preverte spojenie so serverom.""");
             }
         }
     }
