@@ -2,6 +2,7 @@ package com.ronja.crm.ronjaclient.desktop.component.util;
 
 import com.ronja.crm.ronjaclient.desktop.component.common.FetchException;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
+import com.ronja.crm.ronjaclient.service.clientapi.SaveException;
 import com.ronja.crm.ronjaclient.service.domain.Customer;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
@@ -82,4 +83,11 @@ public class DesktopUtil {
     }
   }
 
+  public static void handleException(Throwable throwable) {
+    String message = throwable.getCause().getMessage();
+    if (message.contains("Connection refused:")) {
+      message = "Spojenie so serverom je prerušené.";
+    }
+    throw new SaveException(message);
+  }
 }

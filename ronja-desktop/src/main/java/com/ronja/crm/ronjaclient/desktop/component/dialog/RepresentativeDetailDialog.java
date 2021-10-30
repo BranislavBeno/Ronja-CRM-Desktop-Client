@@ -7,7 +7,6 @@ import com.ronja.crm.ronjaclient.desktop.component.representative.Representative
 import com.ronja.crm.ronjaclient.desktop.component.util.DesktopUtil;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
 import com.ronja.crm.ronjaclient.service.clientapi.RepresentativeWebClient;
-import com.ronja.crm.ronjaclient.service.clientapi.SaveException;
 import com.ronja.crm.ronjaclient.service.domain.*;
 import com.ronja.crm.ronjaclient.service.dto.RepresentativeDto;
 import com.ronja.crm.ronjaclient.service.dto.RepresentativeMapper;
@@ -134,8 +133,7 @@ public class RepresentativeDetailDialog extends Stage {
         DesktopUtil.closeOperation(getScene());
       } catch (Exception ex) {
         Thread.currentThread().interrupt();
-        String message = ex.getCause().getMessage();
-        throw new SaveException(message);
+        DesktopUtil.handleException(ex);
       }
     });
   }
@@ -155,8 +153,7 @@ public class RepresentativeDetailDialog extends Stage {
         DesktopUtil.closeOperation(getScene());
       } catch (Exception ex) {
         Thread.currentThread().interrupt();
-        String message = ex.getCause().getMessage();
-        throw new SaveException(message);
+        DesktopUtil.handleException(ex);
       }
     });
   }

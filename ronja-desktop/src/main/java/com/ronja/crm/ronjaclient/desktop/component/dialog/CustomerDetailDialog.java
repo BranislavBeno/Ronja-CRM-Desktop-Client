@@ -6,7 +6,6 @@ import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableView;
 import com.ronja.crm.ronjaclient.desktop.component.representative.RepresentativeTableView;
 import com.ronja.crm.ronjaclient.desktop.component.util.DesktopUtil;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
-import com.ronja.crm.ronjaclient.service.clientapi.SaveException;
 import com.ronja.crm.ronjaclient.service.domain.Category;
 import com.ronja.crm.ronjaclient.service.domain.Customer;
 import com.ronja.crm.ronjaclient.service.domain.Focus;
@@ -133,8 +132,7 @@ public final class CustomerDetailDialog extends Stage {
       }
     } catch (Exception ex) {
       Thread.currentThread().interrupt();
-      String message = ex.getCause().getMessage();
-      throw new SaveException(message);
+      DesktopUtil.handleException(ex);
     }
   }
 
@@ -152,8 +150,7 @@ public final class CustomerDetailDialog extends Stage {
       }
     } catch (Exception ex) {
       Thread.currentThread().interrupt();
-      String message = ex.getCause().getMessage();
-      throw new SaveException(message);
+      DesktopUtil.handleException(ex);
     }
   }
 
