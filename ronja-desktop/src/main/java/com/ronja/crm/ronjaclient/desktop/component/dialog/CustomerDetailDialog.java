@@ -169,7 +169,7 @@ public final class CustomerDetailDialog extends Stage {
   private boolean customerExists(Customer customer) throws InterruptedException, ExecutionException {
     CompletableFuture<Boolean> bf = CompletableFuture
         .supplyAsync(() -> DesktopUtil.fetchCustomers(customerWebClient)
-            .anyMatch(c -> c.isSame(customer)));
+            .anyMatch(c -> c.equals(customer)));
     return bf.get();
   }
 

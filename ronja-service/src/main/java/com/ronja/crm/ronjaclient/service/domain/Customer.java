@@ -54,13 +54,6 @@ public class Customer {
     this.status = status;
   }
 
-  public boolean isSame(Customer customer) {
-    return Objects.equals(companyName, customer.companyName)
-        && Objects.equals(category, customer.category)
-        && Objects.equals(focus, customer.focus)
-        && Objects.equals(status, customer.status);
-  }
-
   @Override
   public String toString() {
     return companyName != null ? companyName : "";
