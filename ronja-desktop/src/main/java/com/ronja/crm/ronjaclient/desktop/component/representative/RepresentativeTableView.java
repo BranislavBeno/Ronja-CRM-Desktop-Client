@@ -26,6 +26,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import org.controlsfx.control.tableview2.FilteredTableColumn;
 import org.controlsfx.control.tableview2.FilteredTableView;
 
 import java.time.LocalDate;
@@ -134,9 +135,14 @@ public class RepresentativeTableView extends VBox {
         DesktopUtil.addFilteredColumn("Email", tableView, String.class, RepresentativeTableItem::emailsProperty);
         DesktopUtil.addFilteredColumn("Stav", tableView, Status.class, RepresentativeTableItem::statusProperty);
         DesktopUtil.addFilteredColumn("Spôsob kontaktovania", tableView, ContactType.class, RepresentativeTableItem::contactTypeProperty);
-        DesktopUtil.addFilteredColumn(LAST_VISIT_TEXT, tableView, RonjaDate.class, RepresentativeTableItem::lastVisitProperty);
-        DesktopUtil.addFilteredColumn(SCHEDULED_VISIT_TEXT, tableView, RonjaDate.class, RepresentativeTableItem::scheduledVisitProperty);
+        FilteredTableColumn<RepresentativeTableItem, RonjaDate> visitedColumn =
+                DesktopUtil.addFilteredColumn(LAST_VISIT_TEXT, tableView, RonjaDate.class, RepresentativeTableItem::lastVisitProperty);
+        FilteredTableColumn<RepresentativeTableItem, RonjaDate> scheduledColumn =
+                DesktopUtil.addFilteredColumn(SCHEDULED_VISIT_TEXT, tableView, RonjaDate.class, RepresentativeTableItem::scheduledVisitProperty);
         DesktopUtil.addFilteredColumn("Poznámka", tableView, String.class, RepresentativeTableItem::noticeProperty);
+
+        visitedColumn.setComparator(Comparator.comparing(RonjaDate::date));
+        scheduledColumn.setComparator(Comparator.comparing(RonjaDate::date));
 
         tableView.setContextMenu(setUpContextMenu());
         VBox.setVgrow(tableView, Priority.ALWAYS);
