@@ -23,7 +23,7 @@ public class RepresentativeWebClient {
   }
 
   public Mono<Representative[]> fetchParticularRepresentatives(int id) {
-    return ClientApiUtils.fetchParticularEntities(webClient, id, Representative[].class);
+    return ClientApiUtils.fetchParticularEntities(webClient, id);
   }
 
   public Mono<Representative> updateRepresentative(RepresentativeDto representativeDto) {
