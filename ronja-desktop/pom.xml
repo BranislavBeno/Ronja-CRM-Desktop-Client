@@ -15,9 +15,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>16</java.version>
-        <maven.compiler.release>16</maven.compiler.release>
-        <javafx.version>16</javafx.version>
+        <java.version>17</java.version>
+        <maven.compiler.release>17</maven.compiler.release>
+        <javafx.version>17.0.0.1</javafx.version>
         <javafx.maven.plugin.version>0.0.6</javafx.maven.plugin.version>
         <main.class>com.ronja.crm.ronjaclient.desktop.RonjaDesktopApplication</main.class>
     </properties>
@@ -35,12 +35,12 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
-            <version>16</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>16</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.controlsfx</groupId>

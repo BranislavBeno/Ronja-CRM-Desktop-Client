@@ -4,7 +4,7 @@ before_install:
 
 language: java
 install: true
-jdk: openjdk16
+jdk: openjdk17
 
 script:
   # Use maven as tester
