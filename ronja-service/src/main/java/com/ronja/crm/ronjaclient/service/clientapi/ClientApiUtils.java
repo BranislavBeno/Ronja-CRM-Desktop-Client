@@ -60,7 +60,7 @@ public class ClientApiUtils {
                 .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::propagateFetchingError)
                 .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::propagateServerError)
                 .bodyToMono(clazz)
-                .timeout(Duration.ofSeconds(5));
+                .timeout(Duration.ofSeconds(10));
     }
 
     static Mono<Representative[]> fetchParticularEntities(WebClient webClient, int id) {
@@ -70,7 +70,7 @@ public class ClientApiUtils {
                 .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::propagateFetchingError)
                 .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::propagateServerError)
                 .bodyToMono(Representative[].class)
-                .timeout(Duration.ofSeconds(5));
+                .timeout(Duration.ofSeconds(10));
     }
 
     static Mono<Void> deleteEntity(WebClient webClient, int id) {
@@ -80,7 +80,7 @@ public class ClientApiUtils {
                 .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::propagateDeletingError)
                 .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::propagateServerError)
                 .bodyToMono(Void.class)
-                .timeout(Duration.ofSeconds(5));
+                .timeout(Duration.ofSeconds(10));
     }
 
     static <T, U> Mono<T> postEntity(WebClient webClient, U u, Class<T> clazz) {
@@ -91,7 +91,7 @@ public class ClientApiUtils {
                 .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::propagateSavingError)
                 .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::propagateServerError)
                 .bodyToMono(clazz)
-                .timeout(Duration.ofSeconds(5));
+                .timeout(Duration.ofSeconds(10));
     }
 
     static <T, U> Mono<T> putEntity(WebClient webClient, U u, Class<T> clazz) {
@@ -102,6 +102,6 @@ public class ClientApiUtils {
                 .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::propagateSavingError)
                 .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::propagateServerError)
                 .bodyToMono(clazz)
-                .timeout(Duration.ofSeconds(5));
+                .timeout(Duration.ofSeconds(10));
     }
 }
