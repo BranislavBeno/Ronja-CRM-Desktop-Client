@@ -13,7 +13,7 @@
     <description>Client code to connect to the ronja service</description>
 
     <properties>
-        <java.version>16</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>
