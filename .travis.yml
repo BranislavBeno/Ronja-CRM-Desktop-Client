@@ -1,3 +1,8 @@
+sudo: required
+
+services:
+  - docker
+
 before_install:
   - chmod +x mvnw
 
@@ -6,10 +11,6 @@ install: true
 jdk: openjdk17
 
 script:
-  - curl -L -o agent https://app.testcontainers.cloud/download/testcontainers-cloud-agent_linux_x86-64
-  - chmod +x agent
-  - ./agent &
-  - ./agent wait
   - ./mvnw verify
   - ./mvnw jacoco:report sonar:sonar
   - ./mvnw test-compile failsafe:integration-test failsafe:verify
