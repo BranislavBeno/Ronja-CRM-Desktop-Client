@@ -1,13 +1,36 @@
 ## docker image
 image: openjdk:17
 
-## job test_code
+before_script:
+  - chmod +x mvnw
+
+stages:
+  - test
+  - integration_test
+
+## job unit tests
 ## - run unit tests
-## - evaluate test coverage 
-test_code:
+## - evaluate test coverage
+unit_test:
   stage: test
   script:
-    - sh ./mvnw verify jacoco:report
+    - ./mvnw verify jacoco:report
     - cat ronja-service/target/site/jacoco/index.html
+  tags:
+    - DOCKER
+
+## job integration tests
+## - run integration tests
+## - evaluate test coverage
+integration_test:
+  stage: integration_test
+  script:
+    - curl -L -o agent https://app.testcontainers.cloud/download/testcontainers-cloud-agent_linux_x86-64
+    - chmod +x agent
+    - ./agent &
+    - ./agent wait
+    - ./mvnw test-compile failsafe:integration-test failsafe:verify
+  needs:
+    - job: unit_test
   tags:
     - DOCKER

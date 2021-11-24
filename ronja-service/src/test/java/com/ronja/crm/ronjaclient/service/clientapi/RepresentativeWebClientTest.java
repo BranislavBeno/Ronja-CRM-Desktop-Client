@@ -96,6 +96,42 @@ class RepresentativeWebClientTest {
                     }
                 }
             ]""";
+    private static final String ONE_ITEM_LIST_RESPONSE = """
+            [
+                {
+                    "id": 2,
+                    "firstName": "Jane",
+                    "lastName": "Smith",
+                    "position": "CFO",
+                    "region": "EMEA",
+                    "notice": "anything special",
+                    "status": "INACTIVE",
+                    "lastVisit": "2020-10-07",
+                    "scheduledVisit": "2021-04-25",
+                    "contactType": "PHONE",
+                    "phoneNumbers": [
+                        {
+                            "contact": "+420920920920",
+                            "type": "HOME",
+                            "primary": false
+                        }
+                    ],
+                    "emails": [
+                        {
+                            "contact": "jane@example.com",
+                            "type": "WORK",
+                            "primary": true
+                        }
+                    ],
+                    "customer": {
+                        "id": 2,
+                        "companyName": "EmmaCorp",
+                        "category": "LEVEL_2",
+                        "focus": "MANUFACTURE",
+                        "status": "INACTIVE"
+                    }
+                }
+            ]""";
 
     private static final String SINGLE_RESPONSE = """
             {
@@ -134,7 +170,7 @@ class RepresentativeWebClientTest {
     }
 
     @Test
-    @DisplayName("Representative list fetching: happy path test")
+    @DisplayName("Representative all list fetching: happy path test")
     void testRepresentativeListFetching() {
         mockResponse(LIST_RESPONSE);
 
@@ -163,6 +199,18 @@ class RepresentativeWebClientTest {
             assertThat(representative.getCustomer().getCategory()).isEqualTo(Category.LEVEL_1);
             assertThat(representative.getCustomer().getFocus()).isEqualTo(Focus.BUILDER);
             assertThat(representative.getCustomer().getStatus()).isEqualTo(Status.ACTIVE);
+        });
+    }
+
+    @Test
+    @DisplayName("Representative particular list fetching: happy path test")
+    void testRepresentativeParticularListFetching() {
+        mockResponse(ONE_ITEM_LIST_RESPONSE);
+
+        Representative[] representatives = representativeWebClient.fetchParticularRepresentatives(2).block();
+        assertAll(() -> {
+            assertThat(representatives).isNotNull();
+            assertThat(representatives).hasSize(1);
         });
     }
 

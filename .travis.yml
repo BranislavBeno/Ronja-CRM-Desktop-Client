@@ -1,5 +1,4 @@
 before_install:
-  # Set Maven wrapper executable permissions
   - chmod +x mvnw
 
 language: java
@@ -7,10 +6,12 @@ install: true
 jdk: openjdk17
 
 script:
-  # Use maven as tester
-  - ./mvnw verify
-  # Trigger with Gradle static and dynamic code analysis
-  - ./mvnw jacoco:report sonar:sonar
+  - ./mvnw verify jacoco:report sonar:sonar
+  - curl -L -o agent https://app.testcontainers.cloud/download/testcontainers-cloud-agent_linux_x86-64
+  - chmod +x agent
+  - ./agent &
+  - ./agent wait
+  - ./mvnw test-compile failsafe:integration-test failsafe:verify
 
 notifications:
   email:

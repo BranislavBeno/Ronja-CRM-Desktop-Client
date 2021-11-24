@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.ronja.crm.ronjaclient</groupId>
         <artifactId>ronja-parent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>ronja-desktop</artifactId>
@@ -17,7 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
         <maven.compiler.release>17</maven.compiler.release>
-        <javafx.version>17.0.0.1</javafx.version>
+        <javafx.version>17.0.1</javafx.version>
         <javafx.maven.plugin.version>0.0.6</javafx.maven.plugin.version>
         <main.class>com.ronja.crm.ronjaclient.desktop.RonjaDesktopApplication</main.class>
     </properties>
@@ -50,7 +50,7 @@
         <dependency>
             <groupId>com.ronja.crm.ronjaclient</groupId>
             <artifactId>ronja-service</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
