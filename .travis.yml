@@ -10,7 +10,8 @@ script:
   - chmod +x agent
   - ./agent &
   - ./agent wait
-  - ./mvnw verify jacoco:report sonar:sonar
+  - ./mvnw verify
+  - ./mvnw jacoco:report sonar:sonar
   - ./mvnw test-compile failsafe:integration-test failsafe:verify
 
 notifications:
