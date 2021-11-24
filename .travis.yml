@@ -1,4 +1,4 @@
-before_install:
+bbefore_install:
   - chmod +x mvnw
 
 language: java
@@ -6,11 +6,11 @@ install: true
 jdk: openjdk17
 
 script:
-  - ./mvnw verify jacoco:report sonar:sonar
   - curl -L -o agent https://app.testcontainers.cloud/download/testcontainers-cloud-agent_linux_x86-64
   - chmod +x agent
   - ./agent &
   - ./agent wait
+  - ./mvnw verify jacoco:report sonar:sonar
   - ./mvnw test-compile failsafe:integration-test failsafe:verify
 
 notifications:
