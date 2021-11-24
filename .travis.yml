@@ -13,7 +13,6 @@ jdk: openjdk17
 script:
   - ./mvnw verify
   - ./mvnw jacoco:report sonar:sonar
-  - ./mvnw test-compile failsafe:integration-test failsafe:verify
 
 notifications:
   email:
