@@ -2,6 +2,7 @@ spring:
   application:
     ui:
       title: Ronja CRM
+      version: 1.1.0
   main:
     web-application-type: none
 

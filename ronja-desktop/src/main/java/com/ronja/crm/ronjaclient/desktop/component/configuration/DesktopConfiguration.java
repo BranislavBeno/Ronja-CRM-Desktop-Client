@@ -45,7 +45,7 @@ public class DesktopConfiguration {
     }
 
     @Bean
-    public AppInfo appInfo(@Value("${git.build.version}") String version,
+    public AppInfo appInfo(@Value("${spring.application.ui.version}") String version,
                            @Value("${git.build.time}") String buildDate,
                            @Value("${git.commit.id.abbrev}") String commitId,
                            @Value("${spring.application.ui.title}") String appTitle) {
