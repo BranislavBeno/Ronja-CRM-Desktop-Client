@@ -1,5 +1,6 @@
 package com.ronja.crm.ronjaclient.desktop.component.representative;
 
+import com.ronja.crm.ronjaclient.desktop.component.common.AppInfo;
 import com.ronja.crm.ronjaclient.desktop.component.common.FetchException;
 import com.ronja.crm.ronjaclient.desktop.component.dialog.DateFilterDialog;
 import com.ronja.crm.ronjaclient.desktop.component.dialog.Dialogs;
@@ -47,6 +48,7 @@ public class RepresentativeTableView extends VBox {
     private final CustomerWebClient customerWebClient;
     private final RepresentativeWebClient representativeWebClient;
     private final RepresentativeMapper mapper;
+    private final AppInfo appInfo;
     private final boolean forDialog;
     private final ObservableList<RepresentativeTableItem> tableItems;
     private final FilteredTableView<RepresentativeTableItem> tableView;
@@ -57,17 +59,20 @@ public class RepresentativeTableView extends VBox {
 
     public RepresentativeTableView(CustomerWebClient customerWebClient,
                                    RepresentativeWebClient representativeWebClient,
-                                   RepresentativeMapper mapper) {
-        this(customerWebClient, representativeWebClient, mapper, false);
+                                   RepresentativeMapper mapper,
+                                   AppInfo appInfo) {
+        this(customerWebClient, representativeWebClient, mapper, appInfo, false);
     }
 
     public RepresentativeTableView(CustomerWebClient customerWebClient,
                                    RepresentativeWebClient representativeWebClient,
                                    RepresentativeMapper mapper,
+                                   AppInfo appInfo,
                                    boolean forDialog) {
         this.customerWebClient = Objects.requireNonNull(customerWebClient);
         this.representativeWebClient = Objects.requireNonNull(representativeWebClient);
         this.mapper = Objects.requireNonNull(mapper);
+        this.appInfo = Objects.requireNonNull(appInfo);
         this.forDialog = forDialog;
         this.tableItems = FXCollections.observableArrayList();
         this.tableView = new FilteredTableView<>();
@@ -176,13 +181,17 @@ public class RepresentativeTableView extends VBox {
                 customerWebClient, representativeWebClient, this, mapper, false, forDialog));
         // menu item for remove existing representative
         MenuItem deleteItem = provideBoundMenuItem("Zmazať...", e -> deleteRepresentative());
+        // show application info
+        var aboutItem = new MenuItem("O aplikácii...");
+        aboutItem.setOnAction(e -> Dialogs.showAboutDialog(appInfo));
 
         // create context menu
         var contextMenu = new ContextMenu();
         contextMenu.getItems().addAll(
                 visitedFilterItem, scheduledFilterItem, resetFiltersItem, new SeparatorMenuItem(),
                 refreshItem, new SeparatorMenuItem(),
-                updateItem, addItem, deleteItem);
+                updateItem, addItem, deleteItem, new SeparatorMenuItem(),
+                aboutItem);
 
         return contextMenu;
     }

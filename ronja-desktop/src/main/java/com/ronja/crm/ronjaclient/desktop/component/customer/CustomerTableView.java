@@ -1,5 +1,6 @@
 package com.ronja.crm.ronjaclient.desktop.component.customer;
 
+import com.ronja.crm.ronjaclient.desktop.component.common.AppInfo;
 import com.ronja.crm.ronjaclient.desktop.component.dialog.Dialogs;
 import com.ronja.crm.ronjaclient.desktop.component.representative.RepresentativeTableView;
 import com.ronja.crm.ronjaclient.desktop.component.util.DesktopUtil;
@@ -33,11 +34,14 @@ public class CustomerTableView extends VBox {
     private final RepresentativeTableView representativeTableView;
     private final ObservableList<CustomerTableItem> tableItems;
     private final FilteredTableView<CustomerTableItem> tableView;
+    private final AppInfo appInfo;
 
     public CustomerTableView(CustomerWebClient customerWebClient,
-                             RepresentativeTableView representativeTableView) {
+                             RepresentativeTableView representativeTableView,
+                             AppInfo appInfo) {
         this.customerWebClient = Objects.requireNonNull(customerWebClient);
         this.representativeTableView = Objects.requireNonNull(representativeTableView);
+        this.appInfo = Objects.requireNonNull(appInfo);
 
         tableView = new FilteredTableView<>();
         getChildren().add(tableView);
@@ -103,12 +107,17 @@ public class CustomerTableView extends VBox {
         var deleteItem = new MenuItem("Zmazať...");
         deleteItem.setOnAction(e -> deleteCustomer());
         deleteItem.disableProperty().bind(isSelectedCustomerNull());
+        // show application info
+        var aboutItem = new MenuItem("O aplikácii...");
+        aboutItem.setOnAction(e -> Dialogs.showAboutDialog(appInfo));
+
         // create context menu
         var contextMenu = new ContextMenu();
         contextMenu.getItems().addAll(
                 resetFiltersItem, new SeparatorMenuItem(),
                 refreshItem, new SeparatorMenuItem(),
-                updateItem, addItem, deleteItem);
+                updateItem, addItem, deleteItem, new SeparatorMenuItem(),
+                aboutItem);
 
         return contextMenu;
     }
