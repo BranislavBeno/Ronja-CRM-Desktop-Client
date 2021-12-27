@@ -15,7 +15,7 @@ abstract class BasicWebClientIT {
     private static final Network NETWORK = Network.newNetwork();
 
     @Container
-    static final MySQLContainer<?> RONJA_DB = new MySQLContainer<>(DockerImageName.parse("mysql:8.0.25"))
+    static final MySQLContainer<?> RONJA_DB = new MySQLContainer<>(DockerImageName.parse("mysql:8.0.27"))
             .withExposedPorts(3306)
             .withAccessToHost(true)
             .withDatabaseName("ronja")
@@ -25,7 +25,7 @@ abstract class BasicWebClientIT {
             .withNetworkAliases("ronja_db");
 
     @Container
-    static final GenericContainer<?> RONJA_SERVER = new GenericContainer<>(DockerImageName.parse("beo1975/ronja-server:1.2.0"))
+    static final GenericContainer<?> RONJA_SERVER = new GenericContainer<>(DockerImageName.parse("beo1975/ronja-server:1.2.1"))
             .withExposedPorts(8087)
             .waitingFor(Wait.forHttp("/actuator/health"))
             .withNetwork(NETWORK)
