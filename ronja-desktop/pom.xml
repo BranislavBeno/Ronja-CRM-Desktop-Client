@@ -18,7 +18,7 @@
         <java.version>17</java.version>
         <maven.compiler.release>17</maven.compiler.release>
         <javafx.version>17.0.1</javafx.version>
-        <javafx.maven.plugin.version>0.0.6</javafx.maven.plugin.version>
+        <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
         <main.class>com.ronja.crm.ronjaclient.desktop.RonjaDesktopApplication</main.class>
     </properties>
 
