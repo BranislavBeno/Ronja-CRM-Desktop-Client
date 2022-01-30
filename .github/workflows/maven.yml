@@ -29,7 +29,7 @@ jobs:
         distribution: 'temurin'
         java-package: jdk
 
-    - name: Run Tests and Code Analysis
+    - name: Run Tests
       run: ./mvnw verify
 
     - name: Run Code Analysis
