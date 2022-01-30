@@ -1,6 +1,6 @@
 # Ronja CRM client
 
-[![Build Status](https://app.travis-ci.com/BranislavBeno/Ronja-CRM-Desktop-Client.svg?branch=master)](https://app.travis-ci.com/BranislavBeno/Ronja-CRM-Desktop-Client)
+[![Build Status](https://github.com/BranislavBeno/Ronja-CRM-Desktop-Client/actions/workflows/maven.yml/badge.svg)](https://github.com/BranislavBeno/Ronja-CRM-Desktop-Client/actions)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=com.ronja.crm.ronjaclient%3Aronja-parent&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=com.ronja.crm.ronjaclient%3Aronja-parent)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=com.ronja.crm.ronjaclient%3Aronja-parent&metric=coverage)](https://sonarcloud.io/dashboard?id=com.ronja.crm.ronjaclient%3Aronja-parent)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=com.ronja.crm.ronjaclient%3Aronja-parent&metric=ncloc)](https://sonarcloud.io/dashboard?id=com.ronja.crm.ronjaclient%3Aronja-parent)  
