@@ -73,6 +73,16 @@ public class ClientApiUtils {
                 .timeout(Duration.ofSeconds(20));
     }
 
+    static Mono<Representative[]> fetchScheduledEntities(WebClient webClient, int id) {
+        return webClient.get()
+                .uri("/scheduled?days=" + id)
+                .retrieve()
+                .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::propagateFetchingError)
+                .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::propagateServerError)
+                .bodyToMono(Representative[].class)
+                .timeout(Duration.ofSeconds(20));
+    }
+
     static Mono<Void> deleteEntity(WebClient webClient, int id) {
         return webClient.delete()
                 .uri("/delete/" + id)

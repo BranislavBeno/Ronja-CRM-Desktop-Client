@@ -141,9 +141,9 @@ public class RepresentativeTableView extends VBox {
         DesktopUtil.addFilteredColumn("Stav", tableView, Status.class, RepresentativeTableItem::statusProperty);
         DesktopUtil.addFilteredColumn("Spôsob kontaktovania", tableView, ContactType.class, RepresentativeTableItem::contactTypeProperty);
         FilteredTableColumn<RepresentativeTableItem, RonjaDate> visitedColumn =
-                DesktopUtil.addFilteredColumn(LAST_VISIT_TEXT, tableView, RonjaDate.class, RepresentativeTableItem::lastVisitProperty);
+                DesktopUtil.addFilteredColumn("Posledné stretnutia", tableView, RonjaDate.class, RepresentativeTableItem::lastVisitProperty);
         FilteredTableColumn<RepresentativeTableItem, RonjaDate> scheduledColumn =
-                DesktopUtil.addFilteredColumn(SCHEDULED_VISIT_TEXT, tableView, RonjaDate.class, RepresentativeTableItem::scheduledVisitProperty);
+                DesktopUtil.addFilteredColumn("Plánované stretnutia", tableView, RonjaDate.class, RepresentativeTableItem::scheduledVisitProperty);
         DesktopUtil.addFilteredColumn("Poznámka", tableView, String.class, RepresentativeTableItem::noticeProperty);
 
         visitedColumn.setComparator(Comparator.comparing(RonjaDate::date));

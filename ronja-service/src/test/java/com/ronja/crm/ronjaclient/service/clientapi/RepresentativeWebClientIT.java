@@ -15,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class RepresentativeWebClientIT extends BasicWebClientIT {
 
+    private static final int PLUS_DAYS = 14;
     private CustomerWebClient customerWebClient;
     private RepresentativeWebClient representativeWebClient;
     private final RepresentativeMapper mapper = new RepresentativeMapper();
@@ -32,7 +33,7 @@ class RepresentativeWebClientIT extends BasicWebClientIT {
     @Order(1)
     @DisplayName("Test-containers: Test whether new representative is created successfully")
     void testAddNewRepresentative() {
-        Representative representative = provideRepresentative().block();
+        Representative representative = createRepresentative().block();
 
         assertThat(representative).isNotNull();
         assertThat(representative.getId()).isNotZero();
@@ -80,7 +81,19 @@ class RepresentativeWebClientIT extends BasicWebClientIT {
         assertThat(representatives).isEmpty();
     }
 
-    private Mono<Representative> provideRepresentative() {
+    @Test
+    @Order(6)
+    @DisplayName("Test-containers: Test whether representatives scheduled for next 14 days are fetched successfully")
+    void testFetchScheduledRepresentatives() {
+        Representative[] representatives = representativeWebClient.fetchScheduledRepresentatives(PLUS_DAYS).block();
+        assertThat(representatives).isEmpty();
+
+        createRepresentative().block();
+        representatives = representativeWebClient.fetchScheduledRepresentatives(PLUS_DAYS).block();
+        assertThat(representatives).hasSize(1);
+    }
+
+    private Mono<Representative> createRepresentative() {
         Representative representative = new Representative();
         representative.setFirstName("Joe");
         representative.setLastName("Doe");
@@ -91,8 +104,8 @@ class RepresentativeWebClientIT extends BasicWebClientIT {
         representative.setContactType(ContactType.PHONE);
         representative.setPhoneNumbers(Collections.emptyList());
         representative.setEmails(Collections.emptyList());
-        representative.setLastVisit(LocalDate.now());
-        representative.setScheduledVisit(LocalDate.now());
+        representative.setLastVisit(LocalDate.now().minusDays(1));
+        representative.setScheduledVisit(LocalDate.now().plusDays(1));
         representative.setCustomer(provideCustomer().block());
 
         RepresentativeDto dto = mapper.toDto(representative);

@@ -6,6 +6,7 @@
 <VBox xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.ronja.crm.ronjaclient.desktop.controller.MainWindowController">
     <TabPane prefHeight="647.0" prefWidth="1134.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        <Tab fx:id="dashboardTab" text="Prehľad"/>
         <Tab fx:id="customersTab" text="Zákazníci"/>
         <Tab fx:id="representativesTab" text="Reprezentanti"/>
     </TabPane>

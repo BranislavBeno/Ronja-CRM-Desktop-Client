@@ -14,6 +14,7 @@ module ronja.desktop {
     exports com.ronja.crm.ronjaclient.desktop.controller;
     exports com.ronja.crm.ronjaclient.desktop.component.common;
     exports com.ronja.crm.ronjaclient.desktop.component.customer;
+    exports com.ronja.crm.ronjaclient.desktop.component.dashboard;
     exports com.ronja.crm.ronjaclient.desktop.component.representative;
     exports com.ronja.crm.ronjaclient.desktop.component.splashscreen;
 

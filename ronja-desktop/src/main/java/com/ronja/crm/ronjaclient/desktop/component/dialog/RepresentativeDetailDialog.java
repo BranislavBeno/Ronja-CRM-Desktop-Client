@@ -173,36 +173,36 @@ public class RepresentativeDetailDialog extends Stage {
 
   private void updateRepresentativeItem(Throwable throwable) {
     if (throwable == null) {
-      representativeItem.setFirstName(firstNameTextField.getText());
-      representativeItem.setLastName(lastNameTextField.getText());
-      representativeItem.setPosition(positionTextField.getText());
-      representativeItem.setRegion(regionTextField.getText());
-      representativeItem.setNotice(noticeTextField.getText());
-      representativeItem.setStatus(statusChoiceBox.getValue());
-      representativeItem.setContactType(contactTypeChoiceBox.getValue());
-      representativeItem.setLastVisit(new RonjaDate(visitedDatePicker.getValue()));
-      representativeItem.setScheduledVisit(new RonjaDate(scheduledDatePicker.getValue()));
-      representativeItem.setPhoneNumbers(phoneTableView.getContacts());
-      representativeItem.setEmails(emailTableView.getContacts());
-      representativeItem.setCustomer(customerChoiceBox.getValue());
+        representativeItem.setFirstName(firstNameTextField.getText());
+        representativeItem.setLastName(lastNameTextField.getText());
+        representativeItem.setPosition(positionTextField.getText());
+        representativeItem.setRegion(regionTextField.getText());
+        representativeItem.setNotice(noticeTextField.getText());
+        representativeItem.setStatus(statusChoiceBox.getValue());
+        representativeItem.setContactType(contactTypeChoiceBox.getValue());
+        representativeItem.setLastVisit(new RonjaDate(visitedDatePicker.getEditor().getText()));
+        representativeItem.setScheduledVisit(new RonjaDate(scheduledDatePicker.getEditor().getText()));
+        representativeItem.setPhoneNumbers(phoneTableView.getContacts());
+        representativeItem.setEmails(emailTableView.getContacts());
+        representativeItem.setCustomer(customerChoiceBox.getValue());
     }
   }
 
   private Representative updateRepresentative(Representative representative) {
-    representative.setFirstName(firstNameTextField.getText());
-    representative.setLastName(lastNameTextField.getText());
-    representative.setPosition(positionTextField.getText());
-    representative.setRegion(regionTextField.getText());
-    representative.setNotice(noticeTextField.getText());
-    representative.setStatus(statusChoiceBox.getValue());
-    representative.setContactType(contactTypeChoiceBox.getValue());
-    representative.setLastVisit(visitedDatePicker.getValue());
-    representative.setScheduledVisit(scheduledDatePicker.getValue());
-    representative.setPhoneNumbers(phoneTableView.getContacts());
-    representative.setEmails(emailTableView.getContacts());
-    representative.setCustomer(customerChoiceBox.getValue());
+      representative.setFirstName(firstNameTextField.getText());
+      representative.setLastName(lastNameTextField.getText());
+      representative.setPosition(positionTextField.getText());
+      representative.setRegion(regionTextField.getText());
+      representative.setNotice(noticeTextField.getText());
+      representative.setStatus(statusChoiceBox.getValue());
+      representative.setContactType(contactTypeChoiceBox.getValue());
+      representative.setLastVisit(DateTimeUtil.parse(visitedDatePicker.getEditor().getText()));
+      representative.setScheduledVisit(DateTimeUtil.parse(scheduledDatePicker.getEditor().getText()));
+      representative.setPhoneNumbers(phoneTableView.getContacts());
+      representative.setEmails(emailTableView.getContacts());
+      representative.setCustomer(customerChoiceBox.getValue());
 
-    return representative;
+      return representative;
   }
 
   private GridPane setUpPropertiesViewPane() {

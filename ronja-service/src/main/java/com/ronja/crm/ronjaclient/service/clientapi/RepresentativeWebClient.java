@@ -18,23 +18,27 @@ public class RepresentativeWebClient {
         .build();
   }
 
-  public Mono<Representative[]> fetchAllRepresentatives() {
-    return ClientApiUtils.fetchEntities(webClient, Representative[].class);
-  }
+    public Mono<Representative[]> fetchAllRepresentatives() {
+        return ClientApiUtils.fetchEntities(webClient, Representative[].class);
+    }
 
-  public Mono<Representative[]> fetchParticularRepresentatives(int id) {
-    return ClientApiUtils.fetchParticularEntities(webClient, id);
-  }
+    public Mono<Representative[]> fetchParticularRepresentatives(int id) {
+        return ClientApiUtils.fetchParticularEntities(webClient, id);
+    }
 
-  public Mono<Representative> updateRepresentative(RepresentativeDto representativeDto) {
-    return ClientApiUtils.putEntity(webClient, representativeDto, Representative.class);
-  }
+    public Mono<Representative[]> fetchScheduledRepresentatives(int id) {
+        return ClientApiUtils.fetchScheduledEntities(webClient, id);
+    }
 
-  public Mono<Representative> createRepresentative(RepresentativeDto representativeDto) {
-    return ClientApiUtils.postEntity(webClient, representativeDto, Representative.class);
-  }
+    public Mono<Representative> updateRepresentative(RepresentativeDto representativeDto) {
+        return ClientApiUtils.putEntity(webClient, representativeDto, Representative.class);
+    }
 
-  public Mono<Void> deleteRepresentative(int id) {
+    public Mono<Representative> createRepresentative(RepresentativeDto representativeDto) {
+        return ClientApiUtils.postEntity(webClient, representativeDto, Representative.class);
+    }
+
+    public Mono<Void> deleteRepresentative(int id) {
     return ClientApiUtils.deleteEntity(webClient, id);
   }
 }

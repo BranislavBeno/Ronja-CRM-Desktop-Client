@@ -89,7 +89,7 @@ public class Dialogs {
                 Dátum: %s
                 Commit: %s
                                 
-                %s 2021 Copyright: Branislav Beňo
+                %s 2021-2022 Copyright: Branislav Beňo
                 """.formatted(appInfo.version(), date, appInfo.commitId(), copyrightSymbol));
         alert.showAndWait();
     }
