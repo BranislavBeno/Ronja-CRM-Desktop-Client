@@ -22,6 +22,18 @@
         <sonar.login>3953a9d7e11d39a5021edd84d4bbe2f99c1b0947</sonar.login>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.13.2</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -61,6 +73,7 @@
     <modules>
         <module>ronja-desktop</module>
         <module>ronja-service</module>
+        <module>ronja-locale</module>
     </modules>
 
 </project>
