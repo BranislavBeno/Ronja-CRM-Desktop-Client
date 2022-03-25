@@ -4,6 +4,7 @@ import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableView;
 import com.ronja.crm.ronjaclient.desktop.component.dashboard.DashboardPane;
 import com.ronja.crm.ronjaclient.desktop.component.dialog.Dialogs;
 import com.ronja.crm.ronjaclient.desktop.component.representative.RepresentativeTableView;
+import com.ronja.crm.ronjaclient.desktop.i18n.I18N;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
@@ -40,6 +41,7 @@ public class MainWindowController {
     public void initialize() {
         // dashboard tab
         dashboardTab.setContent(dashboardPane);
+        dashboardTab.textProperty().bind(I18N.createStringBinding("label.tab.dashboard"));
         dashboardTab.selectedProperty().addListener((observable, oldValue, newValue) ->
                 onChange(newValue, dashboardPane::setUpPane));
         // customers tab
