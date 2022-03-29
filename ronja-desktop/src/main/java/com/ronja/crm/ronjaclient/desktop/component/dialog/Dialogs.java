@@ -4,6 +4,7 @@ import com.ronja.crm.ronjaclient.desktop.App;
 import com.ronja.crm.ronjaclient.desktop.component.common.AppInfo;
 import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableView;
 import com.ronja.crm.ronjaclient.desktop.component.representative.RepresentativeTableView;
+import com.ronja.crm.ronjaclient.desktop.i18n.I18N;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
 import com.ronja.crm.ronjaclient.service.clientapi.RepresentativeWebClient;
 import com.ronja.crm.ronjaclient.service.dto.RepresentativeMapper;
@@ -42,9 +43,9 @@ public class Dialogs {
         dialog.showAndWait();
     }
 
-    public static void showErrorMessage(String title, String message) {
+    public static void showErrorMessage(String titleKey, String message) {
         var alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
+        alert.titleProperty().bind(I18N.createStringBinding(titleKey));
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.setResizable(true);

@@ -46,10 +46,12 @@ public class MainWindowController {
                 onChange(newValue, dashboardPane::setUpPane));
         // customers tab
         customersTab.setContent(customerTableView);
+        customersTab.textProperty().bind(I18N.createStringBinding("label.tab.customers"));
         customersTab.selectedProperty().addListener((observable, oldValue, newValue) ->
                 onChange(newValue, customerTableView::refreshItems));
         // representatives tab
         representativesTab.setContent(representativeTableView);
+        representativesTab.textProperty().bind(I18N.createStringBinding("label.tab.representatives"));
         representativesTab.selectedProperty().addListener((observable, oldValue, newValue) ->
                 onChange(newValue, representativeTableView::refreshItems));
     }
@@ -62,6 +64,6 @@ public class MainWindowController {
 
     private void handleUncaughtException(Thread thread, Throwable throwable) {
         Platform.runLater(
-                () -> Dialogs.showErrorMessage("Chyba", throwable.getMessage()));
+                () -> Dialogs.showErrorMessage("dialog.title.error", throwable.getMessage()));
     }
 }

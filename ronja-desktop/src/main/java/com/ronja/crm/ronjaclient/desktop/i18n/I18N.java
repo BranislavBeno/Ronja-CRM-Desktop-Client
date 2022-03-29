@@ -13,27 +13,27 @@ import java.util.concurrent.Callable;
 
 public final class I18N {
 
-    private static final ObjectProperty<Locale> locale;
+    private static final ObjectProperty<Locale> LOCALE;
 
     static {
-        locale = new SimpleObjectProperty<>(getDefaultLocale());
-        locale.addListener((observable, oldValue, newValue) -> Locale.setDefault(newValue));
+        LOCALE = new SimpleObjectProperty<>(getDefaultLocale());
+        LOCALE.addListener((observable, oldValue, newValue) -> Locale.setDefault(newValue));
     }
 
     private I18N() {
     }
 
     public static List<Locale> getSupportedLocales() {
-        return new ArrayList<>(Arrays.asList(Locale.ENGLISH, Locale.GERMAN, new Locale("sk", "SK")));
+        return new ArrayList<>(Arrays.asList(Locale.ENGLISH, new Locale("sk", "SK")));
     }
 
     public static Locale getDefaultLocale() {
         Locale sysDefault = Locale.getDefault();
-        return getSupportedLocales().contains(sysDefault) ? sysDefault : Locale.ENGLISH;
+        return getSupportedLocales().contains(sysDefault) ? sysDefault : getSupportedLocales().get(1);
     }
 
     public static Locale getLocale() {
-        return locale.get();
+        return LOCALE.get();
     }
 
     public static void setLocale(Locale locale) {
@@ -42,25 +42,25 @@ public final class I18N {
     }
 
     public static ObjectProperty<Locale> localeProperty() {
-        return locale;
+        return LOCALE;
     }
 
     public static String get(final String key, final Object... args) {
-        ResourceBundle bundle = ResourceBundle.getBundle("messages", getLocale());
+        ResourceBundle bundle = ResourceBundle.getBundle("language/messages", getLocale());
         return MessageFormat.format(bundle.getString(key), args);
     }
 
     public static StringBinding createStringBinding(final String key, Object... args) {
-        return Bindings.createStringBinding(() -> get(key, args), locale);
+        return Bindings.createStringBinding(() -> get(key, args), LOCALE);
     }
 
     public static StringBinding createStringBinding(Callable<String> func) {
-        return Bindings.createStringBinding(func, locale);
+        return Bindings.createStringBinding(func, LOCALE);
     }
 
-    public static Label labelForValue(Callable<String> func) {
+    public static Label labelForValue(final String key, final Object... args) {
         Label label = new Label();
-        label.textProperty().bind(createStringBinding(func));
+        label.textProperty().bind(createStringBinding(key, args));
         return label;
     }
 

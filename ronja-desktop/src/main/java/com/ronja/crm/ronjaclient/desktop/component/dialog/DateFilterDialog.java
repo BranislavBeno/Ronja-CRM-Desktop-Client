@@ -48,7 +48,7 @@ public class DateFilterDialog extends Dialog<DateRecord> {
         EventHandler<ActionEvent> filter = event -> {
             if (startDatePicker.getValue().isAfter(endDatePicker.getValue())) {
                 event.consume();
-                Dialogs.showErrorMessage("Chyba", "Dátum 'od' nesmie byť neskorší ako 'do'!");
+                Dialogs.showErrorMessage("dialog.title.error", "Dátum 'od' nesmie byť neskorší ako 'do'!");
             }
         };
 

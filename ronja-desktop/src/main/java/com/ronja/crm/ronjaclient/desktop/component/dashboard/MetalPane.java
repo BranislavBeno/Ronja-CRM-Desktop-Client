@@ -1,6 +1,7 @@
 package com.ronja.crm.ronjaclient.desktop.component.dashboard;
 
 import com.ronja.crm.ronjaclient.desktop.component.common.FetchException;
+import com.ronja.crm.ronjaclient.desktop.i18n.I18N;
 import com.ronja.crm.ronjaclient.service.clientapi.MetalDataWebClient;
 import com.ronja.crm.ronjaclient.service.domain.MetalData;
 import com.ronja.crm.ronjaclient.service.util.DateTimeUtil;
@@ -41,7 +42,7 @@ public class MetalPane extends VBox {
     }
 
     private Label setUpTitle() {
-        var title = new Label("Ceny podľa LME:");
+        var title = I18N.labelForValue("label.metal.current.prices");
         title.setPadding(new Insets(0, 0, 0, LEFT));
 
         return title;
