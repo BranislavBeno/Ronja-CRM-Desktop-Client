@@ -29,7 +29,7 @@ public final class I18N {
 
     public static Locale getDefaultLocale() {
         Locale sysDefault = Locale.getDefault();
-        return getSupportedLocales().contains(sysDefault) ? sysDefault : getSupportedLocales().get(1);
+        return getSupportedLocales().contains(sysDefault) ? sysDefault : Locale.ENGLISH;
     }
 
     public static Locale getLocale() {
