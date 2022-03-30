@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.io.Resource;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -18,20 +19,28 @@ import java.util.Locale;
 public class StageInitializer implements ApplicationListener<StageReadyEvent> {
 
     private final String applicationTitle;
+    private final String localization;
+    private final Resource mainResource;
     private final ApplicationContext applicationContext;
-    @Value("classpath:/MainWindow.fxml")
-    private Resource mainResource;
 
     public StageInitializer(@Value("${spring.application.ui.title}") String applicationTitle,
+                            @Value("${spring.application.ui.localization}") String localization,
+                            @Value("classpath:/MainWindow.fxml") Resource mainResource,
                             ApplicationContext applicationContext) {
         this.applicationTitle = applicationTitle;
+        this.localization = localization;
+        this.mainResource = mainResource;
         this.applicationContext = applicationContext;
     }
 
     @Override
-    public void onApplicationEvent(StageReadyEvent event) {
+    public void onApplicationEvent(@NonNull StageReadyEvent event) {
         try {
-            I18N.setLocale(new Locale("sk", "SK"));
+            Locale locale = Locale.ENGLISH;
+            if (localization.equals("SK")) {
+                locale = new Locale("sk", "SK");
+            }
+            I18N.setLocale(locale);
 
             var fxmlLoader = new FXMLLoader(mainResource.getURL());
             fxmlLoader.setControllerFactory(applicationContext::getBean);
