@@ -3,8 +3,8 @@ package com.ronja.crm.ronjaclient.desktop.component.dialog;
 import com.ronja.crm.ronjaclient.desktop.App;
 import com.ronja.crm.ronjaclient.desktop.component.common.AppInfo;
 import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableView;
+import com.ronja.crm.ronjaclient.desktop.component.internationalization.I18nUtils;
 import com.ronja.crm.ronjaclient.desktop.component.representative.RepresentativeTableView;
-import com.ronja.crm.ronjaclient.desktop.i18n.I18N;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
 import com.ronja.crm.ronjaclient.service.clientapi.RepresentativeWebClient;
 import com.ronja.crm.ronjaclient.service.dto.RepresentativeMapper;
@@ -45,7 +45,7 @@ public class Dialogs {
 
     public static void showErrorMessage(String titleKey, String message) {
         var alert = new Alert(Alert.AlertType.ERROR);
-        alert.titleProperty().bind(I18N.createStringBinding(titleKey));
+        alert.titleProperty().bind(I18nUtils.createStringBinding(titleKey));
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.setResizable(true);

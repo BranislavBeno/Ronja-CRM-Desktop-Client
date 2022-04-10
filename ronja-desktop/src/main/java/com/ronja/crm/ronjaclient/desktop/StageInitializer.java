@@ -1,7 +1,7 @@
 package com.ronja.crm.ronjaclient.desktop;
 
 import com.ronja.crm.ronjaclient.desktop.DesktopApplication.StageReadyEvent;
-import com.ronja.crm.ronjaclient.desktop.i18n.I18N;
+import com.ronja.crm.ronjaclient.locale.i18n.I18N;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

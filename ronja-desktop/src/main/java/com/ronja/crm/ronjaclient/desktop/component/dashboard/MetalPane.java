@@ -1,7 +1,8 @@
 package com.ronja.crm.ronjaclient.desktop.component.dashboard;
 
 import com.ronja.crm.ronjaclient.desktop.component.common.FetchException;
-import com.ronja.crm.ronjaclient.desktop.i18n.I18N;
+import com.ronja.crm.ronjaclient.desktop.component.internationalization.I18nUtils;
+import com.ronja.crm.ronjaclient.locale.i18n.I18N;
 import com.ronja.crm.ronjaclient.service.clientapi.MetalDataWebClient;
 import com.ronja.crm.ronjaclient.service.domain.MetalData;
 import com.ronja.crm.ronjaclient.service.util.DateTimeUtil;
@@ -31,9 +32,9 @@ public class MetalPane extends VBox {
     public MetalPane(MetalDataWebClient webClient) {
         this.webClient = webClient;
 
-        setUpPane();
         setPadding(new Insets(TOP_RIGHT_BOTTOM_LEFT));
         setSpacing(2);
+        setUpPane();
     }
 
     public void setUpPane() {
@@ -42,7 +43,7 @@ public class MetalPane extends VBox {
     }
 
     private Label setUpTitle() {
-        var title = I18N.labelForValue("label.metal.current.prices");
+        var title = I18nUtils.labelForValue("label.metal.current.prices");
         title.setPadding(new Insets(0, 0, 0, LEFT));
 
         return title;
@@ -63,9 +64,9 @@ public class MetalPane extends VBox {
         prices.addRow(0, new Separator(), new Separator());
         prices.addRow(1, new Label("Zo dňa: "), new Label(m.getFetched().format(DateTimeUtil.DATE_TIME_FORMATTER)));
         prices.addRow(2, new Separator(), new Separator());
-        prices.addRow(3, new Label(MetalType.ALUMINIUM.getTitle() + ": "), new Label(m.getAluminiumPrice()));
-        prices.addRow(4, new Label(MetalType.LEAD.getTitle() + ": "), new Label(m.getLeadPrice()));
-        prices.addRow(5, new Label(MetalType.COPPER.getTitle() + ": "), new Label(m.getCopperPrice()));
+        prices.addRow(3, new Label(MetalType.ALUMINIUM + ": "), new Label(m.getAluminiumPrice()));
+        prices.addRow(4, new Label(MetalType.LEAD + ": "), new Label(m.getLeadPrice()));
+        prices.addRow(5, new Label(MetalType.COPPER + ": "), new Label(m.getCopperPrice()));
         prices.addRow(6, new Separator(), new Separator());
     }
 
@@ -93,7 +94,7 @@ public class MetalPane extends VBox {
 
     private XYChart.Series<String, Number> fillChart(MetalType type) {
         XYChart.Series<String, Number> dataSeries = new XYChart.Series<>();
-        dataSeries.setName(type.getTitle());
+        dataSeries.setName(type.toString());
         MetalData[] metalDataArray = webClient.fetchMetalData().block();
 
         if (metalDataArray != null) {
@@ -120,16 +121,19 @@ public class MetalPane extends VBox {
     }
 
     enum MetalType {
-        ALUMINIUM("Hliník"), COPPER("Meď"), LEAD("Olovo");
+        ALUMINIUM("enum.metal.type.aluminium"),
+        COPPER("enum.metal.type.copper"),
+        LEAD("enum.metal.type.lead");
 
-        private final String title;
+        private final String key;
 
-        MetalType(String title) {
-            this.title = title;
+        MetalType(String key) {
+            this.key = key;
         }
 
-        public String getTitle() {
-            return title;
+        @Override
+        public String toString() {
+            return I18N.get(key);
         }
     }
 }

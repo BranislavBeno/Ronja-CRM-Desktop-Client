@@ -10,7 +10,7 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>ronja-locale</artifactId>
+    <artifactId>ronja-internationalization</artifactId>
     <description>Client code to internationalize application</description>
 
     <properties>
@@ -29,7 +29,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>5.3.16</version>
+            <version>5.3.17</version>
         </dependency>
     </dependencies>
 
