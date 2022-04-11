@@ -1,20 +1,20 @@
 package com.ronja.crm.ronjaclient.service.domain;
 
+import com.ronja.crm.ronjaclient.locale.i18n.I18N;
+
 public enum Category {
-    LEVEL_1("1"), LEVEL_2("2"), LEVEL_3("3");
+    LEVEL_1("category.level.1"),
+    LEVEL_2("category.level.2"),
+    LEVEL_3("category.level.3");
 
-    private final String label;
+    private final String key;
 
-    Category(String label) {
-        this.label = label;
-    }
-
-    public String getLabel() {
-        return label;
+    Category(String key) {
+        this.key = key;
     }
 
     @Override
     public String toString() {
-        return label;
+        return I18N.get(key);
     }
 }

@@ -121,9 +121,9 @@ public class MetalPane extends VBox {
     }
 
     enum MetalType {
-        ALUMINIUM("enum.metal.type.aluminium"),
-        COPPER("enum.metal.type.copper"),
-        LEAD("enum.metal.type.lead");
+        ALUMINIUM("metal.type.aluminium"),
+        COPPER("metal.type.copper"),
+        LEAD("metal.type.lead");
 
         private final String key;
 

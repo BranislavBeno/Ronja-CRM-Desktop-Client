@@ -9,7 +9,6 @@ module ronja.desktop {
     requires spring.core;
     requires spring.web;
     requires ronja.service;
-    requires ronja.internationalization;
 
     exports com.ronja.crm.ronjaclient.desktop;
     exports com.ronja.crm.ronjaclient.desktop.controller;
