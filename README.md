@@ -7,7 +7,7 @@
 [![](https://img.shields.io/badge/Java-17-blue)](/pom.xml)
 [![](https://img.shields.io/badge/JavaFX-18.0.1-blue)](/pom.xml)
 [![](https://img.shields.io/badge/Spring%20Boot-2.6.7-blue)](/pom.xml)
-[![](https://img.shields.io/badge/Testcontainers-1.17.1-blue)](/pom.xml)
+[![](https://img.shields.io/badge/Testcontainers-1.17.2-blue)](/pom.xml)
 [![](https://img.shields.io/badge/Maven-3.8.5-blue)](https://img.shields.io/badge/maven-v3.8.5-blue)
 [![](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
