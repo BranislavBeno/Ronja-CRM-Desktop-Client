@@ -7,9 +7,9 @@ import com.ronja.crm.ronjaclient.desktop.component.dashboard.MetalPane;
 import com.ronja.crm.ronjaclient.desktop.component.dashboard.ScheduledPane;
 import com.ronja.crm.ronjaclient.desktop.component.representative.RepresentativeTableView;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
-import com.ronja.crm.ronjaclient.service.clientapi.MetalDataWebClient;
 import com.ronja.crm.ronjaclient.service.clientapi.RepresentativeWebClient;
 import com.ronja.crm.ronjaclient.service.dto.RepresentativeMapper;
+import com.ronja.crm.ronjaclient.service.service.MetalDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,7 +70,7 @@ public class DesktopConfiguration {
     }
 
     @Bean
-    public MetalPane metalPane(@Autowired MetalDataWebClient metalDataWebClient) {
-        return new MetalPane(metalDataWebClient);
+    public MetalPane metalPane(@Autowired MetalDataService dataService) {
+        return new MetalPane(dataService);
     }
 }

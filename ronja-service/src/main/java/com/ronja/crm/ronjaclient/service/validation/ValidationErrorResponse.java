@@ -1,4 +1,4 @@
-package com.ronja.crm.ronjaclient.service.clientapi;
+package com.ronja.crm.ronjaclient.service.validation;
 
 import java.util.Collection;
 

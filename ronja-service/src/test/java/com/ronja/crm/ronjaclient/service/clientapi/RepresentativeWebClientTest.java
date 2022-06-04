@@ -3,6 +3,8 @@ package com.ronja.crm.ronjaclient.service.clientapi;
 import com.ronja.crm.ronjaclient.service.domain.*;
 import com.ronja.crm.ronjaclient.service.dto.RepresentativeDto;
 import com.ronja.crm.ronjaclient.service.dto.RepresentativeMapper;
+import com.ronja.crm.ronjaclient.service.validation.DeleteException;
+import com.ronja.crm.ronjaclient.service.validation.FetchException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.jetbrains.annotations.NotNull;

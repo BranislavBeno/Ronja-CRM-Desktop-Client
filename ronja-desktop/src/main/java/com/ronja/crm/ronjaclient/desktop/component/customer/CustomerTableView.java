@@ -5,7 +5,7 @@ import com.ronja.crm.ronjaclient.desktop.component.dialog.Dialogs;
 import com.ronja.crm.ronjaclient.desktop.component.representative.RepresentativeTableView;
 import com.ronja.crm.ronjaclient.desktop.component.util.DesktopUtil;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
-import com.ronja.crm.ronjaclient.service.clientapi.DeleteException;
+import com.ronja.crm.ronjaclient.service.validation.DeleteException;
 import com.ronja.crm.ronjaclient.service.domain.Category;
 import com.ronja.crm.ronjaclient.service.domain.Customer;
 import com.ronja.crm.ronjaclient.service.domain.Focus;
