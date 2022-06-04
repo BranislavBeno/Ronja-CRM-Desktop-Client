@@ -1,8 +1,7 @@
 package com.ronja.crm.ronjaclient.desktop.component.dashboard;
 
-import com.ronja.crm.ronjaclient.desktop.component.common.FetchException;
-import com.ronja.crm.ronjaclient.service.clientapi.MetalDataWebClient;
 import com.ronja.crm.ronjaclient.service.domain.MetalData;
+import com.ronja.crm.ronjaclient.service.service.MetalDataService;
 import com.ronja.crm.ronjaclient.service.util.DateTimeUtil;
 import javafx.geometry.Insets;
 import javafx.geometry.Side;
@@ -12,23 +11,24 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Objects;
+import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class MetalPane extends VBox {
 
     private static final int LEFT = 25;
     private static final int TOP_RIGHT_BOTTOM_LEFT = 10;
-    private final MetalDataWebClient webClient;
+    private final MetalDataService dataService;
 
-    public MetalPane(MetalDataWebClient webClient) {
-        this.webClient = webClient;
+    public MetalPane(MetalDataService dataService) {
+        this.dataService = dataService;
 
         setUpPane();
         setPadding(new Insets(TOP_RIGHT_BOTTOM_LEFT));
@@ -37,7 +37,7 @@ public class MetalPane extends VBox {
 
     public void setUpPane() {
         getChildren().clear();
-        getChildren().addAll(setUpTitle(), setUpLatestPrices(), setUpChart());
+        getChildren().addAll(setUpTitle(), setUpLatestPrices(), setUpChartTabs());
     }
 
     private Label setUpTitle() {
@@ -51,7 +51,7 @@ public class MetalPane extends VBox {
         var prices = new GridPane();
         prices.setPadding(new Insets(0, 0, 0, LEFT));
 
-        fetchMetalData()
+        dataService.fetchData()
                 .reduce((first, second) -> second)
                 .ifPresent(m -> addLatestPrices(prices, m));
 
@@ -68,44 +68,49 @@ public class MetalPane extends VBox {
         prices.addRow(6, new Separator(), new Separator());
     }
 
-    private Stream<MetalData> fetchMetalData() {
-        try {
-            MetalData[] metalData = Objects.requireNonNull(webClient.fetchMetalData().block());
-            return Arrays.stream(metalData).sorted(Comparator.comparing(MetalData::getFetched));
-        } catch (Exception e) {
-            throw new FetchException("""
-                    Nepodarilo sa získať dáta o cene kovov.
-                    Preverte spojenie so serverom.""", e);
-        }
+    private TabPane setUpChartTabs() {
+        Tab dailyTab = createTab("Denný prehľad", dataService::fetchDailyData);
+        Tab weeklyTab = createTab("Týždenný prehľad", dataService::fetchWeeklyData);
+
+        TabPane pane = new TabPane();
+        pane.getTabs().addAll(dailyTab, weeklyTab);
+
+        return pane;
     }
 
-    private LineChart<String, Number> setUpChart() {
+    private Tab createTab(String caption, Supplier<Stream<MetalData>> supplier) {
+        Tab tab = new Tab(caption);
+        LineChart<String, Number> chart = setUpChart(supplier);
+        tab.setContent(chart);
+        tab.setClosable(false);
+        return tab;
+    }
+
+    private LineChart<String, Number> setUpChart(Supplier<Stream<MetalData>> supplier) {
         LineChart<String, Number> lineChart = createEmptyChart();
         lineChart.setPadding(new Insets(TOP_RIGHT_BOTTOM_LEFT));
         lineChart.setLegendSide(Side.TOP);
-        lineChart.getData().add(fillChart(MetalType.ALUMINIUM));
-        lineChart.getData().add(fillChart(MetalType.COPPER));
-        lineChart.getData().add(fillChart(MetalType.LEAD));
+        lineChart.getData().add(fillChart(MetalType.ALUMINIUM, supplier));
+        lineChart.getData().add(fillChart(MetalType.COPPER, supplier));
+        lineChart.getData().add(fillChart(MetalType.LEAD, supplier));
 
         return lineChart;
     }
 
-    private XYChart.Series<String, Number> fillChart(MetalType type) {
+    private XYChart.Series<String, Number> fillChart(MetalType type, Supplier<Stream<MetalData>> supplier) {
         XYChart.Series<String, Number> dataSeries = new XYChart.Series<>();
         dataSeries.setName(type.getTitle());
-        MetalData[] metalDataArray = webClient.fetchMetalData().block();
+        List<MetalData> metalDataArray = supplier.get().toList();
 
-        if (metalDataArray != null) {
-            for (MetalData metalData : metalDataArray) {
-                String date = metalData.getFetched().format(DateTimeUtil.DATE_TIME_FORMATTER);
-                BigDecimal price = switch (type) {
-                    case ALUMINIUM -> metalData.getAluminum();
-                    case LEAD -> metalData.getLead();
-                    case COPPER -> metalData.getCopper();
-                };
-                XYChart.Data<String, Number> chartData = new XYChart.Data<>(date, price);
-                dataSeries.getData().add(chartData);
-            }
+        for (MetalData metalData : metalDataArray) {
+            String date = metalData.getFetched().format(DateTimeUtil.DATE_TIME_FORMATTER);
+            BigDecimal price = switch (type) {
+                case ALUMINIUM -> metalData.getAluminum();
+                case LEAD -> metalData.getLead();
+                case COPPER -> metalData.getCopper();
+            };
+            XYChart.Data<String, Number> chartData = new XYChart.Data<>(date, price);
+            dataSeries.getData().add(chartData);
         }
 
         return dataSeries;

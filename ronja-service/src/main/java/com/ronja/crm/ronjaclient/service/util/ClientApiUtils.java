@@ -1,9 +1,10 @@
-package com.ronja.crm.ronjaclient.service.clientapi;
+package com.ronja.crm.ronjaclient.service.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.ronja.crm.ronjaclient.service.domain.Representative;
+import com.ronja.crm.ronjaclient.service.validation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -53,7 +54,7 @@ public class ClientApiUtils {
         });
     }
 
-    static <T> Mono<T> fetchEntities(WebClient webClient, Class<T> clazz) {
+    public static <T> Mono<T> fetchEntities(WebClient webClient, Class<T> clazz) {
         return webClient.get()
                 .uri("/list")
                 .retrieve()
@@ -63,7 +64,7 @@ public class ClientApiUtils {
                 .timeout(Duration.ofSeconds(20));
     }
 
-    static Mono<Representative[]> fetchParticularEntities(WebClient webClient, int id) {
+    public static Mono<Representative[]> fetchParticularEntities(WebClient webClient, int id) {
         return webClient.get()
                 .uri("/search?customerId=" + id)
                 .retrieve()
@@ -73,7 +74,7 @@ public class ClientApiUtils {
                 .timeout(Duration.ofSeconds(20));
     }
 
-    static Mono<Representative[]> fetchScheduledEntities(WebClient webClient, int id) {
+    public static Mono<Representative[]> fetchScheduledEntities(WebClient webClient, int id) {
         return webClient.get()
                 .uri("/scheduled?days=" + id)
                 .retrieve()
@@ -83,7 +84,7 @@ public class ClientApiUtils {
                 .timeout(Duration.ofSeconds(20));
     }
 
-    static Mono<Void> deleteEntity(WebClient webClient, int id) {
+    public static Mono<Void> deleteEntity(WebClient webClient, int id) {
         return webClient.delete()
                 .uri("/delete/" + id)
                 .retrieve()
@@ -93,7 +94,7 @@ public class ClientApiUtils {
                 .timeout(Duration.ofSeconds(20));
     }
 
-    static <T, U> Mono<T> postEntity(WebClient webClient, U u, Class<T> clazz) {
+    public static <T, U> Mono<T> postEntity(WebClient webClient, U u, Class<T> clazz) {
         return webClient.post()
                 .uri("/add")
                 .body(Mono.just(u), clazz)
@@ -104,7 +105,7 @@ public class ClientApiUtils {
                 .timeout(Duration.ofSeconds(20));
     }
 
-    static <T, U> Mono<T> putEntity(WebClient webClient, U u, Class<T> clazz) {
+    public static <T, U> Mono<T> putEntity(WebClient webClient, U u, Class<T> clazz) {
         return webClient.put()
                 .uri("/update")
                 .body(Mono.just(u), clazz)

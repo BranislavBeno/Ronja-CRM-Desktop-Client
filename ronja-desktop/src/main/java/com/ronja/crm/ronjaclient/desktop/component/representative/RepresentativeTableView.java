@@ -6,7 +6,7 @@ import com.ronja.crm.ronjaclient.desktop.component.dialog.DateFilterDialog;
 import com.ronja.crm.ronjaclient.desktop.component.dialog.Dialogs;
 import com.ronja.crm.ronjaclient.desktop.component.util.DesktopUtil;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
-import com.ronja.crm.ronjaclient.service.clientapi.DeleteException;
+import com.ronja.crm.ronjaclient.service.validation.DeleteException;
 import com.ronja.crm.ronjaclient.service.clientapi.RepresentativeWebClient;
 import com.ronja.crm.ronjaclient.service.domain.*;
 import com.ronja.crm.ronjaclient.service.dto.RepresentativeMapper;
@@ -110,7 +110,8 @@ public class RepresentativeTableView extends VBox {
             Representative[] representatives = switch (customerId) {
                 case -1 -> new Representative[]{};
                 case 0 -> Objects.requireNonNull(representativeWebClient.fetchAllRepresentatives().block());
-                default -> Objects.requireNonNull(representativeWebClient.fetchParticularRepresentatives(customerId).block());
+                default ->
+                        Objects.requireNonNull(representativeWebClient.fetchParticularRepresentatives(customerId).block());
             };
             return Arrays.stream(representatives).sorted(Comparator.comparing(Representative::getLastName));
         } catch (Exception e) {
