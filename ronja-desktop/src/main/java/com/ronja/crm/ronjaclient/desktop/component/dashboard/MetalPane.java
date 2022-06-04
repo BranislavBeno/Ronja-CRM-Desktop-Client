@@ -1,5 +1,7 @@
 package com.ronja.crm.ronjaclient.desktop.component.dashboard;
 
+import com.ronja.crm.ronjaclient.desktop.component.internationalization.I18nUtils;
+import com.ronja.crm.ronjaclient.locale.i18n.I18N;
 import com.ronja.crm.ronjaclient.service.domain.MetalData;
 import com.ronja.crm.ronjaclient.service.service.MetalDataService;
 import com.ronja.crm.ronjaclient.service.util.DateTimeUtil;
