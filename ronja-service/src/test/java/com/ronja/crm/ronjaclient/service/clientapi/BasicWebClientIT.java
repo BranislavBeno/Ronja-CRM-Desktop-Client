@@ -15,26 +15,36 @@ abstract class BasicWebClientIT {
     private static final Network NETWORK = Network.newNetwork();
 
     @Container
-    static final MySQLContainer<?> RONJA_DB = new MySQLContainer<>(DockerImageName.parse("mysql:8.0.28"))
-            .withExposedPorts(3306)
-            .withAccessToHost(true)
-            .withDatabaseName("ronja")
-            .withUsername("ronja")
-            .withPassword("ronja")
-            .withNetwork(NETWORK)
-            .withNetworkAliases("ronja_db");
+    static final MySQLContainer<?> RONJA_DB = populateDatabase();
 
     @Container
-    static final GenericContainer<?> RONJA_SERVER = new GenericContainer<>(DockerImageName.parse("beo1975/ronja-server:1.3.0"))
-            .withExposedPorts(8087)
-            .waitingFor(Wait.forHttp("/actuator/health"))
-            .withNetwork(NETWORK)
-            .withEnv("SPRING_DATASOURCE_URL", "jdbc:mysql://ronja_db:3306/ronja?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC")
-            .withEnv("SPRING_DATASOURCE_USERNAME", "ronja")
-            .withEnv("SPRING_DATASOURCE_PASSWORD", "ronja")
-            .dependsOn(RONJA_DB);
+    static final GenericContainer<?> RONJA_SERVER = populateServer();
 
     static {
         Startables.deepStart(RONJA_DB, RONJA_SERVER).join();
+    }
+
+    private static MySQLContainer<?> populateDatabase() {
+        try (MySQLContainer<?> db = new MySQLContainer<>(DockerImageName.parse("mysql:8.0.28"))) {
+            return db.withExposedPorts(3306)
+                    .withAccessToHost(true)
+                    .withDatabaseName("ronja")
+                    .withUsername("ronja")
+                    .withPassword("ronja")
+                    .withNetwork(NETWORK)
+                    .withNetworkAliases("ronja_db");
+        }
+    }
+
+    private static GenericContainer<?> populateServer() {
+        try (GenericContainer<?> server = new GenericContainer<>(DockerImageName.parse("beo1975/ronja-server:1.3.0"))) {
+            return server.withExposedPorts(8087)
+                    .waitingFor(Wait.forHttp("/actuator/health"))
+                    .withNetwork(NETWORK)
+                    .withEnv("SPRING_DATASOURCE_URL", "jdbc:mysql://ronja_db:3306/ronja?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC")
+                    .withEnv("SPRING_DATASOURCE_USERNAME", "ronja")
+                    .withEnv("SPRING_DATASOURCE_PASSWORD", "ronja")
+                    .dependsOn(RONJA_DB);
+        }
     }
 }
