@@ -27,7 +27,7 @@ integration_test:
   script:
     - curl -L -o agent https://app.testcontainers.cloud/download/testcontainers-cloud-agent_linux_x86-64
     - chmod +x agent
-    - ./agent &
+    - ./agent --max-concurrency 4 &
     - ./agent wait
     - ./mvnw test-compile failsafe:integration-test failsafe:verify
   needs:
