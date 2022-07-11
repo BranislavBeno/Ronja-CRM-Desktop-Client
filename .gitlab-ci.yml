@@ -17,7 +17,7 @@ unit_test:
     - ./mvnw verify jacoco:report
     - cat ronja-service/target/site/jacoco/index.html
   tags:
-    - DOCKER
+    - docker
 
 ## job integration tests
 ## - run integration tests
@@ -33,4 +33,4 @@ integration_test:
   needs:
     - job: unit_test
   tags:
-    - DOCKER
+    - docker
