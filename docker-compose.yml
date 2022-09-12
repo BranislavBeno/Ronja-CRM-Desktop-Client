@@ -15,7 +15,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=ronja
       - SPRING_DATASOURCE_PASSWORD=ronja
     networks:
-      - ronjanet
+      - ronja-net
 
   #MySQL Service
   ronja_db:
@@ -33,16 +33,16 @@ services:
       MYSQL_PASSWORD: ronja
       MYSQL_DATABASE: ronja
     volumes:
-      - dbronja:/var/lib/mysql/
+      - db-ronja:/var/lib/mysql/
     networks:
-      - ronjanet
+      - ronja-net
 
 #Networks
 networks:
-  ronjanet:
+  ronja-net:
     driver: bridge
 
 #Volumes
 volumes:
-  dbronja:
+  db-ronja:
     driver: local
