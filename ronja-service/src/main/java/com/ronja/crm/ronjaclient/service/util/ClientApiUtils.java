@@ -3,6 +3,7 @@ package com.ronja.crm.ronjaclient.service.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.ronja.crm.ronjaclient.locale.i18n.I18N;
 import com.ronja.crm.ronjaclient.service.domain.Representative;
 import com.ronja.crm.ronjaclient.service.validation.*;
 import org.springframework.http.HttpStatus;
@@ -15,8 +16,6 @@ import java.time.Duration;
 
 public class ClientApiUtils {
 
-    public static final String SERVER_ERROR_OCCURRED = "Server error occurred";
-
     private ClientApiUtils() {
     }
 
@@ -27,14 +26,14 @@ public class ClientApiUtils {
     static Mono<Throwable> propagateDeletingError(ClientResponse response) {
         Mono<String> errorMsg = response.bodyToMono(String.class);
         return errorMsg.flatMap(msg -> {
-            throw new DeleteException(SERVER_ERROR_OCCURRED);
+            throw new DeleteException(I18N.get("exception.server.delete"));
         });
     }
 
     static Mono<Throwable> propagateFetchingError(ClientResponse response) {
         Mono<String> errorMsg = response.bodyToMono(String.class);
         return errorMsg.flatMap(msg -> {
-            throw new FetchException(SERVER_ERROR_OCCURRED);
+            throw new FetchException(I18N.get("exception.server.fetch"));
         });
     }
 
@@ -49,7 +48,7 @@ public class ClientApiUtils {
                 String message = violation != null ? violation.message() : "";
                 throw new SaveException(message);
             } catch (JsonProcessingException e) {
-                throw new ServerErrorException("Čítanie odpovde serveru zlyhalo!", e);
+                throw new ServerErrorException(I18N.get("exception.server.error"), e);
             }
         });
     }

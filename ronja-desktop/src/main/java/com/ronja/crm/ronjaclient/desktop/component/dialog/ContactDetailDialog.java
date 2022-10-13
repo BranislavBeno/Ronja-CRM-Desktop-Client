@@ -1,6 +1,7 @@
 package com.ronja.crm.ronjaclient.desktop.component.dialog;
 
 import com.ronja.crm.ronjaclient.desktop.component.representative.ContactTableItem;
+import com.ronja.crm.ronjaclient.locale.i18n.I18N;
 import com.ronja.crm.ronjaclient.service.domain.Contact;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -34,13 +35,13 @@ public final class ContactDetailDialog extends Dialog<ContactTableItem> {
         columnConstraints.setHgrow(Priority.ALWAYS);
         gridPane.getColumnConstraints().addAll(new ColumnConstraints(), columnConstraints);
         VBox.setVgrow(gridPane, Priority.NEVER);
-        gridPane.addRow(0, new Label("Kontakt:"), contactTextField);
-        gridPane.addRow(1, new Label("Typ:"), typeTextField);
-        gridPane.addRow(2, new Label("Primárny:"), primaryCheckBox);
+        gridPane.addRow(0, new Label(I18N.get("representative.contact.label") + ":"), contactTextField);
+        gridPane.addRow(1, new Label(I18N.get("representative.contact.type") + ":"), typeTextField);
+        gridPane.addRow(2, new Label(I18N.get("representative.contact.primary") + ":"), primaryCheckBox);
         this.getDialogPane().setContent(gridPane);
 
         // Set the button types.
-        ButtonType okButtonType = new ButtonType("Ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType okButtonType = new ButtonType(I18N.get("label.dialog.ok"), ButtonBar.ButtonData.OK_DONE);
         this.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
         // Enable/Disable login button depending on whether a username was entered.
         this.getDialogPane().lookupButton(okButtonType);

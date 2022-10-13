@@ -8,6 +8,7 @@ module ronja.service {
     requires spring.beans;
     requires spring.core;
     requires spring.boot.autoconfigure;
+    requires transitive ronja.internationalization;
 
     exports com.ronja.crm.ronjaclient.service.clientapi;
     exports com.ronja.crm.ronjaclient.service.domain;

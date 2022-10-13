@@ -5,12 +5,13 @@ import com.ronja.crm.ronjaclient.desktop.component.common.FetchException;
 import com.ronja.crm.ronjaclient.desktop.component.dialog.DateFilterDialog;
 import com.ronja.crm.ronjaclient.desktop.component.dialog.Dialogs;
 import com.ronja.crm.ronjaclient.desktop.component.util.DesktopUtil;
+import com.ronja.crm.ronjaclient.locale.i18n.I18N;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
-import com.ronja.crm.ronjaclient.service.validation.DeleteException;
 import com.ronja.crm.ronjaclient.service.clientapi.RepresentativeWebClient;
 import com.ronja.crm.ronjaclient.service.domain.*;
 import com.ronja.crm.ronjaclient.service.dto.RepresentativeMapper;
 import com.ronja.crm.ronjaclient.service.util.DateTimeUtil;
+import com.ronja.crm.ronjaclient.service.validation.DeleteException;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -42,8 +43,8 @@ import java.util.stream.Stream;
 
 public class RepresentativeTableView extends VBox {
 
-    public static final String LAST_VISIT_TEXT = "Filtruj posledné stretnutia";
-    public static final String SCHEDULED_VISIT_TEXT = "Filtruj plánované stretnutia";
+    public static final String LAST_VISIT_TEXT = I18N.get("filter.recent.visits");
+    public static final String SCHEDULED_VISIT_TEXT = I18N.get("filter.scheduled.visits");
 
     private final CustomerWebClient customerWebClient;
     private final RepresentativeWebClient representativeWebClient;
@@ -116,8 +117,12 @@ public class RepresentativeTableView extends VBox {
             return Arrays.stream(representatives).sorted(Comparator.comparing(Representative::getLastName));
         } catch (Exception e) {
             throw new FetchException("""
-                    Nepodarilo sa získať dáta o reprezentantoch.
-                    Preverte spojenie so serverom.""", e);
+                    %s
+                    %s""".formatted(
+                    I18N.get("exception.representative.fetch"),
+                    I18N.get("exception.server.connection")
+            ),
+                    e);
         }
     }
 
@@ -131,21 +136,32 @@ public class RepresentativeTableView extends VBox {
     }
 
     private void setUpTableView() {
-        DesktopUtil.addFilteredColumn("Meno",
+        DesktopUtil.addFilteredColumn(I18N.get("representative.first.name"),
                 Pos.CENTER_LEFT, tableView, String.class, RepresentativeTableItem::firstNameProperty);
-        DesktopUtil.addFilteredColumn("Priezvisko", tableView, String.class, RepresentativeTableItem::lastNameProperty);
-        DesktopUtil.addFilteredColumn("Spoločnosť", tableView, String.class, RepresentativeTableItem::customerProperty);
-        DesktopUtil.addFilteredColumn("Pozícia", tableView, String.class, RepresentativeTableItem::positionProperty);
-        DesktopUtil.addFilteredColumn("Región", tableView, String.class, RepresentativeTableItem::regionProperty);
-        DesktopUtil.addFilteredColumn("Tel. číslo", tableView, String.class, RepresentativeTableItem::phoneNumbersProperty);
-        DesktopUtil.addFilteredColumn("Email", tableView, String.class, RepresentativeTableItem::emailsProperty);
-        DesktopUtil.addFilteredColumn("Stav", tableView, Status.class, RepresentativeTableItem::statusProperty);
-        DesktopUtil.addFilteredColumn("Spôsob kontaktovania", tableView, ContactType.class, RepresentativeTableItem::contactTypeProperty);
+        DesktopUtil.addFilteredColumn(I18N.get("representative.sure.name"),
+                tableView, String.class, RepresentativeTableItem::lastNameProperty);
+        DesktopUtil.addFilteredColumn(I18N.get("representative.company.name"),
+                tableView, String.class, RepresentativeTableItem::customerProperty);
+        DesktopUtil.addFilteredColumn(I18N.get("representative.position.name"),
+                tableView, String.class, RepresentativeTableItem::positionProperty);
+        DesktopUtil.addFilteredColumn(I18N.get("representative.region.name"),
+                tableView, String.class, RepresentativeTableItem::regionProperty);
+        DesktopUtil.addFilteredColumn(I18N.get("representative.phone.name"),
+                tableView, String.class, RepresentativeTableItem::phoneNumbersProperty);
+        DesktopUtil.addFilteredColumn(I18N.get("representative.email.name"),
+                tableView, String.class, RepresentativeTableItem::emailsProperty);
+        DesktopUtil.addFilteredColumn(I18N.get("label.dialog.state"),
+                tableView, Status.class, RepresentativeTableItem::statusProperty);
+        DesktopUtil.addFilteredColumn(I18N.get("representative.contacted.by"),
+                tableView, ContactType.class, RepresentativeTableItem::contactTypeProperty);
         FilteredTableColumn<RepresentativeTableItem, RonjaDate> visitedColumn =
-                DesktopUtil.addFilteredColumn("Posledné stretnutia", tableView, RonjaDate.class, RepresentativeTableItem::lastVisitProperty);
+                DesktopUtil.addFilteredColumn(I18N.get("representative.last.visit"),
+                        tableView, RonjaDate.class, RepresentativeTableItem::lastVisitProperty);
         FilteredTableColumn<RepresentativeTableItem, RonjaDate> scheduledColumn =
-                DesktopUtil.addFilteredColumn("Plánované stretnutia", tableView, RonjaDate.class, RepresentativeTableItem::scheduledVisitProperty);
-        DesktopUtil.addFilteredColumn("Poznámka", tableView, String.class, RepresentativeTableItem::noticeProperty);
+                DesktopUtil.addFilteredColumn(I18N.get("representative.scheduled.visit"),
+                        tableView, RonjaDate.class, RepresentativeTableItem::scheduledVisitProperty);
+        DesktopUtil.addFilteredColumn(I18N.get("representative.note.name"),
+                tableView, String.class, RepresentativeTableItem::noticeProperty);
 
         visitedColumn.setComparator(Comparator.comparing(RonjaDate::date));
         scheduledColumn.setComparator(Comparator.comparing(RonjaDate::date));
@@ -168,22 +184,22 @@ public class RepresentativeTableView extends VBox {
         // menu item for enhanced filtering - scheduled
         Menu scheduledFilterItem = provideScheduledFilterSubMenu();
         // menu item for reset all filters
-        MenuItem resetFiltersItem = provideMenuItem("Odstrániť filtre", e -> {
+        MenuItem resetFiltersItem = provideMenuItem(I18N.get("label.clear.filters"), e -> {
             resetEnhancedFilter();
             DesktopUtil.resetFilters(tableView);
         });
         // menu item for fetch all items from
-        MenuItem refreshItem = provideMenuItem("Znovu načítať zoznam", e -> refreshItems());
+        MenuItem refreshItem = provideMenuItem(I18N.get("label.reload.items"), e -> refreshItems());
         // menu item for update selected representative
-        MenuItem updateItem = provideBoundMenuItem("Upraviť...", e -> Dialogs.showRepresentativeDetailDialog(
+        MenuItem updateItem = provideBoundMenuItem(I18N.get("label.modify.item") + "...", e -> Dialogs.showRepresentativeDetailDialog(
                 customerWebClient, representativeWebClient, this, mapper, true, forDialog));
         // menu item for add new representative
-        MenuItem addItem = provideMenuItem("Pridať nového...", e -> Dialogs.showRepresentativeDetailDialog(
+        MenuItem addItem = provideMenuItem(I18N.get("label.add.new.item") + "...", e -> Dialogs.showRepresentativeDetailDialog(
                 customerWebClient, representativeWebClient, this, mapper, false, forDialog));
         // menu item for remove existing representative
-        MenuItem deleteItem = provideBoundMenuItem("Zmazať...", e -> deleteRepresentative());
+        MenuItem deleteItem = provideBoundMenuItem(I18N.get("label.remove.item") + "...", e -> deleteRepresentative());
         // show application info
-        var aboutItem = new MenuItem("O aplikácii...");
+        var aboutItem = new MenuItem(I18N.get("label.about.info") + "...");
         aboutItem.setOnAction(e -> Dialogs.showAboutDialog(appInfo));
 
         // create context menu
@@ -198,19 +214,19 @@ public class RepresentativeTableView extends VBox {
     }
 
     private Menu provideVisitedFilterSubMenu() {
-        MenuItem lastMonthItem = provideMenuItem("Za posledný mesiac", e -> {
+        MenuItem lastMonthItem = provideMenuItem(I18N.get("representative.filter.visited.1"), e -> {
             DateRecord dateRecord = toLastDateInterval(1);
             runEnhancedVisitedFilter(dateRecord);
         });
-        MenuItem lastThreeMonthsItem = provideMenuItem("Za posledné tri mesiace", e -> {
+        MenuItem lastThreeMonthsItem = provideMenuItem(I18N.get("representative.filter.visited.2"), e -> {
             DateRecord dateRecord = toLastDateInterval(3);
             runEnhancedVisitedFilter(dateRecord);
         });
-        MenuItem lastSixMonthsItem = provideMenuItem("Za posledný polrok", e -> {
+        MenuItem lastSixMonthsItem = provideMenuItem(I18N.get("representative.filter.visited.3"), e -> {
             DateRecord dateRecord = toLastDateInterval(6);
             runEnhancedVisitedFilter(dateRecord);
         });
-        MenuItem customItem = provideMenuItem("Vlastný filter...", e -> {
+        MenuItem customItem = provideMenuItem(I18N.get("representative.filter.defined") + "...", e -> {
             Optional<DateRecord> filterDates = provideDateFilterDialog(LAST_VISIT_TEXT, visitedRecord);
             filterDates.ifPresent(this::runEnhancedVisitedFilter);
         });
@@ -223,19 +239,19 @@ public class RepresentativeTableView extends VBox {
     }
 
     private Menu provideScheduledFilterSubMenu() {
-        MenuItem nextMonthItem = provideMenuItem("O mesiac", e -> {
+        MenuItem nextMonthItem = provideMenuItem(I18N.get("representative.filter.scheduled.1"), e -> {
             DateRecord dateRecord = toNextDateInterval(1);
             runEnhancedScheduledFilter(dateRecord);
         });
-        MenuItem nextThreeMonthsItem = provideMenuItem("O tri mesiace", e -> {
+        MenuItem nextThreeMonthsItem = provideMenuItem(I18N.get("representative.filter.scheduled.2"), e -> {
             DateRecord dateRecord = toNextDateInterval(3);
             runEnhancedScheduledFilter(dateRecord);
         });
-        MenuItem nextSixMonthsItem = provideMenuItem("O polrok", e -> {
+        MenuItem nextSixMonthsItem = provideMenuItem(I18N.get("representative.filter.scheduled.3"), e -> {
             DateRecord dateRecord = toNextDateInterval(6);
             runEnhancedScheduledFilter(dateRecord);
         });
-        MenuItem customItem = provideMenuItem("Vlastný filter...", e -> {
+        MenuItem customItem = provideMenuItem(I18N.get("representative.filter.defined") + "...", e -> {
             Optional<DateRecord> scheduledFilter = provideDateFilterDialog(SCHEDULED_VISIT_TEXT, scheduledRecord);
             scheduledFilter.ifPresent(this::runEnhancedScheduledFilter);
         });
@@ -293,8 +309,8 @@ public class RepresentativeTableView extends VBox {
 
     private void setUpFilterInfoBar() {
         String label = Stream.of(
-                        provideFilterPaneText(visitedRecord, "Zobraz posledné od %s do %s"),
-                        provideFilterPaneText(scheduledRecord, "Zobraz plánované od %s do %s"))
+                        provideFilterPaneText(visitedRecord, I18N.get("representative.show.visited")),
+                        provideFilterPaneText(scheduledRecord, I18N.get("representative.show.scheduled")))
                 .filter(Predicate.not(String::isBlank))
                 .collect(Collectors.joining(" - "));
         enhancedFilterPane.getChildren().setAll(new Label(label));
@@ -362,8 +378,8 @@ public class RepresentativeTableView extends VBox {
 
     private void deleteRepresentative() {
         RepresentativeTableItem representativeItem = selectedRepresentative().get();
-        var title = "Zmazať reprezentanta";
-        var message = "Skutočne chcete zmazať reprezentanta '%s %s'?".formatted(
+        String title = I18N.get("representative.delete.title");
+        var message = I18N.get("representative.delete.message") + "'%s %s'?".formatted(
                 representativeItem.firstNameProperty().get(), representativeItem.lastNameProperty().get());
         if (Dialogs.showAlertDialog(title, message, Alert.AlertType.CONFIRMATION)) {
             try {
@@ -374,8 +390,10 @@ public class RepresentativeTableView extends VBox {
             } catch (Exception e) {
                 Thread.currentThread().interrupt();
                 throw new DeleteException("""
-                        Zmazanie reprezentanta zlyhalo.
-                        Preverte spojenie so serverom.""");
+                        %s
+                        %s""".formatted(
+                        I18N.get("exception.representative.delete"),
+                        I18N.get("exception.server.connection")));
             }
         }
     }

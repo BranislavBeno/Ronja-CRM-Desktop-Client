@@ -1,5 +1,6 @@
 package com.ronja.crm.ronjaclient.desktop.component.dashboard;
 
+import com.ronja.crm.ronjaclient.locale.i18n.I18N;
 import com.ronja.crm.ronjaclient.service.clientapi.RepresentativeWebClient;
 import com.ronja.crm.ronjaclient.service.domain.Representative;
 import com.ronja.crm.ronjaclient.service.domain.RonjaDate;
@@ -37,7 +38,7 @@ public class ScheduledPane extends VBox {
     }
 
     private TreeItem<String> createTreeItems() {
-        TreeItem<String> rootItem = new TreeItem<>("Plánované stretnutia:");
+        TreeItem<String> rootItem = new TreeItem<>(I18N.get("label.scheduled.meetings") + ":");
         fetchScheduledRepresentatives(webClient)
                 .entrySet()
                 .stream()

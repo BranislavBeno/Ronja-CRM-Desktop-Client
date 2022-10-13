@@ -3,6 +3,7 @@ package com.ronja.crm.ronjaclient.desktop.component.representative;
 import com.ronja.crm.ronjaclient.desktop.component.dialog.ContactDetailDialog;
 import com.ronja.crm.ronjaclient.desktop.component.dialog.Dialogs;
 import com.ronja.crm.ronjaclient.desktop.component.util.DesktopUtil;
+import com.ronja.crm.ronjaclient.locale.i18n.I18N;
 import com.ronja.crm.ronjaclient.service.domain.Contact;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -49,9 +50,9 @@ public class ContactTableView extends TableView<ContactTableItem> {
     }
 
     private void setUpTableView() {
-        DesktopUtil.addColumn("Kontakt", Pos.CENTER_LEFT, this, ContactTableItem::contentProperty);
-        DesktopUtil.addColumn("Typ", Pos.CENTER_LEFT, this, ContactTableItem::typeProperty);
-        DesktopUtil.addColumn("Primárny", Pos.CENTER, this, ContactTableItem::primaryProperty);
+        DesktopUtil.addColumn(I18N.get("representative.contact.label"), Pos.CENTER_LEFT, this, ContactTableItem::contentProperty);
+        DesktopUtil.addColumn(I18N.get("representative.contact.type"), Pos.CENTER_LEFT, this, ContactTableItem::typeProperty);
+        DesktopUtil.addColumn(I18N.get("representative.contact.primary"), Pos.CENTER, this, ContactTableItem::primaryProperty);
 
         setPrefHeight(98);
         setContextMenu(setUpContextMenu());
@@ -59,28 +60,28 @@ public class ContactTableView extends TableView<ContactTableItem> {
 
     private ContextMenu setUpContextMenu() {
         // update selected item
-        var updateItem = new MenuItem("Upraviť...");
+        var updateItem = new MenuItem(I18N.get("label.modify.item") + "...");
         updateItem.disableProperty().bind(isSelectedItemNull());
         updateItem.setOnAction(e -> {
             Contact contact = selectedItem().get().getContact();
-            Optional<ContactTableItem> result = provideInputDialog("Upraviť kontakt", contact);
+            Optional<ContactTableItem> result = provideInputDialog(I18N.get("representative.contact.modify"), contact);
             result.ifPresent(item -> handleContact(item, this::updateContact, this::updatePriorityContact));
         });
 
         // add new item
-        var addItem = new MenuItem("Pridať...");
+        var addItem = new MenuItem(I18N.get("label.add.item") + "...");
         addItem.setOnAction(e -> {
-            Optional<ContactTableItem> result = provideInputDialog("Pridať kontakt", new Contact());
+            Optional<ContactTableItem> result = provideInputDialog(I18N.get("representative.contact.add"), new Contact());
             result.ifPresent(contact -> handleContact(contact, this::addNewContact, this::addNewPriorityContact));
         });
 
         // remove existing item
-        var deleteItem = new MenuItem("Zmazať...");
+        var deleteItem = new MenuItem(I18N.get("label.remove.item") + "...");
         deleteItem.disableProperty().bind(isSelectedItemNull());
         deleteItem.setOnAction(e -> {
             ContactTableItem contact = selectedItem().get();
-            String message = "Skutočne chcete zmazať kontakt '%s'?".formatted(contact.getContent());
-            if (Dialogs.showAlertDialog("Zmazať kontakt", message, Alert.AlertType.CONFIRMATION)) {
+            String message = I18N.get("representative.contact.approve.remove").formatted(contact.getContent());
+            if (Dialogs.showAlertDialog(I18N.get("representative.contact.remove"), message, Alert.AlertType.CONFIRMATION)) {
                 tableItems.remove(contact);
             }
         });
@@ -124,10 +125,10 @@ public class ContactTableView extends TableView<ContactTableItem> {
     }
 
     private void confirmAction(ContactTableItem contact, Consumer<ContactTableItem> consumer) {
-        String title = "Zmeniť prioritný kontakt";
-        String message = """
-                Prioritný kontakt už existuje.
-                Skutočne chcete nastaviť kontakt '%s' ako prioritný?""".formatted(contact.getContent());
+        String title = I18N.get("representative.contact.primary.change");
+        String message = I18N.get("representative.contact.primary.exists")
+                + System.lineSeparator()
+                + I18N.get("representative.contact.primary.question").formatted(contact.getContent());
         if (Dialogs.showAlertDialog(title, message, Alert.AlertType.CONFIRMATION)) {
             tableItems.forEach(i -> i.setPrimary(false));
         } else {

@@ -1,5 +1,6 @@
 package com.ronja.crm.ronjaclient.desktop.component.representative;
 
+import com.ronja.crm.ronjaclient.locale.i18n.I18N;
 import com.ronja.crm.ronjaclient.service.domain.*;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
@@ -27,7 +28,7 @@ public class RepresentativeTableItem {
     private final Representative representative;
 
     public RepresentativeTableItem(Representative representative) {
-        this.representative = Objects.requireNonNull(representative, "Je potrebné zadať reprezentanta!");
+        this.representative = Objects.requireNonNull(representative, I18N.get("representative.is.required"));
 
         firstName = new SimpleStringProperty(representative.getFirstName());
         lastName = new SimpleStringProperty(representative.getLastName());

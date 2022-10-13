@@ -1,5 +1,7 @@
 package com.ronja.crm.ronjaclient.desktop.component.dashboard;
 
+import com.ronja.crm.ronjaclient.desktop.component.internationalization.I18nUtils;
+import com.ronja.crm.ronjaclient.locale.i18n.I18N;
 import com.ronja.crm.ronjaclient.service.domain.MetalData;
 import com.ronja.crm.ronjaclient.service.service.MetalDataService;
 import com.ronja.crm.ronjaclient.service.util.DateTimeUtil;
@@ -41,7 +43,7 @@ public class MetalPane extends VBox {
     }
 
     private Label setUpTitle() {
-        var title = new Label("Ceny podľa LME:");
+        var title = I18nUtils.labelForValue("metal.label.current.prices");
         title.setPadding(new Insets(0, 0, 0, LEFT));
 
         return title;
@@ -60,17 +62,18 @@ public class MetalPane extends VBox {
 
     private void addLatestPrices(GridPane prices, MetalData m) {
         prices.addRow(0, new Separator(), new Separator());
-        prices.addRow(1, new Label("Zo dňa: "), new Label(m.getFetched().format(DateTimeUtil.DATE_TIME_FORMATTER)));
+        prices.addRow(1, I18nUtils.labelForValue("metal.at.date"),
+                new Label(m.getFetched().format(DateTimeUtil.DATE_TIME_FORMATTER)));
         prices.addRow(2, new Separator(), new Separator());
-        prices.addRow(3, new Label(MetalType.ALUMINIUM.getTitle() + ": "), new Label(m.getAluminiumPrice()));
-        prices.addRow(4, new Label(MetalType.LEAD.getTitle() + ": "), new Label(m.getLeadPrice()));
-        prices.addRow(5, new Label(MetalType.COPPER.getTitle() + ": "), new Label(m.getCopperPrice()));
+        prices.addRow(3, new Label(MetalType.ALUMINIUM + ": "), new Label(m.getAluminiumPrice()));
+        prices.addRow(4, new Label(MetalType.LEAD + ": "), new Label(m.getLeadPrice()));
+        prices.addRow(5, new Label(MetalType.COPPER + ": "), new Label(m.getCopperPrice()));
         prices.addRow(6, new Separator(), new Separator());
     }
 
     private TabPane setUpChartTabs() {
-        Tab dailyTab = createTab("Denný prehľad", dataService::fetchDailyData);
-        Tab weeklyTab = createTab("Týždenný prehľad", dataService::fetchWeeklyData);
+        Tab dailyTab = createTab(I18N.get("metal.tab.daily"), dataService::fetchDailyData);
+        Tab weeklyTab = createTab(I18N.get("metal.tab.weekly"), dataService::fetchWeeklyData);
 
         TabPane pane = new TabPane();
         pane.getTabs().addAll(dailyTab, weeklyTab);
@@ -99,7 +102,7 @@ public class MetalPane extends VBox {
 
     private XYChart.Series<String, Number> fillChart(MetalType type, Supplier<Stream<MetalData>> supplier) {
         XYChart.Series<String, Number> dataSeries = new XYChart.Series<>();
-        dataSeries.setName(type.getTitle());
+        dataSeries.setName(type.toString());
         List<MetalData> metalDataArray = supplier.get().toList();
 
         for (MetalData metalData : metalDataArray) {
@@ -124,16 +127,19 @@ public class MetalPane extends VBox {
     }
 
     enum MetalType {
-        ALUMINIUM("Hliník"), COPPER("Meď"), LEAD("Olovo");
+        ALUMINIUM("metal.type.aluminium"),
+        COPPER("metal.type.copper"),
+        LEAD("metal.type.lead");
 
-        private final String title;
+        private final String key;
 
-        MetalType(String title) {
-            this.title = title;
+        MetalType(String key) {
+            this.key = key;
         }
 
-        public String getTitle() {
-            return title;
+        @Override
+        public String toString() {
+            return I18N.get(key);
         }
     }
 }

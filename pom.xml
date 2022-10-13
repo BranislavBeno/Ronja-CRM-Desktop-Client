@@ -82,6 +82,7 @@
     <modules>
         <module>ronja-desktop</module>
         <module>ronja-service</module>
+        <module>ronja-internationalization</module>
     </modules>
 
 </project>

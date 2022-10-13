@@ -1,11 +1,15 @@
 package com.ronja.crm.ronjaclient.desktop.component.dialog;
 
+import com.ronja.crm.ronjaclient.desktop.component.internationalization.I18nUtils;
 import com.ronja.crm.ronjaclient.desktop.component.representative.DateRecord;
 import com.ronja.crm.ronjaclient.service.util.DateTimeUtil;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Dialog;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -37,7 +41,7 @@ public class DateFilterDialog extends Dialog<DateRecord> {
         gridPane.setHgap(5);
         gridPane.setVgap(5);
         VBox.setVgrow(gridPane, Priority.NEVER);
-        gridPane.addRow(0, new Label("Od:"), new Label("Do:"));
+        gridPane.addRow(0, I18nUtils.labelForValue("label.dialog.from"), I18nUtils.labelForValue("label.dialog.to"));
         gridPane.addRow(1, startDatePicker, endDatePicker);
 
         Stage stage = (Stage) getDialogPane().getScene().getWindow();
@@ -48,7 +52,7 @@ public class DateFilterDialog extends Dialog<DateRecord> {
         EventHandler<ActionEvent> filter = event -> {
             if (startDatePicker.getValue().isAfter(endDatePicker.getValue())) {
                 event.consume();
-                Dialogs.showErrorMessage("Chyba", "Dátum 'od' nesmie byť neskorší ako 'do'!");
+                Dialogs.showErrorMessage("dialog.error.title", "dialog.error.message");
             }
         };
 

@@ -2,14 +2,16 @@ package com.ronja.crm.ronjaclient.desktop.component.customer;
 
 import com.ronja.crm.ronjaclient.desktop.component.common.AppInfo;
 import com.ronja.crm.ronjaclient.desktop.component.dialog.Dialogs;
+import com.ronja.crm.ronjaclient.desktop.component.internationalization.I18nUtils;
 import com.ronja.crm.ronjaclient.desktop.component.representative.RepresentativeTableView;
 import com.ronja.crm.ronjaclient.desktop.component.util.DesktopUtil;
+import com.ronja.crm.ronjaclient.locale.i18n.I18N;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
-import com.ronja.crm.ronjaclient.service.validation.DeleteException;
 import com.ronja.crm.ronjaclient.service.domain.Category;
 import com.ronja.crm.ronjaclient.service.domain.Customer;
 import com.ronja.crm.ronjaclient.service.domain.Focus;
 import com.ronja.crm.ronjaclient.service.domain.Status;
+import com.ronja.crm.ronjaclient.service.validation.DeleteException;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -71,11 +73,11 @@ public class CustomerTableView extends VBox {
     }
 
     private void setUpTableView() {
-        DesktopUtil.addFilteredColumn("Názov spoločnosti",
+        DesktopUtil.addFilteredColumn(I18N.get("customer.company.name"),
                 Pos.CENTER_LEFT, tableView, String.class, CustomerTableItem::companyNameProperty);
-        DesktopUtil.addFilteredColumn("Kategória", tableView, Category.class, CustomerTableItem::categoryProperty);
-        DesktopUtil.addFilteredColumn("Zameranie", tableView, Focus.class, CustomerTableItem::focusProperty);
-        DesktopUtil.addFilteredColumn("Stav", tableView, Status.class, CustomerTableItem::statusProperty);
+        DesktopUtil.addFilteredColumn(I18N.get("customer.category.name"), tableView, Category.class, CustomerTableItem::categoryProperty);
+        DesktopUtil.addFilteredColumn(I18N.get("customer.focus.name"), tableView, Focus.class, CustomerTableItem::focusProperty);
+        DesktopUtil.addFilteredColumn(I18N.get("label.dialog.state"), tableView, Status.class, CustomerTableItem::statusProperty);
 
         tableView.setContextMenu(setUpContextMenu());
         VBox.setVgrow(tableView, Priority.ALWAYS);
@@ -91,24 +93,24 @@ public class CustomerTableView extends VBox {
 
     private ContextMenu setUpContextMenu() {
         // reset all filters
-        var resetFiltersItem = new MenuItem("Odstrániť filtre");
+        var resetFiltersItem = I18nUtils.menuItemForValue("label.clear.filters");
         resetFiltersItem.setOnAction(e -> DesktopUtil.resetFilters(tableView));
         // fetch all items from
-        var refreshItem = new MenuItem("Znovu načítať zoznam");
+        var refreshItem = I18nUtils.menuItemForValue("label.reload.items");
         refreshItem.setOnAction(e -> refreshItems());
         // update selected customer
-        var updateItem = new MenuItem("Upraviť...");
+        var updateItem = new MenuItem(getCaption("label.modify.item"));
         updateItem.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerWebClient, this, representativeTableView, true));
         updateItem.disableProperty().bind(isSelectedCustomerNull());
         // add new customer
-        var addItem = new MenuItem("Pridať nového...");
+        var addItem = new MenuItem(getCaption("label.add.new.item"));
         addItem.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerWebClient, this, representativeTableView, false));
         // remove existing customer
-        var deleteItem = new MenuItem("Zmazať...");
+        var deleteItem = new MenuItem(getCaption("label.remove.item"));
         deleteItem.setOnAction(e -> deleteCustomer());
         deleteItem.disableProperty().bind(isSelectedCustomerNull());
         // show application info
-        var aboutItem = new MenuItem("O aplikácii...");
+        var aboutItem = new MenuItem(getCaption("label.about.info"));
         aboutItem.setOnAction(e -> Dialogs.showAboutDialog(appInfo));
 
         // create context menu
@@ -122,12 +124,15 @@ public class CustomerTableView extends VBox {
         return contextMenu;
     }
 
+    private static String getCaption(String key) {
+        return I18N.get(key) + "...";
+    }
 
     private void deleteCustomer() {
         CustomerTableItem customerItem = selectedCustomer().get();
-        var title = "Zmazať zákazníka";
-        var message = String.format("Skutočne chcete zmazať zákazníka '%s'?",
-                customerItem.companyNameProperty().get());
+        var title = I18N.get("customer.delete.title");
+        var message = I18N.get("customer.delete.message")
+                .formatted(customerItem.companyNameProperty().get());
         if (Dialogs.showAlertDialog(title, message, Alert.AlertType.CONFIRMATION)) {
             try {
                 CompletableFuture<Void> cf = CompletableFuture
@@ -136,10 +141,11 @@ public class CustomerTableView extends VBox {
                 cf.get();
             } catch (Exception e) {
                 Thread.currentThread().interrupt();
-                throw new DeleteException("""
-                        Zmazanie zákazníka zlyhalo.
-                        Zmažte najskôr reprezentantov uvedeného zákazníka,
-                        alebo preverte spojenie so serverom.""");
+                throw new DeleteException(I18N.get("exception.customer.delete")
+                        + System.lineSeparator()
+                        + I18N.get("exception.customer.delete.representative")
+                        + System.lineSeparator()
+                        + I18N.get("exception.server.connection.or"));
             }
         }
     }

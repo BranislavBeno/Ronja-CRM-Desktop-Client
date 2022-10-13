@@ -1,20 +1,19 @@
 package com.ronja.crm.ronjaclient.service.domain;
 
+import com.ronja.crm.ronjaclient.locale.i18n.I18N;
+
 public enum Status {
-    ACTIVE("Aktívny"), INACTIVE("Neaktívny");
+    ACTIVE("status.active"),
+    INACTIVE("status.inactive");
 
-    private final String label;
+    private final String key;
 
-    Status(String label) {
-        this.label = label;
-    }
-
-    public String getLabel() {
-        return label;
+    Status(String key) {
+        this.key = key;
     }
 
     @Override
     public String toString() {
-        return label;
+        return I18N.get(key);
     }
 }
