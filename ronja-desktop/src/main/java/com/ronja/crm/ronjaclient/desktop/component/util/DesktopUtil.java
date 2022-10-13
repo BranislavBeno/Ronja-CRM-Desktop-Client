@@ -1,9 +1,10 @@
 package com.ronja.crm.ronjaclient.desktop.component.util;
 
 import com.ronja.crm.ronjaclient.desktop.component.common.FetchException;
+import com.ronja.crm.ronjaclient.locale.i18n.I18N;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
-import com.ronja.crm.ronjaclient.service.validation.SaveException;
 import com.ronja.crm.ronjaclient.service.domain.Customer;
+import com.ronja.crm.ronjaclient.service.validation.SaveException;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -43,14 +44,12 @@ public class DesktopUtil {
         return column;
     }
 
-    public static <T, U> TableColumn<T, U> addColumn(String caption, Pos alignment, TableView<T> table,
-                                                     Function<T, ObservableValue<U>> function) {
+    public static <T, U> void addColumn(String caption, Pos alignment, TableView<T> table,
+                                        Function<T, ObservableValue<U>> function) {
         TableColumn<T, U> column = new TableColumn<>(caption);
         column.setCellValueFactory(p -> function.apply(p.getValue()));
         column.setStyle(String.format("-fx-alignment: %s;", alignment));
         table.getColumns().add(column);
-
-        return column;
     }
 
     public static <T> void resetFilters(FilteredTableView<T> tableView) {
@@ -79,15 +78,18 @@ public class DesktopUtil {
             return Arrays.stream(customers).sorted(Comparator.comparing(Customer::getCompanyName));
         } catch (Exception e) {
             throw new FetchException("""
-                    Nepodarilo sa získať dáta o klientoch.
-                    Preverte spojenie so serverom.""", e);
+                    %s
+                    %s""".formatted(
+                    I18N.get("exception.client.fetch"),
+                    I18N.get("exception.server.connection")),
+                    e);
         }
     }
 
     public static void handleException(Throwable throwable) {
         String message = throwable.getCause().getMessage();
         if (message.contains("Connection refused:")) {
-            message = "Spojenie so serverom je prerušené.";
+            message = I18N.get("exception.server.disconnection");
         }
         throw new SaveException(message);
     }

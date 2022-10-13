@@ -3,6 +3,8 @@ spring:
     ui:
       title: Ronja CRM
       version: 1.3.0
+      # EN/SK
+      localization: SK
   main:
     web-application-type: none
 

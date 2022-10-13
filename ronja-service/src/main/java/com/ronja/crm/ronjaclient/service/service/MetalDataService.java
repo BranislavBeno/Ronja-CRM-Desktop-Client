@@ -1,5 +1,6 @@
 package com.ronja.crm.ronjaclient.service.service;
 
+import com.ronja.crm.ronjaclient.locale.i18n.I18N;
 import com.ronja.crm.ronjaclient.service.clientapi.MetalDataWebClient;
 import com.ronja.crm.ronjaclient.service.domain.MetalData;
 import com.ronja.crm.ronjaclient.service.validation.FetchException;
@@ -28,9 +29,10 @@ public class MetalDataService {
             MetalData[] metalData = Objects.requireNonNull(webClient.fetchMetalData());
             return Arrays.stream(metalData).sorted(Comparator.comparing(MetalData::getFetched));
         } catch (Exception e) {
-            throw new FetchException("""
-                    Nepodarilo sa získať dáta o cene kovov.
-                    Preverte spojenie so serverom.""", e);
+            String message = I18N.get("exception.metal.fetch")
+                    + System.lineSeparator()
+                    + I18N.get("exception.server.connection");
+            throw new FetchException(message, e);
         }
     }
 

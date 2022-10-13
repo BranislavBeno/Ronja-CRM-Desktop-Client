@@ -2,6 +2,8 @@ package com.ronja.crm.ronjaclient.desktop.component.dashboard;
 
 import com.ronja.crm.ronjaclient.desktop.component.common.AppInfo;
 import com.ronja.crm.ronjaclient.desktop.component.dialog.Dialogs;
+import com.ronja.crm.ronjaclient.desktop.component.internationalization.I18nUtils;
+import com.ronja.crm.ronjaclient.locale.i18n.I18N;
 import javafx.application.Platform;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -21,6 +23,7 @@ public class DashboardPane extends SplitPane {
 
         getItems().addAll(scheduledPane, metalPane);
 
+        // setup context menu
         final ContextMenu contextMenu = setUpContextMenu();
         setOnContextMenuRequested(e -> contextMenu.show(this, e.getScreenX(), e.getScreenY()));
     }
@@ -32,10 +35,10 @@ public class DashboardPane extends SplitPane {
 
     private ContextMenu setUpContextMenu() {
         // fetch all items from
-        var refreshItem = new MenuItem("Znovu načítať obsah");
+        var refreshItem = I18nUtils.menuItemForValue("label.refresh.view");
         refreshItem.setOnAction(e -> Platform.runLater(this::setUpPane));
         // show application info
-        var aboutItem = new MenuItem("O aplikácii...");
+        var aboutItem = new MenuItem(I18N.get("label.about.info") + "...");
         aboutItem.setOnAction(e -> Dialogs.showAboutDialog(appInfo));
 
         // create context menu

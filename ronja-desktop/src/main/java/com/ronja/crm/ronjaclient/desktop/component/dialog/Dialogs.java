@@ -3,7 +3,9 @@ package com.ronja.crm.ronjaclient.desktop.component.dialog;
 import com.ronja.crm.ronjaclient.desktop.App;
 import com.ronja.crm.ronjaclient.desktop.component.common.AppInfo;
 import com.ronja.crm.ronjaclient.desktop.component.customer.CustomerTableView;
+import com.ronja.crm.ronjaclient.desktop.component.internationalization.I18nUtils;
 import com.ronja.crm.ronjaclient.desktop.component.representative.RepresentativeTableView;
+import com.ronja.crm.ronjaclient.locale.i18n.I18N;
 import com.ronja.crm.ronjaclient.service.clientapi.CustomerWebClient;
 import com.ronja.crm.ronjaclient.service.clientapi.RepresentativeWebClient;
 import com.ronja.crm.ronjaclient.service.dto.RepresentativeMapper;
@@ -42,11 +44,23 @@ public class Dialogs {
         dialog.showAndWait();
     }
 
-    public static void showErrorMessage(String title, String message) {
+    public static void showErrorMessage(String titleKey, String messageKey) {
         var alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
+        alert.titleProperty().bind(I18nUtils.createStringBinding(titleKey));
         alert.setHeaderText(null);
-        alert.setContentText(message);
+        alert.contentTextProperty().bind(I18nUtils.createStringBinding(messageKey));
+        alert.setResizable(true);
+        alert.initOwner(App.getMainWindow());
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.setAlwaysOnTop(true);
+        alert.showAndWait();
+    }
+    public static void showErrorMessage(String titleKey, Throwable throwable) {
+        var alert = new Alert(Alert.AlertType.ERROR);
+        alert.titleProperty().bind(I18nUtils.createStringBinding(titleKey));
+        alert.setHeaderText(null);
+        alert.setContentText(throwable.getMessage());
         alert.setResizable(true);
         alert.initOwner(App.getMainWindow());
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -66,9 +80,9 @@ public class Dialogs {
         alert.getButtonTypes().clear();
         alert.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
         var noButton = (Button) alert.getDialogPane().lookupButton(ButtonType.NO);
-        noButton.setText("Nie");
+        noButton.setText(I18N.get("label.dialog.no"));
         var yesButton = (Button) alert.getDialogPane().lookupButton(ButtonType.YES);
-        yesButton.setText("Áno");
+        yesButton.setText(I18N.get("label.dialog.yes"));
         noButton.setDefaultButton(true);
         yesButton.setDefaultButton(false);
         Optional<ButtonType> result = alert.showAndWait();
@@ -77,20 +91,23 @@ public class Dialogs {
     }
 
     public static void showAboutDialog(AppInfo appInfo) {
-        var alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("O aplikácii");
+        var alert = I18nUtils.alertForValue(Alert.AlertType.INFORMATION, "label.about.info");
         alert.setHeaderText(appInfo.appTitle());
         alert.initOwner(App.getMainWindow());
 
         String date = appInfo.date().format(DateTimeUtil.DATE_TIME_FORMATTER);
         String copyrightSymbol = Character.toString(169);
         alert.setContentText("""
-                Verzia: %s
-                Dátum: %s
-                Commit: %s
+                %s: %s
+                %s: %s
+                %s: %s
                                 
-                %s 2021-2022 Copyright: Branislav Beňo
-                """.formatted(appInfo.version(), date, appInfo.commitId(), copyrightSymbol));
+                %s %s
+                """.formatted(
+                I18N.get("label.about.version"), appInfo.version(),
+                I18N.get("label.about.released"), date,
+                I18N.get("label.about.commit"), appInfo.commitId(),
+                copyrightSymbol, I18N.get("label.about.copyright")));
         alert.showAndWait();
     }
 }
