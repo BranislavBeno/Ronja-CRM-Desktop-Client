@@ -70,7 +70,10 @@ public class DesktopConfiguration {
     }
 
     @Bean
-    public MetalPane metalPane(@Autowired MetalDataService dataService) {
-        return new MetalPane(dataService);
+    public MetalPane metalPane(@Value("${client.metals.limit.daily:2}") int dailyLimit,
+                               @Value("${client.metals.limit.weekly:10}") int weeklyLimit,
+                               @Value("${client.metals.limit.monthly:40}") int monthlyLimit,
+                               @Autowired MetalDataService dataService) {
+        return new MetalPane(dailyLimit, weeklyLimit, monthlyLimit, dataService);
     }
 }

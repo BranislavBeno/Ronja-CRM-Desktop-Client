@@ -34,9 +34,7 @@ public class ServiceConfiguration {
     }
 
     @Bean
-    public MetalDataService metalDataService(@Value("${client.metals.limit.daily:2}") int dailyLimit,
-                                             @Value("${client.metals.limit.weekly:10}") int weeklyLimit,
-                                             @Autowired MetalDataWebClient webClient) {
-        return new MetalDataService(dailyLimit, weeklyLimit, webClient);
+    public MetalDataService metalDataService(@Autowired MetalDataWebClient webClient) {
+        return new MetalDataService(webClient);
     }
 }
