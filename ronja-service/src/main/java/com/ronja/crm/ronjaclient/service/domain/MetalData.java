@@ -80,6 +80,10 @@ public class MetalData {
     }
 
     private BigDecimal computePrice(BigDecimal input) {
+        if (input == null){
+            return BigDecimal.ZERO;
+        }
+
         return new BigDecimal(1).divide(input.multiply(OUNCE_PER_TONNE), MathContext.DECIMAL32);
     }
 }

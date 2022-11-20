@@ -119,6 +119,9 @@ public class MetalPane extends VBox {
                 case LEAD -> data.getLead();
                 case COPPER -> data.getCopper();
             };
+            if (price.equals(BigDecimal.ZERO)) {
+                continue;
+            }
             XYChart.Data<String, Number> chartData = new XYChart.Data<>(date, price);
             dataSeries.getData().add(chartData);
         }
