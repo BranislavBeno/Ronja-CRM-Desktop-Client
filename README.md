@@ -7,9 +7,10 @@
 [![](https://img.shields.io/badge/Java-17-blue)](/pom.xml)
 [![](https://img.shields.io/badge/JavaFX-18.0.2-blue)](/pom.xml)
 [![](https://img.shields.io/badge/Spring%20Boot-2.7.5-blue)](/pom.xml)
-[![](https://img.shields.io/badge/Testcontainers-1.17.5-blue)](/pom.xml)
+[![](https://img.shields.io/badge/Testcontainers-1.17.6-blue)](/pom.xml)
 [![](https://img.shields.io/badge/Maven-3.8.6-blue)](https://img.shields.io/badge/maven-v3.8.6-blue)
 [![](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-Desktop client implemented in JavaFX and Spring Boot.
-Application is preconfigured to connect REST API Ronja Server, which provides communication with database.
+Desktop client implemented in JavaFX and Spring Boot.  
+The application is preconfigured to connect `REST API Ronja Server`, which provides communication with the database.  
+In case you would like to run this client application, it's necessary first start `Ronja Server` via [docker-compose](/docker-compose.yml).
