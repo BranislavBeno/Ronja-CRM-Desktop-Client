@@ -1,37 +1,35 @@
-## docker image
 image: eclipse-temurin:19-jdk
 
-before_script:
-  - chmod +x mvnw
+scan-code:
+  stage: .pre
+  image:
+    name: "zricethezav/gitleaks:latest"
+    entrypoint: [ "" ]
+  script:
+    - gitleaks detect --verbose --redact --no-git --source="$CI_PROJECT_DIR"
+  tags:
+    - docker
 
-stages:
-  - test
-  - integration_test
-
-## job unit tests
-## - run unit tests
-## - evaluate test coverage
-unit_test:
+unit-tests:
   stage: test
   script:
+    - chmod +x mvnw
     - ./mvnw verify jacoco:report
     - cat ronja-service/target/site/jacoco/index.html
   tags:
     - docker
 
-## job integration tests
-## - run integration tests
-## - evaluate test coverage
-integration_test:
-  stage: integration_test
+integration-tests:
+  stage: test
   script:
     - suffix=$([[ $(uname -m) == "aarch64" ]] && echo "arm64" || echo "x86-64")
     - curl -L -o agent https://app.testcontainers.cloud/download/testcontainers-cloud-agent_linux_$suffix
     - chmod +x agent
     - ./agent &
     - ./agent wait
+    - chmod +x mvnw
     - ./mvnw test-compile failsafe:integration-test failsafe:verify
   needs:
-    - job: unit_test
+    - job: unit-tests
   tags:
     - docker
