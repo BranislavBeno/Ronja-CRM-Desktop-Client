@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.6</version>
+        <version>3.0.0</version>
         <relativePath/>
     </parent>
 
@@ -17,10 +17,9 @@
     <packaging>pom</packaging>
 
     <properties>
-        <maven.compiler.release>17</maven.compiler.release>
+        <maven.compiler.release>19</maven.compiler.release>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>branislavbeno</sonar.organization>
-        <sonar.login>3953a9d7e11d39a5021edd84d4bbe2f99c1b0947</sonar.login>
     </properties>
 
     <dependencyManagement>
