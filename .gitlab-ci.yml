@@ -1,37 +1,49 @@
-## docker image
-image: eclipse-temurin:19-jdk
+image: azul/zulu-openjdk:19
 
-before_script:
-  - chmod +x mvnw
-
-stages:
-  - test
-  - integration_test
-
-## job unit tests
-## - run unit tests
-## - evaluate test coverage
-unit_test:
-  stage: test
+scan-credentials:
+  stage: .pre
+  image:
+    name: "zricethezav/gitleaks:v8.15.2"
+    entrypoint: [""]
   script:
-    - ./mvnw verify jacoco:report
-    - cat ronja-service/target/site/jacoco/index.html
+    - gitleaks detect --verbose --redact --no-git --source="$CI_PROJECT_DIR"
   tags:
     - docker
 
-## job integration tests
-## - run integration tests
-## - evaluate test coverage
-integration_test:
-  stage: integration_test
+scan-vulnerabilities:
+  stage: .pre
+  image:
+    name: "aquasec/trivy:0.35.0"
+    entrypoint: [""]
   script:
+    - trivy fs --no-progress --ignore-unfixed --exit-code 0 $CI_PROJECT_DIR
+  allow_failure: true
+  tags:
+    - docker
+
+test-code:
+  stage: test
+  script:
+    - chmod +x mvnw
+    - ./mvnw verify jacoco:report
+    - cat ronja-service/target/site/jacoco/index.html
+  coverage: "/Total.*?([0-9]{1,3})%/"
+  tags:
+    - docker
+
+test-integration:
+  stage: test
+  script:
+    - apt-get update && apt-get install -y curl
+    - curl --version
     - suffix=$([[ $(uname -m) == "aarch64" ]] && echo "arm64" || echo "x86-64")
     - curl -L -o agent https://app.testcontainers.cloud/download/testcontainers-cloud-agent_linux_$suffix
     - chmod +x agent
     - ./agent &
     - ./agent wait
+    - chmod +x mvnw
     - ./mvnw test-compile failsafe:integration-test failsafe:verify
   needs:
-    - job: unit_test
+    - job: test-code
   tags:
     - docker
