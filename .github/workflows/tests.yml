@@ -30,7 +30,7 @@ jobs:
       uses: actions/setup-java@v3
       with:
         java-version: ${{ env.JDK_VERSION }}
-        distribution: temurin
+        distribution: zulu
         java-package: jdk
 
     - name: Run Tests

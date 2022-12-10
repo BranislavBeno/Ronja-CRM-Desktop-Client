@@ -4,7 +4,7 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=com.ronja.crm.ronjaclient%3Aronja-parent&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=com.ronja.crm.ronjaclient%3Aronja-parent)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=com.ronja.crm.ronjaclient%3Aronja-parent&metric=coverage)](https://sonarcloud.io/dashboard?id=com.ronja.crm.ronjaclient%3Aronja-parent)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=com.ronja.crm.ronjaclient%3Aronja-parent&metric=ncloc)](https://sonarcloud.io/dashboard?id=com.ronja.crm.ronjaclient%3Aronja-parent)  
-[![](https://img.shields.io/badge/Java-17-blue)](/pom.xml)
+[![](https://img.shields.io/badge/Java-19-blue)](/pom.xml)
 [![](https://img.shields.io/badge/JavaFX-18.0.2-blue)](/pom.xml)
 [![](https://img.shields.io/badge/Spring%20Boot-2.7.6-blue)](/pom.xml)
 [![](https://img.shields.io/badge/Testcontainers-1.17.6-blue)](/pom.xml)
