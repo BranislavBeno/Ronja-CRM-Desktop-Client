@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.ronja.crm.ronjaclient.locale.i18n.I18N;
 import com.ronja.crm.ronjaclient.service.domain.Representative;
 import com.ronja.crm.ronjaclient.service.validation.*;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerErrorException;
@@ -57,8 +57,8 @@ public class ClientApiUtils {
         return webClient.get()
                 .uri("/list")
                 .retrieve()
-                .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::propagateFetchingError)
-                .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::propagateServerError)
+                .onStatus(HttpStatusCode::is4xxClientError, ClientApiUtils::propagateFetchingError)
+                .onStatus(HttpStatusCode::is5xxServerError, ClientApiUtils::propagateServerError)
                 .bodyToMono(clazz)
                 .timeout(Duration.ofSeconds(20));
     }
@@ -67,8 +67,8 @@ public class ClientApiUtils {
         return webClient.get()
                 .uri("/search?customerId=" + id)
                 .retrieve()
-                .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::propagateFetchingError)
-                .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::propagateServerError)
+                .onStatus(HttpStatusCode::is4xxClientError, ClientApiUtils::propagateFetchingError)
+                .onStatus(HttpStatusCode::is5xxServerError, ClientApiUtils::propagateServerError)
                 .bodyToMono(Representative[].class)
                 .timeout(Duration.ofSeconds(20));
     }
@@ -77,8 +77,8 @@ public class ClientApiUtils {
         return webClient.get()
                 .uri("/scheduled?days=" + id)
                 .retrieve()
-                .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::propagateFetchingError)
-                .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::propagateServerError)
+                .onStatus(HttpStatusCode::is4xxClientError, ClientApiUtils::propagateFetchingError)
+                .onStatus(HttpStatusCode::is5xxServerError, ClientApiUtils::propagateServerError)
                 .bodyToMono(Representative[].class)
                 .timeout(Duration.ofSeconds(20));
     }
@@ -87,8 +87,8 @@ public class ClientApiUtils {
         return webClient.delete()
                 .uri("/delete/" + id)
                 .retrieve()
-                .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::propagateDeletingError)
-                .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::propagateServerError)
+                .onStatus(HttpStatusCode::is4xxClientError, ClientApiUtils::propagateDeletingError)
+                .onStatus(HttpStatusCode::is5xxServerError, ClientApiUtils::propagateServerError)
                 .bodyToMono(Void.class)
                 .timeout(Duration.ofSeconds(20));
     }
@@ -98,8 +98,8 @@ public class ClientApiUtils {
                 .uri("/add")
                 .body(Mono.just(u), clazz)
                 .retrieve()
-                .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::propagateSavingError)
-                .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::propagateServerError)
+                .onStatus(HttpStatusCode::is4xxClientError, ClientApiUtils::propagateSavingError)
+                .onStatus(HttpStatusCode::is5xxServerError, ClientApiUtils::propagateServerError)
                 .bodyToMono(clazz)
                 .timeout(Duration.ofSeconds(20));
     }
@@ -109,8 +109,8 @@ public class ClientApiUtils {
                 .uri("/update")
                 .body(Mono.just(u), clazz)
                 .retrieve()
-                .onStatus(HttpStatus::is4xxClientError, ClientApiUtils::propagateSavingError)
-                .onStatus(HttpStatus::is5xxServerError, ClientApiUtils::propagateServerError)
+                .onStatus(HttpStatusCode::is4xxClientError, ClientApiUtils::propagateSavingError)
+                .onStatus(HttpStatusCode::is5xxServerError, ClientApiUtils::propagateServerError)
                 .bodyToMono(clazz)
                 .timeout(Duration.ofSeconds(20));
     }
