@@ -2,8 +2,8 @@ package com.ronja.crm.ronjaclient.desktop.component.dashboard;
 
 import com.ronja.crm.ronjaclient.locale.i18n.I18N;
 import com.ronja.crm.ronjaclient.service.clientapi.RepresentativeWebClient;
-import com.ronja.crm.ronjaclient.service.domain.Representative;
 import com.ronja.crm.ronjaclient.service.domain.RonjaDate;
+import com.ronja.crm.ronjaclient.service.domain.Scheduled;
 import javafx.geometry.Insets;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -48,35 +48,33 @@ public class ScheduledPane extends VBox {
         return rootItem;
     }
 
-    private TreeItem<String> addTreeItem(Map.Entry<String, List<Representative>> entry) {
+    private TreeItem<String> addTreeItem(Map.Entry<String, List<Scheduled>> entry) {
         TreeItem<String> item = toDateItem(entry);
         entry.getValue()
                 .stream()
-                .map(this::toRepresentativeItem)
+                .map(this::toScheduledItem)
                 .forEach(item.getChildren()::add);
 
         return item;
     }
 
-    private TreeItem<String> toDateItem(Map.Entry<String, List<Representative>> entry) {
+    private TreeItem<String> toDateItem(Map.Entry<String, List<Scheduled>> entry) {
         return new TreeItem<>("%s (%d)".formatted(entry.getKey(), entry.getValue().size()));
     }
 
-    private TreeItem<String> toRepresentativeItem(Representative v) {
-        String company = v.getCustomer() != null
-                ? " - " + v.getCustomer().getCompanyName()
-                : "";
+    private TreeItem<String> toScheduledItem(Scheduled v) {
+        String company = v.getCustomerName() != null ? " - " + v.getCustomerName() : "";
         return new TreeItem<>("%s %s%s".formatted(v.getFirstName(), v.getLastName(), company));
     }
 
-    private Map<String, List<Representative>> fetchScheduledRepresentatives(RepresentativeWebClient webClient) {
-        Representative[] scheduled = Objects.requireNonNull(webClient.fetchScheduledRepresentatives(14).block());
+    private Map<String, List<Scheduled>> fetchScheduledRepresentatives(RepresentativeWebClient webClient) {
+        Scheduled[] scheduled = Objects.requireNonNull(webClient.fetchScheduledRepresentatives(14).block());
 
         return Arrays.stream(scheduled)
                 .collect(Collectors.groupingBy(this::dateToString, TreeMap::new, Collectors.toList()));
     }
 
-    private String dateToString(Representative representative) {
+    private String dateToString(Scheduled representative) {
         return new RonjaDate(representative.getScheduledVisit()).toString();
     }
 }
