@@ -3,7 +3,7 @@ version: '3.5'
 ## Services
 services:
   viewer:
-    image: beo1975/ronja-server:1.3.2
+    image: beo1975/ronja-server:1.3.3
     container_name: ronja_server
     restart: unless-stopped
     ports:

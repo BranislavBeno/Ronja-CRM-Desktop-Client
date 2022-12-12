@@ -1,1 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.ronja.crm.ronjaclient.service.configuration.ServiceConfiguration

@@ -85,7 +85,7 @@ class RepresentativeWebClientIT extends BasicWebClientIT {
     @Order(6)
     @DisplayName("Test-containers: Test whether representatives scheduled for next 14 days are fetched successfully")
     void testFetchScheduledRepresentatives() {
-        Representative[] representatives = representativeWebClient.fetchScheduledRepresentatives(PLUS_DAYS).block();
+        Scheduled[] representatives = representativeWebClient.fetchScheduledRepresentatives(PLUS_DAYS).block();
         assertThat(representatives).isEmpty();
 
         createRepresentative().block();

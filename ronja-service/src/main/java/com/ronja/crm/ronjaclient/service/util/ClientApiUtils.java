@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.ronja.crm.ronjaclient.locale.i18n.I18N;
 import com.ronja.crm.ronjaclient.service.domain.Representative;
+import com.ronja.crm.ronjaclient.service.domain.Scheduled;
 import com.ronja.crm.ronjaclient.service.validation.*;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -73,13 +74,13 @@ public class ClientApiUtils {
                 .timeout(Duration.ofSeconds(20));
     }
 
-    public static Mono<Representative[]> fetchScheduledEntities(WebClient webClient, int id) {
+    public static Mono<Scheduled[]> fetchScheduledEntities(WebClient webClient, int id) {
         return webClient.get()
                 .uri("/scheduled?days=" + id)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, ClientApiUtils::propagateFetchingError)
                 .onStatus(HttpStatusCode::is5xxServerError, ClientApiUtils::propagateServerError)
-                .bodyToMono(Representative[].class)
+                .bodyToMono(Scheduled[].class)
                 .timeout(Duration.ofSeconds(20));
     }
 
