@@ -37,7 +37,7 @@ abstract class BasicWebClientIT {
     }
 
     private static GenericContainer<?> populateServer() {
-        try (GenericContainer<?> server = new GenericContainer<>(DockerImageName.parse("beo1975/ronja-server:1.3.2"))) {
+        try (GenericContainer<?> server = new GenericContainer<>(DockerImageName.parse("beo1975/ronja-server:1.3.3"))) {
             return server.withExposedPorts(8087)
                     .waitingFor(Wait.forHttp("/actuator/health"))
                     .withNetwork(NETWORK)

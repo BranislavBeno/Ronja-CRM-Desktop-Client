@@ -1,6 +1,7 @@
 package com.ronja.crm.ronjaclient.service.clientapi;
 
 import com.ronja.crm.ronjaclient.service.domain.Representative;
+import com.ronja.crm.ronjaclient.service.domain.Scheduled;
 import com.ronja.crm.ronjaclient.service.dto.RepresentativeDto;
 import com.ronja.crm.ronjaclient.service.util.ClientApiUtils;
 import org.springframework.http.HttpHeaders;
@@ -27,7 +28,7 @@ public class RepresentativeWebClient {
         return ClientApiUtils.fetchParticularEntities(webClient, id);
     }
 
-    public Mono<Representative[]> fetchScheduledRepresentatives(int id) {
+    public Mono<Scheduled[]> fetchScheduledRepresentatives(int id) {
         return ClientApiUtils.fetchScheduledEntities(webClient, id);
     }
 
