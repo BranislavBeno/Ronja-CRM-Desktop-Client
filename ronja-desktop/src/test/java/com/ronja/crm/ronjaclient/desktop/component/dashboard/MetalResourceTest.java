@@ -18,32 +18,32 @@ class MetalResourceTest {
 
     @BeforeAll
     static void setupAll() {
-        IntStream.rangeClosed(1, 28).forEach(i -> METAL_DATA.add(createMetalData(i)));
+        IntStream.rangeClosed(1, 60).forEach(i -> METAL_DATA.add(createMetalData(i)));
         metalResource = new MetalResource(2, 10, 40, METAL_DATA);
     }
 
     @Test
     void fetchLatestData() {
         metalResource.getLatestData()
-                .ifPresent(m -> assertThat(m.getFetched()).isEqualTo(LocalDate.now().minusDays(28)));
+                .ifPresent(m -> assertThat(m.getFetched()).isEqualTo(LocalDate.now().minusDays(60)));
     }
 
     @Test
     void getDailyData() {
         List<MetalData> data = metalResource.getDailyData();
-        assertThat(data).hasSize(28);
+        assertThat(data).hasSize(60);
     }
 
     @Test
     void getWeeklyData() {
         List<MetalData> data = metalResource.getWeeklyData();
-        assertThat(data).hasSize(4);
+        assertThat(data).hasSize(8);
     }
 
     @Test
     void getMonthlyData() {
         List<MetalData> data = metalResource.getMonthlyData();
-        assertThat(data).hasSizeBetween(1, 2);
+        assertThat(data).hasSizeBetween(1, 3);
     }
 
     private static MetalData createMetalData(int offset) {
