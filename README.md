@@ -6,7 +6,7 @@
 [![](https://img.shields.io/badge/JavaFX-18.0.2-blue)](/pom.xml)
 [![](https://img.shields.io/badge/Spring%20Boot-3.0.2-blue)](/pom.xml)
 [![](https://img.shields.io/badge/Testcontainers-1.17.6-blue)](/pom.xml)
-[![](https://img.shields.io/badge/Maven-3.8.6-blue)](https://img.shields.io/badge/maven-v3.8.6-blue)
+[![](https://img.shields.io/badge/Maven-3.9.0-blue)](https://img.shields.io/badge/maven-v3.9.0-blue)
 [![](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ## Ronja CRM client
