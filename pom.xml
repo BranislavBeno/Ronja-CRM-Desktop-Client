@@ -40,11 +40,6 @@
             <artifactId>snakeyaml</artifactId>
             <version>1.33</version>
         </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-http</artifactId>
-            <version>4.1.88.Final</version>
-        </dependency>
     </dependencies>
 
     <build>
