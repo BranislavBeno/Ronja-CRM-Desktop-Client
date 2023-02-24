@@ -15,7 +15,7 @@ public final class I18N {
     }
 
     public static List<Locale> getSupportedLocales() {
-        return new ArrayList<>(Arrays.asList(Locale.ENGLISH, new Locale("sk", "SK")));
+        return new ArrayList<>(Arrays.asList(Locale.ENGLISH, Locale.of("sk", "SK")));
     }
 
     public static Locale getDefaultLocale() {
