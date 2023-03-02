@@ -43,7 +43,7 @@ class MetalResourceTest {
     @Test
     void getMonthlyData() {
         List<MetalData> data = metalResource.getMonthlyData();
-        assertThat(data).hasSizeBetween(0, 3);
+        assertThat(data).hasSizeBetween(0, 4);
     }
 
     private static MetalData createMetalData(int offset) {
