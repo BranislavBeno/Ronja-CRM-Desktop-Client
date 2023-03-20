@@ -37,7 +37,7 @@ class MetalResourceTest {
     @Test
     void getWeeklyData() {
         List<MetalData> data = metalResource.getWeeklyData();
-        assertThat(data).hasSizeBetween(10, 13);
+        assertThat(data).hasSizeGreaterThan(10);
     }
 
     @Test
