@@ -12,7 +12,7 @@ variables:
 scan-code:
   stage: .pre
   image:
-    name: "zricethezav/gitleaks:v8.16.2"
+    name: "zricethezav/gitleaks:latest"
     entrypoint: [""]
   script:
     - gitleaks detect --verbose --redact --no-git --source="$CI_PROJECT_DIR"
@@ -22,7 +22,7 @@ scan-code:
 scan-vulnerabilities:
   stage: .pre
   image:
-    name: "aquasec/trivy:0.39.0"
+    name: "aquasec/trivy:latest"
     entrypoint: [""]
   script:
     - trivy fs --no-progress --ignore-unfixed --exit-code 0 $CI_PROJECT_DIR
