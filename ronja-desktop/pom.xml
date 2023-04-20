@@ -15,9 +15,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>19</java.version>
-        <maven.compiler.release>19</maven.compiler.release>
-        <javafx.version>19</javafx.version>
+        <java.version>20</java.version>
+        <maven.compiler.release>20</maven.compiler.release>
+        <javafx.version>20</javafx.version>
         <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
         <main.class>com.ronja.crm.ronjaclient.desktop.RonjaDesktopApplication</main.class>
     </properties>
@@ -139,5 +139,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
