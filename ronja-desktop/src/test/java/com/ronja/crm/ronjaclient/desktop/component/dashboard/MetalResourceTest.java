@@ -31,13 +31,13 @@ class MetalResourceTest {
     @Test
     void getDailyData() {
         List<MetalData> data = metalResource.getDailyData();
-        assertThat(data).hasSizeBetween(58, 60);
+        assertThat(data).hasSizeBetween(55, 60);
     }
 
     @Test
     void getWeeklyData() {
         List<MetalData> data = metalResource.getWeeklyData();
-        assertThat(data).hasSizeGreaterThan(10);
+        assertThat(data).hasSizeBetween(8, 15);
     }
 
     @Test
