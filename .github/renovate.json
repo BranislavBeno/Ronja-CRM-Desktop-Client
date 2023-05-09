@@ -3,6 +3,31 @@
   "extends": [
     "config:base"
   ],
+  "timezone": "Europe/Bratislava",
+  "schedule": [
+    "after 10pm every weekday",
+    "before 5am every weekday",
+    "every weekend"
+  ],
+  "packageRules" : [
+    {
+      "groupName" : "all non-major dependencies",
+      "groupSlug" : "all-minor-patch",
+      "matchUpdateTypes" : [
+        "minor",
+        "patch"
+      ],
+      "matchPackagePatterns" : [
+        "*"
+      ]
+    },
+    {
+      "matchPackagePatterns" : [
+        "org.openjfx:*"
+      ],
+      "allowedVersions" : "!/.*-ea.*$/"
+    }
+  ],
   "ignorePaths": [],
   "regexManagers": [
     {
