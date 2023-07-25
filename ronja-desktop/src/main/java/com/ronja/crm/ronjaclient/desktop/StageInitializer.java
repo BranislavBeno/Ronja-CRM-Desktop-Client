@@ -32,7 +32,7 @@ public class StageInitializer implements ApplicationListener<StageReadyEvent> {
 
         Locale locale = Locale.ENGLISH;
         if (localization.equals("SK")) {
-            locale = new Locale("sk", "SK");
+            locale = Locale.of("sk", "SK");
         }
         I18N.setLocale(locale);
     }
