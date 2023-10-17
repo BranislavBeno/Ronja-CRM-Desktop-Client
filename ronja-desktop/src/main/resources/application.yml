@@ -10,11 +10,11 @@ spring:
 
 client:
   customers:
-    base-url: https://beo-1975-ronja-server-nv9ri.ondigitalocean.app/customers
+    base-url: http://localhost:8087/customers
   representatives:
-    base-url: https://beo-1975-ronja-server-nv9ri.ondigitalocean.app/representatives
+    base-url: http://localhost:8087/representatives
   metals:
-    base-url: https://beo-1975-ronja-server-nv9ri.ondigitalocean.app/metals
+    base-url: http://localhost:8087/metals
     limit:
       daily: 2
       weekly: 10
