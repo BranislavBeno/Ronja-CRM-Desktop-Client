@@ -4,8 +4,8 @@
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=com.ronja.crm.ronjaclient%3Aronja-parent&metric=ncloc)](https://sonarcloud.io/dashboard?id=com.ronja.crm.ronjaclient%3Aronja-parent)  
 [![](https://img.shields.io/badge/Java-21-blue)](/pom.xml)
 [![](https://img.shields.io/badge/JavaFX-22-blue)](/pom.xml)
-[![](https://img.shields.io/badge/Spring%20Boot-3.2.5-blue)](/pom.xml)
-[![](https://img.shields.io/badge/Testcontainers-1.19.7-blue)](/pom.xml)
+[![](https://img.shields.io/badge/Spring%20Boot-3.3.0-blue)](/pom.xml)
+[![](https://img.shields.io/badge/Testcontainers-1.19.8-blue)](/pom.xml)
 [![](https://img.shields.io/badge/Maven-3.9.6-blue)](https://img.shields.io/badge/maven-v3.9.6-blue)
 [![](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
