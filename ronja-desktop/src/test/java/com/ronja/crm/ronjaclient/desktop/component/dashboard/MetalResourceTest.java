@@ -1,6 +1,7 @@
 package com.ronja.crm.ronjaclient.desktop.component.dashboard;
 
 import com.ronja.crm.ronjaclient.service.domain.MetalData;
+import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -9,9 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-class MetalResourceTest {
+class MetalResourceTest implements WithAssertions {
 
     private static final List<MetalData> METAL_DATA = new ArrayList<>();
     private static MetalResource metalResource;

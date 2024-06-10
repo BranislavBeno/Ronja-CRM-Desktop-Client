@@ -3,6 +3,7 @@ package com.ronja.crm.ronjaclient.service.clientapi;
 import com.ronja.crm.ronjaclient.service.domain.*;
 import com.ronja.crm.ronjaclient.service.dto.RepresentativeDto;
 import com.ronja.crm.ronjaclient.service.dto.RepresentativeMapper;
+import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.*;
 import reactor.core.publisher.Mono;
 
@@ -10,10 +11,8 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Objects;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class RepresentativeWebClientIT extends BasicWebClientIT {
+class RepresentativeWebClientIT extends BasicWebClientIT implements WithAssertions {
 
     private static final int PLUS_DAYS = 14;
     private CustomerWebClient customerWebClient;
@@ -34,9 +33,7 @@ class RepresentativeWebClientIT extends BasicWebClientIT {
     @DisplayName("Test-containers: Test whether new representative is created successfully")
     void testAddNewRepresentative() {
         Representative representative = createRepresentative().block();
-
-        assertThat(representative).isNotNull();
-        assertThat(representative.getId()).isNotZero();
+        assertThat(representative).isNotNull().satisfies(r -> assertThat(r.getId()).isNotZero());
     }
 
     @Test

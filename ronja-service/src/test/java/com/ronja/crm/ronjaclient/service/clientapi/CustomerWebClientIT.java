@@ -4,15 +4,14 @@ import com.ronja.crm.ronjaclient.service.domain.Category;
 import com.ronja.crm.ronjaclient.service.domain.Customer;
 import com.ronja.crm.ronjaclient.service.domain.Focus;
 import com.ronja.crm.ronjaclient.service.domain.Status;
+import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.*;
 import reactor.core.publisher.Mono;
 
 import java.util.Objects;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class CustomerWebClientIT extends BasicWebClientIT {
+class CustomerWebClientIT extends BasicWebClientIT implements WithAssertions {
 
     private CustomerWebClient customerWebClient;
 
@@ -27,9 +26,7 @@ class CustomerWebClientIT extends BasicWebClientIT {
     @DisplayName("Test-containers: Test whether new customer is created successfully")
     void testAddNewCustomer() {
         Customer customer = provideCustomer().block();
-
-        assertThat(customer).isNotNull();
-        assertThat(customer.getId()).isNotZero();
+        assertThat(customer).isNotNull().satisfies(c -> assertThat(c.getId()).isNotZero());
     }
 
     @Test

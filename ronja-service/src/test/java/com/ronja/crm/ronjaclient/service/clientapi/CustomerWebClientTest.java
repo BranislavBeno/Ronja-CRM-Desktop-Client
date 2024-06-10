@@ -8,19 +8,14 @@ import com.ronja.crm.ronjaclient.service.validation.DeleteException;
 import com.ronja.crm.ronjaclient.service.validation.FetchException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.*;
 import org.springframework.web.server.ServerErrorException;
 
 import java.io.IOException;
 import java.util.function.Supplier;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
-class CustomerWebClientTest {
+class CustomerWebClientTest implements WithAssertions {
 
     private static final String LIST_RESPONSE = """
             [
@@ -71,18 +66,19 @@ class CustomerWebClientTest {
         mockResponse(LIST_RESPONSE);
 
         Customer[] customers = customerWebClient.fetchAllCustomers().block();
-        assertAll(() -> {
-            assertThat(customers).isNotNull();
-            assertThat(customers).hasSize(2);
-        });
+        assertThat(customers).isNotNull().satisfies(cs -> {
+            assertThat(cs).hasSize(2);
 
-        Customer customer = customers[0];
-        assertAll(() -> {
-            assertThat(customer.getId()).isEqualTo(2);
-            assertThat(customer.getCompanyName()).isEqualTo("EmmaCorp");
-            assertThat(customer.getCategory()).isEqualTo(Category.LEVEL_2);
-            assertThat(customer.getFocus()).isEqualTo(Focus.MANUFACTURE);
-            assertThat(customer.getStatus()).isEqualTo(Status.INACTIVE);
+            Customer customer = cs[0];
+            assertThat(customer).isNotNull().satisfies(c ->
+                    Assertions.assertAll(() -> {
+                        assertThat(c.getId()).isEqualTo(2);
+                        assertThat(c.getCompanyName()).isEqualTo("EmmaCorp");
+                        assertThat(c.getCategory()).isEqualTo(Category.LEVEL_2);
+                        assertThat(c.getFocus()).isEqualTo(Focus.MANUFACTURE);
+                        assertThat(c.getStatus()).isEqualTo(Status.INACTIVE);
+                    })
+            );
         });
     }
 
@@ -94,7 +90,7 @@ class CustomerWebClientTest {
         Customer customer = provideCustomer();
         Customer newCustomer = customerWebClient.createCustomer(customer).block();
 
-        assertAll(() -> {
+        Assertions.assertAll(() -> {
             assertThat(newCustomer).isNotNull();
             assertThat(newCustomer).hasToString(customer.toString());
         });
@@ -118,7 +114,7 @@ class CustomerWebClientTest {
     @Test
     @DisplayName("Customer data handling: failure test")
     void testExceptionsOnCustomerDataHandling() {
-        assertAll(() -> {
+        Assertions.assertAll(() -> {
             // customer list fetching failures
             assertThatThrownBy(this::fetchCustomers).isExactlyInstanceOf(FetchException.class);
             // customer creating failures
