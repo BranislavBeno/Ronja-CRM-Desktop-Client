@@ -33,9 +33,7 @@ class RepresentativeWebClientIT extends BasicWebClientIT implements WithAssertio
     @DisplayName("Test-containers: Test whether new representative is created successfully")
     void testAddNewRepresentative() {
         Representative representative = createRepresentative().block();
-
-        assertThat(representative).isNotNull();
-        assertThat(representative.getId()).isNotZero();
+        assertThat(representative).isNotNull().satisfies(r -> assertThat(r.getId()).isNotZero());
     }
 
     @Test

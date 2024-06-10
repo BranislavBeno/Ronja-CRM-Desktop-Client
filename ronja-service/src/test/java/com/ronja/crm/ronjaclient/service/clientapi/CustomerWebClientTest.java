@@ -70,15 +70,15 @@ class CustomerWebClientTest implements WithAssertions {
             assertThat(cs).hasSize(2);
 
             Customer customer = cs[0];
-            assertThat(customer).isNotNull().satisfies(c -> {
-                Assertions.assertAll(() -> {
-                    assertThat(c.getId()).isEqualTo(2);
-                    assertThat(c.getCompanyName()).isEqualTo("EmmaCorp");
-                    assertThat(c.getCategory()).isEqualTo(Category.LEVEL_2);
-                    assertThat(c.getFocus()).isEqualTo(Focus.MANUFACTURE);
-                    assertThat(c.getStatus()).isEqualTo(Status.INACTIVE);
-                });
-            });
+            assertThat(customer).isNotNull().satisfies(c ->
+                    Assertions.assertAll(() -> {
+                        assertThat(c.getId()).isEqualTo(2);
+                        assertThat(c.getCompanyName()).isEqualTo("EmmaCorp");
+                        assertThat(c.getCategory()).isEqualTo(Category.LEVEL_2);
+                        assertThat(c.getFocus()).isEqualTo(Focus.MANUFACTURE);
+                        assertThat(c.getStatus()).isEqualTo(Status.INACTIVE);
+                    })
+            );
         });
     }
 

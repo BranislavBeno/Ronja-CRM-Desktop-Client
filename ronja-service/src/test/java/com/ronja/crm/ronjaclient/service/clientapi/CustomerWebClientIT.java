@@ -26,9 +26,7 @@ class CustomerWebClientIT extends BasicWebClientIT implements WithAssertions {
     @DisplayName("Test-containers: Test whether new customer is created successfully")
     void testAddNewCustomer() {
         Customer customer = provideCustomer().block();
-
-        assertThat(customer).isNotNull();
-        assertThat(customer.getId()).isNotZero();
+        assertThat(customer).isNotNull().satisfies(c -> assertThat(c.getId()).isNotZero());
     }
 
     @Test
