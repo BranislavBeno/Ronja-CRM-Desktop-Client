@@ -85,8 +85,12 @@
                 <version>5.33.0</version>
                 <configuration>
                     <activeRecipes>
+                        <recipe>com.ronja.crm.ronjaclient.NoStaticImport</recipe>
+                        <recipe>org.openrewrite.java.RemoveUnusedImports</recipe>
+                        <recipe>org.openrewrite.java.OrderImports</recipe>
                         <recipe>org.openrewrite.java.migrate.UpgradeToJava21</recipe>
                         <recipe>org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_3</recipe>
+                        <recipe>org.openrewrite.java.spring.boot3.SpringBoot3BestPractices</recipe>
                     </activeRecipes>
                 </configuration>
                 <dependencies>

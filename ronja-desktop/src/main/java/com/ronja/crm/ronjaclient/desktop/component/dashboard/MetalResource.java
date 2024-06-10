@@ -11,9 +11,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static java.time.DayOfWeek.FRIDAY;
-import static java.time.DayOfWeek.MONDAY;
-
 public class MetalResource {
 
     private final int dailyLimit;
@@ -45,8 +42,8 @@ public class MetalResource {
                     LocalDate fetched = m.getFetched();
                     DayOfWeek dayOfWeek = LocalDate.now().getDayOfWeek();
                     return switch (dayOfWeek) {
-                        case SATURDAY -> fetched.getDayOfWeek().equals(FRIDAY);
-                        case SUNDAY -> fetched.getDayOfWeek().equals(MONDAY);
+                        case SATURDAY -> fetched.getDayOfWeek().equals(DayOfWeek.FRIDAY);
+                        case SUNDAY -> fetched.getDayOfWeek().equals(DayOfWeek.MONDAY);
                         default -> fetched.getDayOfWeek().equals(dayOfWeek);
                     };
                 })

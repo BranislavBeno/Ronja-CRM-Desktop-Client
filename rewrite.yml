@@ -1,0 +1,7 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.ronja.crm.ronjaclient.NoStaticImport
+displayName: Remove static import
+recipeList:
+  - org.openrewrite.java.NoStaticImport:
+      methodPattern: org.junit.jupiter.api.Assertions *(..)

@@ -7,11 +7,9 @@ import com.ronja.crm.ronjaclient.service.validation.DeleteException;
 import com.ronja.crm.ronjaclient.service.validation.FetchException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import org.assertj.core.api.WithAssertions;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.web.server.ServerErrorException;
 
 import java.io.IOException;
@@ -19,10 +17,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.function.Supplier;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
-class RepresentativeWebClientTest {
+class RepresentativeWebClientTest implements WithAssertions {
 
     private static final String LIST_RESPONSE = """
             [
@@ -177,30 +172,31 @@ class RepresentativeWebClientTest {
         mockResponse(LIST_RESPONSE);
 
         Representative[] representatives = representativeWebClient.fetchAllRepresentatives().block();
-        assertAll(() -> {
-            assertThat(representatives).isNotNull();
-            assertThat(representatives).hasSize(2);
-        });
+        assertThat(representatives).isNotNull().satisfies(rs -> {
+            assertThat(rs).hasSize(2);
 
-        Representative representative = representatives[0];
-        assertAll(() -> {
-            assertThat(representative.getId()).isEqualTo(1);
-            assertThat(representative.getFirstName()).isEqualTo("John");
-            assertThat(representative.getLastName()).isEqualTo("Doe");
-            assertThat(representative.getPosition()).isEqualTo("CEO");
-            assertThat(representative.getRegion()).isEqualTo("V4");
-            assertThat(representative.getNotice()).isEqualTo("nothing special");
-            assertThat(representative.getStatus()).isEqualTo(Status.ACTIVE);
-            assertThat(representative.getLastVisit()).isEqualTo(LocalDate.of(2020, 10, 7));
-            assertThat(representative.getScheduledVisit()).isEqualTo(LocalDate.of(2021, 4, 25));
-            assertThat(representative.getPhoneNumbers()).hasSize(2);
-            Contact expected = new Contact("john@example.com", "HOME", true);
-            Contact actual = representative.getEmails().stream().findFirst().orElseThrow();
-            assertThat(expected.getContent()).isEqualTo(actual.getContent());
-            assertThat(representative.getCustomer().getCompanyName()).isEqualTo("LeslieCorp");
-            assertThat(representative.getCustomer().getCategory()).isEqualTo(Category.LEVEL_1);
-            assertThat(representative.getCustomer().getFocus()).isEqualTo(Focus.BUILDER);
-            assertThat(representative.getCustomer().getStatus()).isEqualTo(Status.ACTIVE);
+            Representative representative = rs[0];
+            assertThat(representative).isNotNull().satisfies(r ->
+                    Assertions.assertAll(() -> {
+                        assertThat(r.getId()).isEqualTo(1);
+                        assertThat(r.getFirstName()).isEqualTo("John");
+                        assertThat(r.getLastName()).isEqualTo("Doe");
+                        assertThat(r.getPosition()).isEqualTo("CEO");
+                        assertThat(r.getRegion()).isEqualTo("V4");
+                        assertThat(r.getNotice()).isEqualTo("nothing special");
+                        assertThat(r.getStatus()).isEqualTo(Status.ACTIVE);
+                        assertThat(r.getLastVisit()).isEqualTo(LocalDate.of(2020, 10, 7));
+                        assertThat(r.getScheduledVisit()).isEqualTo(LocalDate.of(2021, 4, 25));
+                        assertThat(r.getPhoneNumbers()).hasSize(2);
+                        Contact expected = new Contact("john@example.com", "HOME", true);
+                        Contact actual = r.getEmails().stream().findFirst().orElseThrow();
+                        assertThat(expected.getContent()).isEqualTo(actual.getContent());
+                        assertThat(r.getCustomer().getCompanyName()).isEqualTo("LeslieCorp");
+                        assertThat(r.getCustomer().getCategory()).isEqualTo(Category.LEVEL_1);
+                        assertThat(r.getCustomer().getFocus()).isEqualTo(Focus.BUILDER);
+                        assertThat(r.getCustomer().getStatus()).isEqualTo(Status.ACTIVE);
+                    })
+            );
         });
     }
 
@@ -210,7 +206,7 @@ class RepresentativeWebClientTest {
         mockResponse(ONE_ITEM_LIST_RESPONSE);
 
         Representative[] representatives = representativeWebClient.fetchParticularRepresentatives(2).block();
-        assertAll(() -> {
+        Assertions.assertAll(() -> {
             assertThat(representatives).isNotNull();
             assertThat(representatives).hasSize(1);
         });
@@ -225,10 +221,7 @@ class RepresentativeWebClientTest {
         RepresentativeDto dto = mapper.toDto(representative);
         Representative newRepresentative = representativeWebClient.createRepresentative(dto).block();
 
-        assertAll(() -> {
-            assertThat(newRepresentative).isNotNull();
-            assertThat(newRepresentative.getLastName()).isEqualTo(representative.getLastName());
-        });
+        assertThat(newRepresentative).isNotNull().satisfies(nr -> assertThat(nr.getLastName()).isEqualTo(representative.getLastName()));
     }
 
     @Test
@@ -252,7 +245,7 @@ class RepresentativeWebClientTest {
     @DisplayName("Representative data handling: failure test")
     void testExceptionsOnRepresentativeDataHandling() {
         RepresentativeDto dto = mapper.toDto(provideNewRepresentative());
-        assertAll(() -> {
+        Assertions.assertAll(() -> {
             // representative list fetching failures
             assertThatThrownBy(this::fetchRepresentatives).isExactlyInstanceOf(FetchException.class);
             // representative creating failures

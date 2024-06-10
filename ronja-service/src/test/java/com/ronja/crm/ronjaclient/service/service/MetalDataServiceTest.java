@@ -3,16 +3,15 @@ package com.ronja.crm.ronjaclient.service.service;
 import com.ronja.crm.ronjaclient.service.clientapi.MetalDataWebClient;
 import com.ronja.crm.ronjaclient.service.domain.MetalData;
 import com.ronja.crm.ronjaclient.service.validation.FetchException;
+import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-class MetalDataServiceTest {
+class MetalDataServiceTest implements WithAssertions {
 
     private MetalDataWebClient webClient;
     private MetalDataService cut;
@@ -32,13 +31,13 @@ class MetalDataServiceTest {
     @Test
     void testFetchDataFailing() {
         Mockito.when(webClient.fetchMetalData()).thenThrow(RuntimeException.class);
-        assertThrows(FetchException.class, () -> cut.fetchData());
+        Assertions.assertThrows(FetchException.class, () -> cut.fetchData());
     }
 
     @Test
     void testFetchDataReturningNull() {
         Mockito.when(webClient.fetchMetalData()).thenReturn(null);
-        assertThrows(FetchException.class, () -> cut.fetchData());
+        Assertions.assertThrows(FetchException.class, () -> cut.fetchData());
     }
 
     @Test
