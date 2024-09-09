@@ -8,7 +8,6 @@ import com.ronja.crm.ronjaclient.desktop.component.representative.Representative
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -27,9 +26,9 @@ public class MainWindowController {
     @FXML
     private Tab representativesTab;
 
-    public MainWindowController(@Autowired DashboardPane dashboardPane,
-                                @Autowired CustomerTableView customerTableView,
-                                @Autowired RepresentativeTableView representativeTableView) {
+    public MainWindowController(DashboardPane dashboardPane,
+                                CustomerTableView customerTableView,
+                                RepresentativeTableView representativeTableView) {
         Thread.setDefaultUncaughtExceptionHandler(this::handleUncaughtException);
 
         this.dashboardPane = Objects.requireNonNull(dashboardPane);

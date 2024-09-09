@@ -34,7 +34,7 @@ public class DesktopUtil {
                                                                      Class<U> clazz, Function<T, ObservableValue<U>> function) {
         FilteredTableColumn<T, U> column = new FilteredTableColumn<>(caption);
         column.setCellValueFactory(p -> function.apply(p.getValue()));
-        column.setStyle(String.format("-fx-alignment: %s;", alignment));
+        column.setStyle("-fx-alignment: %s;".formatted(alignment));
 
         SouthFilter<T, U> filter = new SouthFilter<>(column, clazz);
         column.setSouthNode(filter);
@@ -48,7 +48,7 @@ public class DesktopUtil {
                                         Function<T, ObservableValue<U>> function) {
         TableColumn<T, U> column = new TableColumn<>(caption);
         column.setCellValueFactory(p -> function.apply(p.getValue()));
-        column.setStyle(String.format("-fx-alignment: %s;", alignment));
+        column.setStyle("-fx-alignment: %s;".formatted(alignment));
         table.getColumns().add(column);
     }
 
