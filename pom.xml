@@ -91,7 +91,7 @@
                         <recipe>org.openrewrite.java.OrderImports</recipe>
                         <recipe>org.openrewrite.java.migrate.UpgradeToJava21</recipe>
                         <recipe>org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_3</recipe>
-                        <recipe>org.openrewrite.java.spring.boot3.SpringBoot3BestPractices</recipe>
+                        <recipe>org.openrewrite.java.spring.boot3.SpringBoot33BestPractices</recipe>
                     </activeRecipes>
                 </configuration>
                 <dependencies>
