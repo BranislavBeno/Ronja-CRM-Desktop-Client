@@ -25,7 +25,7 @@ abstract class BasicWebClientIT {
     }
 
     private static MySQLContainer<?> populateDatabase() {
-        try (MySQLContainer<?> db = new MySQLContainer<>(DockerImageName.parse("mysql:9.2.0"))) {
+        try (MySQLContainer<?> db = new MySQLContainer<>(DockerImageName.parse("mysql:lts"))) {
             return db.withExposedPorts(3306)
                     .withAccessToHost(true)
                     .withDatabaseName("ronja")
