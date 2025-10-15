@@ -8,7 +8,7 @@ before_install:
 
 language: java
 install: true
-jdk: openjdk17
+jdk: openjdk25
 
 script:
   - ./mvnw verify

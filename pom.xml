@@ -17,8 +17,8 @@
     <packaging>pom</packaging>
 
     <properties>
-    <java.version>24</java.version>
-        <maven.compiler.release>24</maven.compiler.release>
+    <java.version>25</java.version>
+        <maven.compiler.release>25</maven.compiler.release>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>branislavbeno</sonar.organization>
     </properties>
@@ -89,8 +89,8 @@
                         <recipe>com.ronja.crm.ronjaclient.NoStaticImport</recipe>
                         <recipe>org.openrewrite.java.RemoveUnusedImports</recipe>
                         <recipe>org.openrewrite.java.OrderImports</recipe>
-                        <recipe>org.openrewrite.java.migrate.UpgradeToJava21</recipe>
-                        <recipe>org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_4</recipe>
+                        <recipe>org.openrewrite.java.migrate.UpgradeToJava25</recipe>
+                        <recipe>org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_5</recipe>
                     </activeRecipes>
                 </configuration>
                 <dependencies>

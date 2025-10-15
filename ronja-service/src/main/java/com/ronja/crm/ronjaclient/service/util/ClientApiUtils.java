@@ -26,14 +26,14 @@ public class ClientApiUtils {
 
     static Mono<Throwable> propagateDeletingError(ClientResponse response) {
         Mono<String> errorMsg = response.bodyToMono(String.class);
-        return errorMsg.flatMap(msg -> {
+        return errorMsg.flatMap(_ -> {
             throw new DeleteException(I18N.get("exception.server.delete"));
         });
     }
 
     static Mono<Throwable> propagateFetchingError(ClientResponse response) {
         Mono<String> errorMsg = response.bodyToMono(String.class);
-        return errorMsg.flatMap(msg -> {
+        return errorMsg.flatMap(_ -> {
             throw new FetchException(I18N.get("exception.server.fetch"));
         });
     }

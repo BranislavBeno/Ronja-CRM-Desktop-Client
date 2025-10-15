@@ -19,7 +19,7 @@ public class I18nUtils {
 
     static {
         LOCALE = new SimpleObjectProperty<>(I18N.getDefaultLocale());
-        LOCALE.addListener((observable, oldValue, newValue) -> I18N.setLocale(newValue));
+        LOCALE.addListener((_, _, newValue) -> I18N.setLocale(newValue));
     }
 
     private I18nUtils() {

@@ -2,7 +2,7 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=com.ronja.crm.ronjaclient%3Aronja-parent&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=com.ronja.crm.ronjaclient%3Aronja-parent)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=com.ronja.crm.ronjaclient%3Aronja-parent&metric=coverage)](https://sonarcloud.io/dashboard?id=com.ronja.crm.ronjaclient%3Aronja-parent)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=com.ronja.crm.ronjaclient%3Aronja-parent&metric=ncloc)](https://sonarcloud.io/dashboard?id=com.ronja.crm.ronjaclient%3Aronja-parent)  
-[![](https://img.shields.io/badge/Java-24-blue)](/pom.xml)
+[![](https://img.shields.io/badge/Java-25-blue)](/pom.xml)
 [![](https://img.shields.io/badge/JavaFX-25-blue)](/pom.xml)
 [![](https://img.shields.io/badge/Spring%20Boot-3.5.6-blue)](/pom.xml)
 [![](https://img.shields.io/badge/Testcontainers-2.0.0-blue)](/pom.xml)
@@ -16,8 +16,8 @@ In case you would like to run this client application, it's necessary first star
 For testing purpose is the application preconfigured to expect CRM server on localhost:8087.
 
 ### Installation
-The preferred way of installation is to build and run the application as a fat jar on any hosting OS with Java 24 installed.  
-When a hosting system for client doesn't provide JRE in version 24, it's recommended to bundle the respective fat jar with its own JRE of correct Java version.  
+The preferred way of installation is to build and run the application as a fat jar on any hosting OS with Java 25 installed.  
+When a hosting system for client doesn't provide JRE in version 25, it's recommended to bundle the respective fat jar with its own JRE of correct Java version.  
 
 It's also recommended to put the application's related properties file into the same folder as the application's fat jar.  
 The properties file is intended, among other things, to set GUI language. User can choose between Slovak and English language.  

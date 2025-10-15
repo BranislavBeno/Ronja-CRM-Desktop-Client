@@ -28,7 +28,7 @@ public class MetalResource {
     public Optional<MetalData> getLatestData() {
         return metalData
                 .stream()
-                .reduce((first, second) -> second);
+                .reduce((_, second) -> second);
     }
 
     public List<MetalData> getDailyData() {

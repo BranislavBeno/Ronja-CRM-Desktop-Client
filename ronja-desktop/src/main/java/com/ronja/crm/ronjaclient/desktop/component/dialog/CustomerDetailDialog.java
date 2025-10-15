@@ -72,7 +72,7 @@ public final class CustomerDetailDialog extends Stage {
         }
 
         var cancelButton = I18nUtils.menuItemForButton("label.dialog.cancel");
-        cancelButton.setOnAction(e -> DesktopUtil.closeOperation(getScene()));
+        cancelButton.setOnAction(_ -> DesktopUtil.closeOperation(getScene()));
 
         var buttonBar = new HBox();
         buttonBar.setAlignment(Pos.CENTER_RIGHT);
@@ -106,9 +106,9 @@ public final class CustomerDetailDialog extends Stage {
         representativeTableView.setCustomer(customer);
         representativeTableView.refreshItems();
         saveButton.setText(I18N.get("label.dialog.save"));
-        saveButton.setOnAction(e -> updateAction(customer, false));
+        saveButton.setOnAction(_ -> updateAction(customer, false));
         saveCloseButton.setText(I18N.get("label.dialog.save.close"));
-        saveCloseButton.setOnAction(e -> updateAction(customer, true));
+        saveCloseButton.setOnAction(_ -> updateAction(customer, true));
     }
 
     private void setUpDialogForCreate() {
@@ -117,9 +117,9 @@ public final class CustomerDetailDialog extends Stage {
         representativeTableView.setCustomer(null);
         representativeTableView.refreshItems();
         saveButton.setText(I18N.get("label.dialog.add"));
-        saveButton.setOnAction(e -> addAction(false));
+        saveButton.setOnAction(_ -> addAction(false));
         saveCloseButton.setText(I18N.get("label.dialog.add.close"));
-        saveCloseButton.setOnAction(e -> addAction(true));
+        saveCloseButton.setOnAction(_ -> addAction(true));
     }
 
     private void updateAction(Customer customer, boolean close) {
@@ -127,7 +127,7 @@ public final class CustomerDetailDialog extends Stage {
             Customer updatedCustomer = updateCustomer(customer);
             CompletableFuture<Void> cf = CompletableFuture
                     .runAsync(() -> customerWebClient.updateCustomer(updatedCustomer).block())
-                    .whenComplete((r, t) -> updateCustomerItem(t));
+                    .whenComplete((_, t) -> updateCustomerItem(t));
             cf.get();
             if (close) {
                 DesktopUtil.closeOperation(getScene());

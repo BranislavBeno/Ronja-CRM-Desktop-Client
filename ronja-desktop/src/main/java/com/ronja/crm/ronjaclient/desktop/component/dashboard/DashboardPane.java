@@ -36,10 +36,10 @@ public class DashboardPane extends SplitPane {
     private ContextMenu setUpContextMenu() {
         // fetch all items from
         var refreshItem = I18nUtils.menuItemForValue("label.refresh.view");
-        refreshItem.setOnAction(e -> Platform.runLater(this::setUpPane));
+        refreshItem.setOnAction(_ -> Platform.runLater(this::setUpPane));
         // show application info
         var aboutItem = new MenuItem(I18N.get("label.about.info") + "...");
-        aboutItem.setOnAction(e -> Dialogs.showAboutDialog(appInfo));
+        aboutItem.setOnAction(_ -> Dialogs.showAboutDialog(appInfo));
 
         // create context menu
         var contextMenu = new ContextMenu();
