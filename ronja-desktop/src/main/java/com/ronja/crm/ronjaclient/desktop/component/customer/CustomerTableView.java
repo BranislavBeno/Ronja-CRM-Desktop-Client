@@ -94,24 +94,24 @@ public class CustomerTableView extends VBox {
     private ContextMenu setUpContextMenu() {
         // reset all filters
         var resetFiltersItem = I18nUtils.menuItemForValue("label.clear.filters");
-        resetFiltersItem.setOnAction(e -> DesktopUtil.resetFilters(tableView));
+        resetFiltersItem.setOnAction(_ -> DesktopUtil.resetFilters(tableView));
         // fetch all items from
         var refreshItem = I18nUtils.menuItemForValue("label.reload.items");
-        refreshItem.setOnAction(e -> refreshItems());
+        refreshItem.setOnAction(_ -> refreshItems());
         // update selected customer
         var updateItem = new MenuItem(getCaption("label.modify.item"));
-        updateItem.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerWebClient, this, representativeTableView, true));
+        updateItem.setOnAction(_ -> Dialogs.showCustomerDetailDialog(customerWebClient, this, representativeTableView, true));
         updateItem.disableProperty().bind(isSelectedCustomerNull());
         // add new customer
         var addItem = new MenuItem(getCaption("label.add.new.item"));
-        addItem.setOnAction(e -> Dialogs.showCustomerDetailDialog(customerWebClient, this, representativeTableView, false));
+        addItem.setOnAction(_ -> Dialogs.showCustomerDetailDialog(customerWebClient, this, representativeTableView, false));
         // remove existing customer
         var deleteItem = new MenuItem(getCaption("label.remove.item"));
-        deleteItem.setOnAction(e -> deleteCustomer());
+        deleteItem.setOnAction(_ -> deleteCustomer());
         deleteItem.disableProperty().bind(isSelectedCustomerNull());
         // show application info
         var aboutItem = new MenuItem(getCaption("label.about.info"));
-        aboutItem.setOnAction(e -> Dialogs.showAboutDialog(appInfo));
+        aboutItem.setOnAction(_ -> Dialogs.showAboutDialog(appInfo));
 
         // create context menu
         var contextMenu = new ContextMenu();
@@ -137,9 +137,9 @@ public class CustomerTableView extends VBox {
             try {
                 CompletableFuture<Void> cf = CompletableFuture
                         .runAsync(() -> deleteCustomer(customerItem))
-                        .whenComplete((r, t) -> deleteCustomerItem(customerItem, t));
+                        .whenComplete((_, t) -> deleteCustomerItem(customerItem, t));
                 cf.get();
-            } catch (Exception e) {
+            } catch (Exception _) {
                 Thread.currentThread().interrupt();
                 throw new DeleteException(I18N.get("exception.customer.delete")
                         + System.lineSeparator()

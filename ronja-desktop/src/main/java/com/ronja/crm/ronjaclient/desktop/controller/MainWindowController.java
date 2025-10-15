@@ -41,17 +41,17 @@ public class MainWindowController {
         // customers tab
         customersTab.setContent(customerTableView);
         customersTab.textProperty().bind(I18nUtils.createStringBinding("label.tab.customers"));
-        customersTab.selectedProperty().addListener((observable, oldValue, newValue) ->
+        customersTab.selectedProperty().addListener((_, _, newValue) ->
                 onChange(newValue, customerTableView::refreshItems));
         // representatives tab
         representativesTab.setContent(representativeTableView);
         representativesTab.textProperty().bind(I18nUtils.createStringBinding("label.tab.representatives"));
-        representativesTab.selectedProperty().addListener((observable, oldValue, newValue) ->
+        representativesTab.selectedProperty().addListener((_, _, newValue) ->
                 onChange(newValue, representativeTableView::refreshItems));
         // dashboard tab
         dashboardTab.setContent(dashboardPane);
         dashboardTab.textProperty().bind(I18nUtils.createStringBinding("label.tab.dashboard"));
-        dashboardTab.selectedProperty().addListener((observable, oldValue, newValue) ->
+        dashboardTab.selectedProperty().addListener((_, _, newValue) ->
                 onChange(newValue, dashboardPane::setUpPane));
     }
 

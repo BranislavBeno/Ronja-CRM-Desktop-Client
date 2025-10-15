@@ -103,7 +103,7 @@ public class RepresentativeDetailDialog extends Stage {
         }
 
         var cancelButton = I18nUtils.menuItemForButton("label.dialog.cancel");
-        cancelButton.setOnAction(e -> DesktopUtil.closeOperation(getScene()));
+        cancelButton.setOnAction(_ -> DesktopUtil.closeOperation(getScene()));
 
         var buttonBar = new HBox();
         buttonBar.setAlignment(Pos.CENTER_RIGHT);
@@ -124,13 +124,13 @@ public class RepresentativeDetailDialog extends Stage {
         setUpContent(representative);
         setTitle(I18N.get("representative.modify.title"));
         saveButton.setText(I18N.get("label.dialog.save"));
-        saveButton.setOnAction(e -> {
+        saveButton.setOnAction(_ -> {
             Representative updatedRepresentative = updateRepresentative(representative);
             RepresentativeDto dto = mapper.toDto(updatedRepresentative);
             try {
                 CompletableFuture<Void> cf = CompletableFuture
                         .runAsync(() -> representativeWebClient.updateRepresentative(dto).block())
-                        .whenComplete((r, t) -> updateRepresentativeItem(t));
+                        .whenComplete((_, t) -> updateRepresentativeItem(t));
                 cf.get();
                 DesktopUtil.closeOperation(getScene());
             } catch (Exception ex) {
@@ -144,7 +144,7 @@ public class RepresentativeDetailDialog extends Stage {
         setTitle(I18N.get("representative.add.title"));
         setUpContent();
         saveButton.setText(I18N.get("label.dialog.add"));
-        saveButton.setOnAction(e -> {
+        saveButton.setOnAction(_ -> {
             Representative representative = provideRepresentative();
             RepresentativeDto dto = mapper.toDto(representative);
             try {

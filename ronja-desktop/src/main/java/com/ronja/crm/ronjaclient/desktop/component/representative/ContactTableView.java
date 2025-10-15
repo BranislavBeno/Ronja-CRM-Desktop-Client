@@ -62,7 +62,7 @@ public class ContactTableView extends TableView<ContactTableItem> {
         // update selected item
         var updateItem = new MenuItem(I18N.get("label.modify.item") + "...");
         updateItem.disableProperty().bind(isSelectedItemNull());
-        updateItem.setOnAction(e -> {
+        updateItem.setOnAction(_ -> {
             Contact contact = selectedItem().get().getContact();
             Optional<ContactTableItem> result = provideInputDialog(I18N.get("representative.contact.modify"), contact);
             result.ifPresent(item -> handleContact(item, this::updateContact, this::updatePriorityContact));
@@ -70,7 +70,7 @@ public class ContactTableView extends TableView<ContactTableItem> {
 
         // add new item
         var addItem = new MenuItem(I18N.get("label.add.item") + "...");
-        addItem.setOnAction(e -> {
+        addItem.setOnAction(_ -> {
             Optional<ContactTableItem> result = provideInputDialog(I18N.get("representative.contact.add"), new Contact());
             result.ifPresent(contact -> handleContact(contact, this::addNewContact, this::addNewPriorityContact));
         });
@@ -78,7 +78,7 @@ public class ContactTableView extends TableView<ContactTableItem> {
         // remove existing item
         var deleteItem = new MenuItem(I18N.get("label.remove.item") + "...");
         deleteItem.disableProperty().bind(isSelectedItemNull());
-        deleteItem.setOnAction(e -> {
+        deleteItem.setOnAction(_ -> {
             ContactTableItem contact = selectedItem().get();
             String message = I18N.get("representative.contact.approve.remove").formatted(contact.getContent());
             if (Dialogs.showAlertDialog(I18N.get("representative.contact.remove"), message, Alert.AlertType.CONFIRMATION)) {

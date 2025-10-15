@@ -184,23 +184,23 @@ public class RepresentativeTableView extends VBox {
         // menu item for enhanced filtering - scheduled
         Menu scheduledFilterItem = provideScheduledFilterSubMenu();
         // menu item for reset all filters
-        MenuItem resetFiltersItem = provideMenuItem(I18N.get("label.clear.filters"), e -> {
+        MenuItem resetFiltersItem = provideMenuItem(I18N.get("label.clear.filters"), _ -> {
             resetEnhancedFilter();
             DesktopUtil.resetFilters(tableView);
         });
         // menu item for fetch all items from
-        MenuItem refreshItem = provideMenuItem(I18N.get("label.reload.items"), e -> refreshItems());
+        MenuItem refreshItem = provideMenuItem(I18N.get("label.reload.items"), _ -> refreshItems());
         // menu item for update selected representative
-        MenuItem updateItem = provideBoundMenuItem(I18N.get("label.modify.item") + "...", e -> Dialogs.showRepresentativeDetailDialog(
+        MenuItem updateItem = provideBoundMenuItem(I18N.get("label.modify.item") + "...", _ -> Dialogs.showRepresentativeDetailDialog(
                 customerWebClient, representativeWebClient, this, mapper, true, forDialog));
         // menu item for add new representative
-        MenuItem addItem = provideMenuItem(I18N.get("label.add.new.item") + "...", e -> Dialogs.showRepresentativeDetailDialog(
+        MenuItem addItem = provideMenuItem(I18N.get("label.add.new.item") + "...", _ -> Dialogs.showRepresentativeDetailDialog(
                 customerWebClient, representativeWebClient, this, mapper, false, forDialog));
         // menu item for remove existing representative
-        MenuItem deleteItem = provideBoundMenuItem(I18N.get("label.remove.item") + "...", e -> deleteRepresentative());
+        MenuItem deleteItem = provideBoundMenuItem(I18N.get("label.remove.item") + "...", _ -> deleteRepresentative());
         // show application info
         var aboutItem = new MenuItem(I18N.get("label.about.info") + "...");
-        aboutItem.setOnAction(e -> Dialogs.showAboutDialog(appInfo));
+        aboutItem.setOnAction(_ -> Dialogs.showAboutDialog(appInfo));
 
         // create context menu
         var contextMenu = new ContextMenu();
@@ -214,19 +214,19 @@ public class RepresentativeTableView extends VBox {
     }
 
     private Menu provideVisitedFilterSubMenu() {
-        MenuItem lastMonthItem = provideMenuItem(I18N.get("representative.filter.visited.1"), e -> {
+        MenuItem lastMonthItem = provideMenuItem(I18N.get("representative.filter.visited.1"), _ -> {
             DateRecord dateRecord = toLastDateInterval(1);
             runEnhancedVisitedFilter(dateRecord);
         });
-        MenuItem lastThreeMonthsItem = provideMenuItem(I18N.get("representative.filter.visited.2"), e -> {
+        MenuItem lastThreeMonthsItem = provideMenuItem(I18N.get("representative.filter.visited.2"), _ -> {
             DateRecord dateRecord = toLastDateInterval(3);
             runEnhancedVisitedFilter(dateRecord);
         });
-        MenuItem lastSixMonthsItem = provideMenuItem(I18N.get("representative.filter.visited.3"), e -> {
+        MenuItem lastSixMonthsItem = provideMenuItem(I18N.get("representative.filter.visited.3"), _ -> {
             DateRecord dateRecord = toLastDateInterval(6);
             runEnhancedVisitedFilter(dateRecord);
         });
-        MenuItem customItem = provideMenuItem(I18N.get("representative.filter.defined") + "...", e -> {
+        MenuItem customItem = provideMenuItem(I18N.get("representative.filter.defined") + "...", _ -> {
             Optional<DateRecord> filterDates = provideDateFilterDialog(LAST_VISIT_TEXT, visitedRecord);
             filterDates.ifPresent(this::runEnhancedVisitedFilter);
         });
@@ -239,19 +239,19 @@ public class RepresentativeTableView extends VBox {
     }
 
     private Menu provideScheduledFilterSubMenu() {
-        MenuItem nextMonthItem = provideMenuItem(I18N.get("representative.filter.scheduled.1"), e -> {
+        MenuItem nextMonthItem = provideMenuItem(I18N.get("representative.filter.scheduled.1"), _ -> {
             DateRecord dateRecord = toNextDateInterval(1);
             runEnhancedScheduledFilter(dateRecord);
         });
-        MenuItem nextThreeMonthsItem = provideMenuItem(I18N.get("representative.filter.scheduled.2"), e -> {
+        MenuItem nextThreeMonthsItem = provideMenuItem(I18N.get("representative.filter.scheduled.2"), _ -> {
             DateRecord dateRecord = toNextDateInterval(3);
             runEnhancedScheduledFilter(dateRecord);
         });
-        MenuItem nextSixMonthsItem = provideMenuItem(I18N.get("representative.filter.scheduled.3"), e -> {
+        MenuItem nextSixMonthsItem = provideMenuItem(I18N.get("representative.filter.scheduled.3"), _ -> {
             DateRecord dateRecord = toNextDateInterval(6);
             runEnhancedScheduledFilter(dateRecord);
         });
-        MenuItem customItem = provideMenuItem(I18N.get("representative.filter.defined") + "...", e -> {
+        MenuItem customItem = provideMenuItem(I18N.get("representative.filter.defined") + "...", _ -> {
             Optional<DateRecord> scheduledFilter = provideDateFilterDialog(SCHEDULED_VISIT_TEXT, scheduledRecord);
             scheduledFilter.ifPresent(this::runEnhancedScheduledFilter);
         });
@@ -385,9 +385,9 @@ public class RepresentativeTableView extends VBox {
             try {
                 CompletableFuture<Void> cf = CompletableFuture
                         .runAsync(() -> deleteRepresentative(representativeItem))
-                        .whenComplete((r, t) -> deleteRepresentativeItem(representativeItem, t));
+                        .whenComplete((_, t) -> deleteRepresentativeItem(representativeItem, t));
                 cf.get();
-            } catch (Exception e) {
+            } catch (Exception _) {
                 Thread.currentThread().interrupt();
                 throw new DeleteException("""
                         %s
