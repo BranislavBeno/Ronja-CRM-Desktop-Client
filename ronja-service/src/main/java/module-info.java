@@ -1,5 +1,4 @@
 module ronja.service {
-    requires com.fasterxml.jackson.databind;
     requires reactor.core;
     requires spring.context;
     requires spring.web;
@@ -8,6 +7,7 @@ module ronja.service {
     requires spring.beans;
     requires spring.core;
     requires spring.boot.autoconfigure;
+    requires tools.jackson.databind;
     requires transitive ronja.internationalization;
 
     exports com.ronja.crm.ronjaclient.service.clientapi;
