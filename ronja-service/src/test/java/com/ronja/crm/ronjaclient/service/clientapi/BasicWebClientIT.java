@@ -1,12 +1,12 @@
 package com.ronja.crm.ronjaclient.service.clientapi;
 
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.lifecycle.Startables;
+import org.testcontainers.mysql.MySQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers(disabledWithoutDocker = true)
@@ -15,7 +15,7 @@ abstract class BasicWebClientIT {
     private static final Network NETWORK = Network.newNetwork();
 
     @Container
-    static final MySQLContainer<?> RONJA_DB = populateDatabase();
+    static final MySQLContainer RONJA_DB = populateDatabase();
 
     @Container
     static final GenericContainer<?> RONJA_SERVER = populateServer();
@@ -24,8 +24,8 @@ abstract class BasicWebClientIT {
         Startables.deepStart(RONJA_DB, RONJA_SERVER).join();
     }
 
-    private static MySQLContainer<?> populateDatabase() {
-        try (MySQLContainer<?> db = new MySQLContainer<>(DockerImageName.parse("mysql:lts"))) {
+    private static MySQLContainer populateDatabase() {
+        try (MySQLContainer db = new MySQLContainer(DockerImageName.parse("mysql:lts"))) {
             return db.withExposedPorts(3306)
                     .withAccessToHost(true)
                     .withDatabaseName("ronja")

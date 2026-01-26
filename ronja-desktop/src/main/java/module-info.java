@@ -2,6 +2,7 @@ module ronja.desktop {
     requires javafx.controls;
     requires javafx.fxml;
     requires org.controlsfx.controls;
+    requires org.jspecify;
     requires spring.beans;
     requires spring.boot;
     requires spring.boot.autoconfigure;

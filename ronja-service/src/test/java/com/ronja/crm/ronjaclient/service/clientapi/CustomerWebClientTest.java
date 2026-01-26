@@ -6,8 +6,9 @@ import com.ronja.crm.ronjaclient.service.domain.Focus;
 import com.ronja.crm.ronjaclient.service.domain.Status;
 import com.ronja.crm.ronjaclient.service.validation.DeleteException;
 import com.ronja.crm.ronjaclient.service.validation.FetchException;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
+import mockwebserver3.MockResponse;
+import mockwebserver3.MockWebServer;
+import okhttp3.Headers;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.*;
 import org.springframework.web.server.ServerErrorException;
@@ -56,8 +57,8 @@ class CustomerWebClientTest implements WithAssertions {
     }
 
     @AfterEach
-    void shutdown() throws IOException {
-        this.mockWebServer.shutdown();
+    void shutdown() {
+        this.mockWebServer.close();
     }
 
     @Test
@@ -146,21 +147,16 @@ class CustomerWebClientTest implements WithAssertions {
     }
 
     private void provideResponse() {
-        this.mockWebServer.enqueue(new MockResponse()
-                .setResponseCode(400)
-                .setBody("Error occurred."));
+        this.mockWebServer.enqueue(new MockResponse(400, new Headers(new String[]{}), "Error occurred."));
     }
 
     private void mockResponse(String listResponse) {
-        MockResponse mockResponse = new MockResponse()
-                .addHeader("Content-Type", "application/json; charset=utf-8")
-                .setBody(listResponse);
+        MockResponse mockResponse = new MockResponse(200, new Headers(new String[]{"Content-Type", "application/json; charset=utf-8"}), listResponse);
         this.mockWebServer.enqueue(mockResponse);
     }
 
     private void mockResponse() {
-        MockResponse mockResponse = new MockResponse()
-                .addHeader("Content-Type", "application/json; charset=utf-8");
+        MockResponse mockResponse = new MockResponse(200, new Headers(new String[]{"Content-Type", "application/json; charset=utf-8"}), "");
         this.mockWebServer.enqueue(mockResponse);
     }
 

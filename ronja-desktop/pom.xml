@@ -48,6 +48,10 @@
             <version>11.2.3</version>
         </dependency>
         <dependency>
+            <groupId>org.jspecify</groupId>
+            <artifactId>jspecify</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.ronja.crm.ronjaclient</groupId>
             <artifactId>ronja-service</artifactId>
             <version>1.0.0</version>
@@ -75,9 +79,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.14.1</version>
-        <configuration>
-          <release>${java.version}</release>
-        </configuration>
+                <configuration>
+                    <release>${java.version}</release>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.openjfx</groupId>
