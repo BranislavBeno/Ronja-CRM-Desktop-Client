@@ -33,6 +33,9 @@ jobs:
         distribution: zulu
         java-package: jdk
 
+    - name: Setup TestLens
+      uses: testlens-app/setup-testlens@v1
+
     - name: Run Tests
       run: ./mvnw verify
 
